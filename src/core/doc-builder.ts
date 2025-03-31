@@ -4,6 +4,7 @@ import { getNRestDocsConfig } from "./config";
 import { FieldBuilderOptional } from "./withField";
 import { StrictChecker } from "./strict-checker";
 import { isEmpty } from "es-toolkit/compat";
+import { AsciiDocRenderer } from "./renderer/asciidoc.renderer";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -61,19 +62,21 @@ export class DocRequestBuilder {
         // 요청 URL, Query, Headers (데모용)
         const requestUrl = new URL(request?.url || "", "http://localhost");
         const requestPath = requestUrl.pathname;
-        const requestQuery = Object.fromEntries(requestUrl.searchParams);
-        const requestHeaders = request?.header || {};
+        const requestMethod = request?.method || "";
+        // const requestQuery = Object.fromEntries(requestUrl.searchParams);
+        // const requestHeaders = request?.header || {};
+
+        const renderer = new AsciiDocRenderer();
+        const doc = renderer.render({
+            identifier,
+            method: requestMethod,
+            path: requestPath,
+            requestBody,
+            responseBody,
+        });
 
         console.log(`--- Doc Identifier: ${identifier} ---`);
-        console.log("Global Config:", config);
-        console.log("Doc Options:", JSON.stringify(this.options, null, 2));
-        console.log("Request Path:", requestPath);
-        console.log("Request Query:", requestQuery);
-        console.log("Request Headers:", requestHeaders);
-        console.log("Request Body:", requestBody);
-        console.log("Response Status:", response.status);
-        console.log("Response Body:", responseBody);
-        console.log("Response Text:", response.text);
+        console.log(doc);
         console.log("---------------------------------------");
 
         return response;
