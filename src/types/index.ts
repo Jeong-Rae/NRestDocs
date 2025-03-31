@@ -1,1 +1,6 @@
-export { NRestDocsConfig, FieldDescriptor, DocOptions } from "./doc-options"
+export {
+    NRestDocsConfig,
+    FieldDescriptor,
+    DocOptions,
+    DocumentFormat,
+} from "./doc-options";
