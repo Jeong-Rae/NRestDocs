@@ -12,3 +12,9 @@ export {
     FieldBuilderStart,
     FieldBuilderOptional,
 } from "./core/withField";
+
+// errors
+export { MissingFieldError } from "./errors/MissingFieldError";
+export { TypeInvalidError } from "./errors/TypeInvalidError";
+export { ExtraFieldError } from "./errors/ExtraFieldError";
+export { ValidationError } from "./errors/ValidationError";

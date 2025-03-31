@@ -2,6 +2,8 @@ import { Response } from "supertest";
 import { DocOptions } from "../types/doc-options";
 import { getNRestDocsConfig } from "./config";
 import { FieldBuilderOptional } from "./withField";
+import { StrictChecker } from "./strict-checker";
+import { isEmpty } from "es-toolkit/compat";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -20,12 +22,17 @@ export class DocRequestBuilder {
     /** 요청 필드 정의 */
     withRequestFields(fields: FieldBuilderOptional[]): this {
         this.options.requestFields = fields.map((field) => {
-            const descriptor = field.toDescriptor();
+            const {
+                field: fieldName,
+                type,
+                description,
+                optional,
+            } = field.toDescriptor();
             return {
-                field: descriptor.field,
-                type: descriptor.type,
-                description: descriptor.description,
-                optional: descriptor.optional,
+                field: fieldName,
+                type,
+                description,
+                optional,
             };
         });
         return this;
@@ -34,12 +41,17 @@ export class DocRequestBuilder {
     /** 응답 필드 정의 */
     withResponseFields(fields: FieldBuilderOptional[]): this {
         this.options.responseFields = fields.map((field) => {
-            const descriptor = field.toDescriptor();
+            const {
+                field: fieldName,
+                type,
+                description,
+                optional,
+            } = field.toDescriptor();
             return {
-                field: descriptor.field,
-                type: descriptor.type,
-                description: descriptor.description,
-                optional: descriptor.optional,
+                field: fieldName,
+                type,
+                description,
+                optional,
             };
         });
         return this;
@@ -54,6 +66,19 @@ export class DocRequestBuilder {
 
         const request = response.request as any;
         const requestBody = request?._data ?? {};
+        const responseBody = response.body ?? {};
+
+        const { requestFields, responseFields } = this.options;
+
+        if (config.strict) {
+            const checker = new StrictChecker();
+            if (!isEmpty(requestFields)) {
+                checker.check("request", requestBody, requestFields);
+            }
+            if (!isEmpty(responseFields)) {
+                checker.check("response", responseBody, responseFields);
+            }
+        }
 
         // 요청 URL, Query, Headers (데모용)
         const requestUrl = new URL(request?.url || "", "http://localhost");
@@ -69,7 +94,7 @@ export class DocRequestBuilder {
         console.log("Request Headers:", requestHeaders);
         console.log("Request Body:", requestBody);
         console.log("Response Status:", response.status);
-        console.log("Response Body:", response.body);
+        console.log("Response Body:", responseBody);
         console.log("Response Text:", response.text);
         console.log("---------------------------------------");
 
