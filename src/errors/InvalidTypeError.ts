@@ -1,7 +1,7 @@
 /**
  * 타입 검증 실패 시 발생하는 오류
  */
-export interface TypeInvalidErrorOptions {
+export interface InvalidTypeErrorOptions {
     context: string;
     message: string;
     expected: string;
@@ -9,13 +9,13 @@ export interface TypeInvalidErrorOptions {
     fieldName?: string;
 }
 
-export class TypeInvalidError extends Error {
+export class InvalidTypeError extends Error {
     public readonly context: string;
     public readonly expected: string;
     public readonly actual: string;
     public readonly fieldName?: string;
 
-    constructor(options: TypeInvalidErrorOptions | string) {
+    constructor(options: InvalidTypeErrorOptions | string) {
         if (typeof options === "string") {
             super(options);
             this.context = "";
@@ -34,6 +34,6 @@ export class TypeInvalidError extends Error {
             this.fieldName = fieldName;
         }
 
-        this.name = "TypeInvalidError";
+        this.name = "InvalidTypeError";
     }
 }

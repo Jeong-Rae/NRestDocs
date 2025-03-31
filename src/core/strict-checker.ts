@@ -1,8 +1,8 @@
 import { FieldDescriptor } from "../types/doc-options";
 import { isString, isBoolean, isNil } from "es-toolkit";
 import { isNumber, isObjectLike, isArray } from "es-toolkit/compat";
-import { TypeInvalidError } from "../errors/TypeInvalidError";
-import { ExtraFieldError } from "../errors/ExtraFieldError";
+import { InvalidTypeError } from "../errors/InvalidTypeError";
+import { UnexpectedFieldError } from "../errors/UnexpectedFieldError";
 import { MissingFieldError } from "../errors/MissingFieldError";
 import { ValidationError } from "../errors/ValidationError";
 
@@ -71,7 +71,7 @@ export class StrictChecker {
      *
      * @param value 검사할 값
      * @param context 검사 컨텍스트(request 또는 response)
-     * @throws 값이 객체가 아닌 경우 TypeInvalidError 발생
+     * @throws 값이 객체가 아닌 경우 InvalidTypeError 발생
      */
     private async ensureObject(value: any, context: string): Promise<void> {
         const isValidObject =
@@ -79,7 +79,7 @@ export class StrictChecker {
 
         if (!isValidObject) {
             const actualType = await this.prettyType(value);
-            throw new TypeInvalidError({
+            throw new InvalidTypeError({
                 context,
                 message: `${context} body must be a non-null object`,
                 expected: "object",
@@ -94,7 +94,7 @@ export class StrictChecker {
      * @param actualBody 검사할 실제 데이터 객체
      * @param fields 필드 정의 목록
      * @param context 검사 컨텍스트(request 또는 response)
-     * @throws 정의되지 않은 필드가 존재할 경우 ExtraFieldError 발생
+     * @throws 정의되지 않은 필드가 존재할 경우 UnexpectedFieldError 발생
      */
     private async ensureNoExtraFields(
         actualBody: Record<string, any>,
@@ -109,7 +109,7 @@ export class StrictChecker {
         );
 
         if (extraKeys.length > 0) {
-            throw new ExtraFieldError({
+            throw new UnexpectedFieldError({
                 context,
                 message: `${context} contains undocumented field(s)`,
                 extraFields: extraKeys,
@@ -148,7 +148,7 @@ export class StrictChecker {
         // 타입 검사
         if (!(await this.matchesType(type, value))) {
             const actualType = await this.prettyType(value);
-            throw new TypeInvalidError({
+            throw new InvalidTypeError({
                 context,
                 message: `${context} field has incorrect type`,
                 fieldName,

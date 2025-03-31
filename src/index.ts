@@ -15,6 +15,6 @@ export {
 
 // errors
 export { MissingFieldError } from "./errors/MissingFieldError";
-export { TypeInvalidError } from "./errors/TypeInvalidError";
-export { ExtraFieldError } from "./errors/ExtraFieldError";
+export { InvalidTypeError } from "./errors/InvalidTypeError";
+export { UnexpectedFieldError } from "./errors/UnexpectedFieldError";
 export { ValidationError } from "./errors/ValidationError";

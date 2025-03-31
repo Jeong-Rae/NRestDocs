@@ -1,5 +1,5 @@
 import { Response } from "supertest";
-import { DocOptions } from "../types/doc-options";
+import { DocOptions, FieldDescriptor } from "../types/doc-options";
 import { getNRestDocsConfig } from "./config";
 import { FieldBuilderOptional } from "./withField";
 import { StrictChecker } from "./strict-checker";
@@ -21,40 +21,18 @@ export class DocRequestBuilder {
 
     /** 요청 필드 정의 */
     withRequestFields(fields: FieldBuilderOptional[]): this {
-        this.options.requestFields = fields.map((field) => {
-            const {
-                field: fieldName,
-                type,
-                description,
-                optional,
-            } = field.toDescriptor();
-            return {
-                field: fieldName,
-                type,
-                description,
-                optional,
-            };
-        });
+        this.options.requestFields = this.mapFields(fields);
         return this;
     }
 
     /** 응답 필드 정의 */
     withResponseFields(fields: FieldBuilderOptional[]): this {
-        this.options.responseFields = fields.map((field) => {
-            const {
-                field: fieldName,
-                type,
-                description,
-                optional,
-            } = field.toDescriptor();
-            return {
-                field: fieldName,
-                type,
-                description,
-                optional,
-            };
-        });
+        this.options.responseFields = this.mapFields(fields);
         return this;
+    }
+
+    private mapFields(fields: FieldBuilderOptional[]): FieldDescriptor[] {
+        return fields.map((f) => f.toDescriptor());
     }
 
     /**
@@ -73,10 +51,10 @@ export class DocRequestBuilder {
         if (config.strict) {
             const checker = new StrictChecker();
             if (!isEmpty(requestFields)) {
-                checker.check("request", requestBody, requestFields);
+                await checker.check("request", requestBody, requestFields);
             }
             if (!isEmpty(responseFields)) {
-                checker.check("response", responseBody, responseFields);
+                await checker.check("response", responseBody, responseFields);
             }
         }
 

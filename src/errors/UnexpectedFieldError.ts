@@ -1,17 +1,17 @@
 /**
  * 정의되지 않은 추가 필드가 존재할 때 발생하는 오류
  */
-export interface ExtraFieldErrorOptions {
+export interface UnexpectedFieldErrorOptions {
     context: string;
     message: string;
     extraFields: string[];
 }
 
-export class ExtraFieldError extends Error {
+export class UnexpectedFieldError extends Error {
     public readonly context: string;
     public readonly extraFields: string[];
 
-    constructor(options: ExtraFieldErrorOptions | string) {
+    constructor(options: UnexpectedFieldErrorOptions | string) {
         if (typeof options === "string") {
             super(options);
             this.context = "";
@@ -26,6 +26,6 @@ export class ExtraFieldError extends Error {
             this.extraFields = extraFields;
         }
 
-        this.name = "ExtraFieldError";
+        this.name = "UnexpectedFieldError";
     }
 }
