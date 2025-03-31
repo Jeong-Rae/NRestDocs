@@ -6,3 +6,9 @@ export {
     FieldDescriptor,
     DocOptions,
 } from "./types";
+export {
+    withField,
+    FieldBuilder,
+    FieldBuilderStart,
+    FieldBuilderOptional,
+} from "./core/withField";

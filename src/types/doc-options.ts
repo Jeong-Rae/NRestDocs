@@ -1,5 +1,5 @@
 /** 문서 포맷 타입 */
-export type DocumentFormat = 'adoc' | 'md';
+export type DocumentFormat = "adoc" | "md";
 
 /** 전역 설정 타입 */
 export type NRestDocsConfig = {
@@ -9,7 +9,7 @@ export type NRestDocsConfig = {
     format: DocumentFormat;
     /** strict 모드 시, 문서 정의와 실제 요청/응답 불일치 시 테스트 실패 */
     strict: boolean;
-}
+};
 
 /** JSON 필드 타입 */
 export type FieldType = string;
@@ -22,7 +22,9 @@ export type FieldDescriptor = {
     type: FieldType;
     /** 설명(옵션) */
     description?: string;
-}
+    /** 필수 필드 여부 */
+    optional: boolean;
+};
 
 /** 테스트 코드에서 문서화 시 제공하는 옵션 */
 export type DocOptions = {
@@ -36,4 +38,4 @@ export type DocOptions = {
     responseFields?: FieldDescriptor[];
 
     // pathParams, queryParams, headers
-}
+};
