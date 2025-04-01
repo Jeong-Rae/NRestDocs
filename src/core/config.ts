@@ -1,9 +1,9 @@
-import { NRestDocsConfig } from '../types';
+import { NRestDocsConfig } from "../types/doc-options";
 
 let globalNRestDocsConfig: NRestDocsConfig = {
-    output: './docs',
-    format: 'adoc',
-    strict: true,
+    output: "./docs",
+    format: "adoc",
+    strict: false,
 };
 
 /**

@@ -1,10 +1,10 @@
-import { format } from "../../utils/format";
+import { format } from "../utils/format";
 
 /** API 제목 스니펫 */
 export function snippetTitle(identifier: string): string {
     return format`
 = API: ${identifier}
-`;
+`.trimStart();
 }
 
 /** Overview 스니펫 */
@@ -13,7 +13,7 @@ export function snippetOverview(method: string, path: string): string {
 == Overview
 HTTP Method:: \`${method}\`
 URL Path:: \`${path}\`
-`;
+`.trimStart();
 }
 
 /** Request 스니펫 */
@@ -24,7 +24,7 @@ export function snippetRequestBlock(json: any): string {
 ----
 ${JSON.stringify(json, null, 2)}
 ----
-`;
+`.trimStart();
 }
 
 /** Response 스니펫 */
@@ -35,5 +35,5 @@ export function snippetResponseBlock(json: any): string {
 ----
 ${JSON.stringify(json, null, 2)}
 ----
-`;
+`.trimStart();
 }

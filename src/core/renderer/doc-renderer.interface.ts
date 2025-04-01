@@ -1,3 +1,5 @@
+import { DocumentSnippets } from "./doc-snipperts.type";
+
 export interface RenderParams {
     identifier: string;
     method: string;
@@ -7,15 +9,5 @@ export interface RenderParams {
 }
 
 export interface DocRenderer {
-    /** 전체 문서 렌더링 */
-    renderFull(params: RenderParams): string;
-
-    /** 개별 스니펫: Overview */
-    snippetOverview(params: RenderParams): string;
-
-    /** 개별 스니펫: Request */
-    snippetRequest(params: RenderParams): string;
-
-    /** 개별 스니펫: Response */
-    snippetResponse(params: RenderParams): string;
+    renderSnippets(params: RenderParams): DocumentSnippets;
 }

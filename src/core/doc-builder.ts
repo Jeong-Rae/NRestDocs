@@ -4,8 +4,10 @@ import { getNRestDocsConfig } from "./config";
 import { FieldBuilderOptional } from "./withField";
 import { StrictChecker } from "./strict-checker";
 import { isEmpty } from "es-toolkit/compat";
-import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
-import { DocRenderer } from "./renderer/doc-renderer.interface";
+import { LocalDocWriter } from "./writer/local-doc-writer";
+import { generateCurlSnippet } from "./snipperts/curl-snippert";
+import { generateHttpRequestSnippet } from "./snipperts/http-request-snippert";
+import { generateHttpResponseSnippet } from "./snipperts/http-response-snippet";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -46,7 +48,13 @@ export class DocRequestBuilder {
 
         const request = response.request as any;
         const requestBody = request?._data ?? {};
+        const requestHeaders = request?.header ?? {};
+        const requestMethod = request?.method ?? "";
+        const requestUrl = new URL(request?.url || "", "http://localhost");
+
         const responseBody = response.body ?? {};
+        const responseHeaders = response.headers ?? {};
+        const statusCode = response.status;
 
         const { requestFields, responseFields } = this.options;
 
@@ -60,25 +68,41 @@ export class DocRequestBuilder {
             }
         }
 
-        // 요청 URL, Query, Headers (데모용)
-        const requestUrl = new URL(request?.url || "", "http://localhost");
-        const requestPath = requestUrl.pathname;
-        const requestMethod = request?.method || "";
-        // const requestQuery = Object.fromEntries(requestUrl.searchParams);
-        // const requestHeaders = request?.header || {};
+        const snippetMap: Record<string, string> = {};
 
-        const renderer: DocRenderer = new AsciiDocRenderer();
-        const doc = renderer.renderFull({
-            identifier,
-            method: requestMethod,
-            path: requestPath,
-            requestBody,
-            responseBody,
+        // curl-request
+        snippetMap["curl-request"] = generateCurlSnippet(
+            requestMethod,
+            requestUrl,
+            requestHeaders,
+            requestBody
+        );
+
+        // http-request
+        snippetMap["http-request"] = generateHttpRequestSnippet(
+            requestMethod,
+            requestUrl,
+            requestHeaders,
+            requestBody
+        );
+
+        // http-response
+        snippetMap["http-response"] = generateHttpResponseSnippet(
+            statusCode,
+            responseHeaders,
+            responseBody
+        );
+
+        const writer = new LocalDocWriter({
+            outputDir: config.output ?? "./docs",
+            extension: "adoc",
+            directoryStructure: "nested",
         });
 
-        console.log(`--- Doc Identifier: ${identifier} ---`);
-        console.log(doc);
-        console.log("---------------------------------------");
+        // 스니펫별로 파일 기록
+        for (const [snippetName, content] of Object.entries(snippetMap)) {
+            await writer.writeSnippet(identifier, snippetName, content);
+        }
 
         return response;
     }
