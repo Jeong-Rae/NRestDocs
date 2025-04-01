@@ -7,7 +7,7 @@ import { filterResponseHeaders } from "../utils/header-filter";
 export function generateHttpResponseSnippet(
     statusCode: number,
     headers: HttpHeaders,
-    body: any
+    body: unknown
 ): string {
     const lines: string[] = [];
 
@@ -24,7 +24,7 @@ export function generateHttpResponseSnippet(
     lines.push("");
 
     // body
-    if (body && Object.keys(body).length > 0) {
+    if (body && Object.keys(body as Record<string, unknown>).length > 0) {
         lines.push(JSON.stringify(body, null, 2));
     }
 

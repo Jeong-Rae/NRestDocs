@@ -13,6 +13,10 @@ import {
 } from "../types/descriptors";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
 
+interface RequestData {
+    _data?: unknown;
+}
+
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
     private options: DocOptions = {};
@@ -108,16 +112,12 @@ export class DocRequestBuilder {
             if (!isEmpty(this.requestFields)) {
                 await checker.check(
                     "request",
-                    (response.request as any)?._data ?? {},
+                    (response.request as RequestData)?._data ?? {},
                     this.requestFields
                 );
             }
             if (!isEmpty(this.responseFields)) {
-                await checker.check(
-                    "response",
-                    response.body ?? {},
-                    this.responseFields
-                );
+                await checker.check("response", response.body ?? {}, this.responseFields);
             }
         }
 
@@ -145,8 +145,6 @@ export class DocRequestBuilder {
 }
 
 /** supertest Promise를 받아 DocRequestBuilder로 감싸기 */
-export function docRequest(
-    supertestPromise: Promise<Response>
-): DocRequestBuilder {
+export function docRequest(supertestPromise: Promise<Response>): DocRequestBuilder {
     return new DocRequestBuilder(supertestPromise);
 }

@@ -3,9 +3,7 @@ import { HeaderDescriptor } from "../../types/descriptors";
 /**
  * request-headers
  */
-export function generateRequestHeadersSnippet(
-    headers: HeaderDescriptor[]
-): string {
+export function generateRequestHeadersSnippet(headers: HeaderDescriptor[]): string {
     const lines: string[] = [];
     lines.push("= request-headers");
     lines.push("");
@@ -16,9 +14,7 @@ export function generateRequestHeadersSnippet(
 
     headers.forEach((header) => {
         const isOptional = header.optional ? "true" : "false";
-        lines.push(
-            `| +${header.name}+ | +${isOptional}+ | ${header.description ?? ""}`
-        );
+        lines.push(`| +${header.name}+ | +${isOptional}+ | ${header.description ?? ""}`);
     });
 
     lines.push("|===");

@@ -4,13 +4,9 @@ import { DocWriter } from "./doc-writer.interface";
 import { DocWriterConfig } from "./doc-writer-config";
 
 export class LocalDocWriter implements DocWriter {
-    constructor(private config: DocWriterConfig) {}
+    constructor(private readonly _config: DocWriterConfig) {}
 
-    async writeSnippet(
-        identifier: string,
-        snippetName: string,
-        content: string
-    ): Promise<void> {
+    async writeSnippet(identifier: string, snippetName: string, content: string): Promise<void> {
         const filePath = this.buildFilePath(identifier, snippetName);
         await this.ensureDir(path.dirname(filePath));
         await fs.writeFile(filePath, content, "utf-8");
@@ -28,24 +24,15 @@ export class LocalDocWriter implements DocWriter {
     }
 
     private buildFilePath(identifier: string, snippetName: string): string {
-        const { outputDir, extension, directoryStructure } = this.config;
-        const safeExtension = extension.startsWith(".")
-            ? extension
-            : `.${extension}`;
+        const { outputDir, extension, directoryStructure } = this._config;
+        const safeExtension = extension.startsWith(".") ? extension : `.${extension}`;
 
         switch (directoryStructure) {
             case "flat":
-                return path.join(
-                    outputDir,
-                    `${identifier}-${snippetName}${safeExtension}`
-                );
+                return path.join(outputDir, `${identifier}-${snippetName}${safeExtension}`);
             case "nested":
             default:
-                return path.join(
-                    outputDir,
-                    identifier,
-                    `${snippetName}${safeExtension}`
-                );
+                return path.join(outputDir, identifier, `${snippetName}${safeExtension}`);
         }
     }
 

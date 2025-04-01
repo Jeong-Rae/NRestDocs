@@ -7,10 +7,10 @@ import { FieldDescriptor, FieldType } from "../types/descriptors";
 export interface FieldBuilderStart {
     /**
      * 필드의 타입을 지정합니다.
-     * @param type 필드 타입 ('string', 'number', 'boolean', 'object', 'array' 등)
+     * @param _fieldType 필드 타입 ('string', 'number', 'boolean', 'object', 'array' 등)
      * @returns 타입이 지정된 후의 빌더 객체
      */
-    type(type: FieldType): FieldBuilderOptional;
+    type(_fieldType: FieldType): FieldBuilderOptional;
 }
 
 /**
@@ -20,10 +20,10 @@ export interface FieldBuilderStart {
 export interface FieldBuilderOptional {
     /**
      * 필드에 설명을 추가합니다.
-     * @param description 필드에 대한 설명
+     * @param _fieldDescription 필드에 대한 설명
      * @returns 빌더 체인을 계속하기 위한 this
      */
-    description(description: string): FieldBuilderOptional;
+    description(_fieldDescription: string): FieldBuilderOptional;
 
     /**
      * 필드를 선택적(optional)으로 표시합니다.
@@ -65,23 +65,23 @@ export function definedField(fieldName: string): FieldBuilderStart {
 
     // type() 이후 체이닝 빌더 객체
     const builder: FieldBuilderOptional = {
-        description(description: string) {
-            internal.description = description;
+        description(_fieldDescription: string): FieldBuilderOptional {
+            internal.description = _fieldDescription;
             return builder;
         },
-        optional() {
+        optional(): FieldBuilderOptional {
             internal.optional = true;
             return builder;
         },
-        toDescriptor() {
+        toDescriptor(): FieldDescriptor {
             return { ...internal };
         },
     };
 
     // 시작 빌더 반환: type() 호출이 필수
     return {
-        type(type: FieldType) {
-            internal.type = type;
+        type(_fieldType: FieldType): FieldBuilderOptional {
+            internal.type = _fieldType;
             return builder;
         },
     };

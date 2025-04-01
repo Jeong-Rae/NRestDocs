@@ -27,6 +27,14 @@ import {
     PartDescriptor,
     SnippetMap,
 } from "../../types/descriptors";
+import { HttpMethod } from "../../types/http";
+
+interface RequestData {
+    _data?: unknown;
+    header?: Record<string, string>;
+    method?: HttpMethod;
+    url?: string;
+}
 
 export class AsciiDocRenderer implements DocRenderer {
     renderSnippets(params: RenderParams): DocumentSnippets {
@@ -57,10 +65,10 @@ export class AsciiDocRenderer implements DocRenderer {
     ): SnippetMap {
         const snippetMap: SnippetMap = {} as SnippetMap;
 
-        const request = response.request as any;
+        const request = response.request as RequestData;
         const requestBody = request?._data ?? {};
         const requestHeaders = request?.header ?? {};
-        const requestMethod = request?.method ?? "";
+        const requestMethod = request?.method ?? "GET";
         const requestUrl = new URL(request?.url || "", "http://localhost");
 
         const responseBody = response.body ?? {};
@@ -89,14 +97,10 @@ export class AsciiDocRenderer implements DocRenderer {
         // 선택 생성 스니펫
         // request
         if (!isEmpty(options.requestHeaders)) {
-            snippetMap["request-headers"] = generateRequestHeadersSnippet(
-                options.requestHeaders
-            );
+            snippetMap["request-headers"] = generateRequestHeadersSnippet(options.requestHeaders);
         }
         if (!isEmpty(options.pathParameters)) {
-            snippetMap["path-parameters"] = generatePathParametersSnippet(
-                options.pathParameters
-            );
+            snippetMap["path-parameters"] = generatePathParametersSnippet(options.pathParameters);
         }
         if (!isEmpty(options.requestParameters)) {
             snippetMap["request-parameters"] = generateRequestParametersSnippet(
@@ -104,14 +108,10 @@ export class AsciiDocRenderer implements DocRenderer {
             );
         }
         if (!isEmpty(options.requestParts)) {
-            snippetMap["request-parts"] = generateRequestPartsSnippet(
-                options.requestParts
-            );
+            snippetMap["request-parts"] = generateRequestPartsSnippet(options.requestParts);
         }
         if (!isEmpty(options.requestFields)) {
-            snippetMap["request-fields"] = generateRequestFieldsSnippet(
-                options.requestFields
-            );
+            snippetMap["request-fields"] = generateRequestFieldsSnippet(options.requestFields);
         }
 
         // response
@@ -121,9 +121,7 @@ export class AsciiDocRenderer implements DocRenderer {
             );
         }
         if (!isEmpty(options.responseFields)) {
-            snippetMap["response-fields"] = generateResponseFieldsSnippet(
-                options.responseFields
-            );
+            snippetMap["response-fields"] = generateResponseFieldsSnippet(options.responseFields);
         }
 
         return snippetMap;

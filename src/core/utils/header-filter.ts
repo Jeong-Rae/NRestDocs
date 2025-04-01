@@ -11,10 +11,7 @@ import {
  * @param allowedList - 허용할 헤더 이름 배열
  * @returns 허용된 헤더만 포함한 헤더
  */
-export function filterHeaders(
-    headers: HttpHeaders,
-    allowedList: string[]
-): HttpHeaders {
+export function filterHeaders(headers: HttpHeaders, allowedList: string[]): HttpHeaders {
     const allowedLower = allowedList.map((header) => header.toLowerCase());
     const filtered: HttpHeaders = {};
 

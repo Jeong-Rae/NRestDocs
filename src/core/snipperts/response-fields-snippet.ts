@@ -3,9 +3,7 @@ import { FieldDescriptor } from "../../types/descriptors";
 /**
  * response-fields
  */
-export function generateResponseFieldsSnippet(
-    fields: FieldDescriptor[]
-): string {
+export function generateResponseFieldsSnippet(fields: FieldDescriptor[]): string {
     const lines: string[] = [];
     lines.push("= response-fields");
     lines.push("");
@@ -17,9 +15,7 @@ export function generateResponseFieldsSnippet(
     fields.forEach((field) => {
         const optionalStr = field.optional ? "true" : "false";
         lines.push(
-            `| +${field.name}+ | +${field.type}+ | +${optionalStr}+ | ${
-                field.description ?? ""
-            }`
+            `| +${field.name}+ | +${field.type}+ | +${optionalStr}+ | ${field.description ?? ""}`
         );
     });
 

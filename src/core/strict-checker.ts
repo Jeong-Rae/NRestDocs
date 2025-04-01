@@ -22,7 +22,7 @@ export class StrictChecker {
      */
     public async check(
         context: "request" | "response",
-        actualBody: any,
+        actualBody: unknown,
         fields: FieldDescriptor[]
     ): Promise<void> {
         const errors: Error[] = [];
@@ -40,7 +40,7 @@ export class StrictChecker {
 
         // 추가 필드 검증
         try {
-            await this.ensureNoExtraFields(actualBody, fields, context);
+            await this.ensureNoExtraFields(actualBody as Record<string, unknown>, fields, context);
         } catch (error) {
             errors.push(error as Error);
         }
@@ -48,7 +48,11 @@ export class StrictChecker {
         // 각 필드의 타입 유효성 검사
         const fieldValidationResults = await Promise.allSettled(
             fields.map((field) =>
-                this.validateField(field, actualBody[field.name], context)
+                this.validateField(
+                    field,
+                    (actualBody as Record<string, unknown>)[field.name],
+                    context
+                )
             )
         );
 
@@ -73,9 +77,8 @@ export class StrictChecker {
      * @param context 검사 컨텍스트(request 또는 response)
      * @throws 값이 객체가 아닌 경우 InvalidTypeError 발생
      */
-    private async ensureObject(value: any, context: string): Promise<void> {
-        const isValidObject =
-            isObjectLike(value) && !isArray(value) && !isNil(value);
+    private async ensureObject(value: unknown, context: string): Promise<void> {
+        const isValidObject = isObjectLike(value) && !isArray(value) && !isNil(value);
 
         if (!isValidObject) {
             const actualType = await this.prettyType(value);
@@ -97,16 +100,14 @@ export class StrictChecker {
      * @throws 정의되지 않은 필드가 존재할 경우 UnexpectedFieldError 발생
      */
     private async ensureNoExtraFields(
-        actualBody: Record<string, any>,
+        actualBody: Record<string, unknown>,
         fields: FieldDescriptor[],
         context: string
     ): Promise<void> {
         const definedKeys = new Set(fields.map(({ name }) => name));
 
         // 모든 키가 정의된 필드인지 확인
-        const extraKeys = Object.keys(actualBody).filter(
-            (key) => !definedKeys.has(key)
-        );
+        const extraKeys = Object.keys(actualBody).filter((key) => !definedKeys.has(key));
 
         if (extraKeys.length > 0) {
             throw new UnexpectedFieldError({
@@ -128,7 +129,7 @@ export class StrictChecker {
      */
     private async validateField(
         field: FieldDescriptor,
-        value: any,
+        value: unknown,
         context: string
     ): Promise<void> {
         const { name: fieldName, type, optional } = field;
@@ -165,7 +166,7 @@ export class StrictChecker {
      * @param value 실제 값
      * @returns 타입이 일치하면 true, 그렇지 않으면 false
      */
-    private async matchesType(expected: string, value: any): Promise<boolean> {
+    private async matchesType(expected: string, value: unknown): Promise<boolean> {
         switch (expected) {
             case "string":
                 return isString(value);
@@ -188,7 +189,7 @@ export class StrictChecker {
      * @param value 타입을 표시할 값
      * @returns 값의 타입을 나타내는 문자열
      */
-    private async prettyType(value: any): Promise<string> {
+    private async prettyType(value: unknown): Promise<string> {
         if (isNil(value)) return "null";
         if (isArray(value)) return "array";
         if (isString(value)) return "string";
@@ -203,17 +204,12 @@ export class StrictChecker {
      *
      * @param errors 수집된 오류 목록
      * @param context 검사 컨텍스트(request 또는 response)
-     * @throws ValidationError
      */
     private throwValidationErrors(errors: Error[], context: string): never {
-        const errorCount = errors.length;
-        const errorSummary = errors.map((err) => err.message).join("\n- ");
-
         throw new ValidationError({
             context,
-            message: `${context} validation failed with ${errorCount} error(s)`,
+            message: `${context} validation failed`,
             errors,
-            summary: `- ${errorSummary}`,
         });
     }
 }

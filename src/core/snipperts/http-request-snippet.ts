@@ -8,7 +8,7 @@ export function generateHttpRequestSnippet(
     method: HttpMethod,
     url: URL,
     headers: HttpHeaders,
-    body: any
+    body: unknown
 ): string {
     const lines: string[] = [];
 
@@ -26,7 +26,7 @@ export function generateHttpRequestSnippet(
     lines.push("");
 
     // body
-    if (body && Object.keys(body).length > 0) {
+    if (body && Object.keys(body as Record<string, unknown>).length > 0) {
         lines.push(JSON.stringify(body, null, 2));
     }
 

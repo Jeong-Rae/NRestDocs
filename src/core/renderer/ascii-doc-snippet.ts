@@ -1,4 +1,5 @@
 import { format } from "../utils/format";
+import { HttpMethod } from "../../types/http";
 
 /** API 제목 스니펫 */
 export function snippetTitle(identifier: string): string {
@@ -8,7 +9,7 @@ export function snippetTitle(identifier: string): string {
 }
 
 /** Overview 스니펫 */
-export function snippetOverview(method: string, path: string): string {
+export function snippetOverview(method: HttpMethod, path: string): string {
     return format`
 == Overview
 HTTP Method:: \`${method}\`
@@ -17,7 +18,7 @@ URL Path:: \`${path}\`
 }
 
 /** Request 스니펫 */
-export function snippetRequestBlock(json: any): string {
+export function snippetRequestBlock(json: unknown): string {
     return format`
 == Request
 [source,json]
@@ -28,7 +29,7 @@ ${JSON.stringify(json, null, 2)}
 }
 
 /** Response 스니펫 */
-export function snippetResponseBlock(json: any): string {
+export function snippetResponseBlock(json: unknown): string {
     return format`
 == Response
 [source,json]

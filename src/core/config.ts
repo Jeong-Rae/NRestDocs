@@ -9,8 +9,9 @@ let globalNRestDocsConfig: NRestDocsConfig = {
 /**
  * 전역 설정을 갱신
  */
-export function setNRestDocsConfig(config: Partial<NRestDocsConfig>) {
+export function setNRestDocsConfig(config: Partial<NRestDocsConfig>): NRestDocsConfig {
     globalNRestDocsConfig = { ...globalNRestDocsConfig, ...config };
+    return globalNRestDocsConfig;
 }
 
 /**

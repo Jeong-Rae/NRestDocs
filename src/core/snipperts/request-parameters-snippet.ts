@@ -3,9 +3,7 @@ import { ParameterDescriptor } from "../../types/descriptors";
 /**
  * request-parameters
  */
-export function generateRequestParametersSnippet(
-    params: ParameterDescriptor[]
-): string {
+export function generateRequestParametersSnippet(params: ParameterDescriptor[]): string {
     const lines: string[] = [];
     lines.push("= request-parameters");
     lines.push("");
@@ -16,9 +14,7 @@ export function generateRequestParametersSnippet(
 
     params.forEach((param) => {
         const isOptional = param.optional ? "true" : "false";
-        lines.push(
-            `| +${param.name}+ | +${isOptional}+ | ${param.description ?? ""}`
-        );
+        lines.push(`| +${param.name}+ | +${isOptional}+ | ${param.description ?? ""}`);
     });
 
     lines.push("|===");

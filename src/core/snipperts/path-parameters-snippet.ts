@@ -3,9 +3,7 @@ import { ParameterDescriptor } from "../../types/descriptors";
 /**
  * path-parameters
  */
-export function generatePathParametersSnippet(
-    params: ParameterDescriptor[]
-): string {
+export function generatePathParametersSnippet(params: ParameterDescriptor[]): string {
     const lines: string[] = [];
     lines.push("= path-parameters");
     lines.push("");
@@ -16,9 +14,7 @@ export function generatePathParametersSnippet(
 
     params.forEach((param) => {
         const isOptional = param.optional ? "true" : "false";
-        lines.push(
-            `| +${param.name}+ | +${isOptional}+ | ${param.description ?? ""}`
-        );
+        lines.push(`| +${param.name}+ | +${isOptional}+ | ${param.description ?? ""}`);
     });
 
     lines.push("|===");

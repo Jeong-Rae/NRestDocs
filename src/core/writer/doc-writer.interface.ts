@@ -1,13 +1,9 @@
 export interface DocWriter {
     /**
      * 특정 스니펫을 파일로 저장
-     * @param identifier API 식별자
-     * @param snippetName 스니펫 파일 명
-     * @param content 파일에 쓸 내용
+     * @param _identifier API 식별자
+     * @param _snippetName 스니펫 파일 명
+     * @param _content 파일에 쓸 내용
      */
-    writeSnippet(
-        identifier: string,
-        snippetName: string,
-        content: string
-    ): void;
+    writeSnippet(_identifier: string, _snippetName: string, _content: string): void;
 }

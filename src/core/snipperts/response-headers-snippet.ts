@@ -3,9 +3,7 @@ import { HeaderDescriptor } from "../../types/descriptors";
 /**
  * response-headers
  */
-export function generateResponseHeadersSnippet(
-    headers: HeaderDescriptor[]
-): string {
+export function generateResponseHeadersSnippet(headers: HeaderDescriptor[]): string {
     const lines: string[] = [];
     lines.push("= response-headers");
     lines.push("");
@@ -16,9 +14,7 @@ export function generateResponseHeadersSnippet(
 
     headers.forEach((header) => {
         const isOptional = header.optional ? "true" : "false";
-        lines.push(
-            `| +${header.name}+ | +${isOptional}+ | ${header.description ?? ""}`
-        );
+        lines.push(`| +${header.name}+ | +${isOptional}+ | ${header.description ?? ""}`);
     });
 
     lines.push("|===");

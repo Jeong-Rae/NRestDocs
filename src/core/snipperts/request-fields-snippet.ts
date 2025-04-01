@@ -3,9 +3,7 @@ import { FieldDescriptor } from "../../types/descriptors";
 /**
  * request-fields
  */
-export function generateRequestFieldsSnippet(
-    fields: FieldDescriptor[]
-): string {
+export function generateRequestFieldsSnippet(fields: FieldDescriptor[]): string {
     const lines: string[] = [];
     lines.push("= request-fields");
     lines.push("");
@@ -17,9 +15,7 @@ export function generateRequestFieldsSnippet(
     fields.forEach((field) => {
         const isOptional = field.optional ? "true" : "false";
         lines.push(
-            `| +${field.name}+ | +${field.type}+ | +${isOptional}+ | ${
-                field.description ?? ""
-            }`
+            `| +${field.name}+ | +${field.type}+ | +${isOptional}+ | ${field.description ?? ""}`
         );
     });
 
