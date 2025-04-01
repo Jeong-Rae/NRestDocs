@@ -4,7 +4,8 @@ import { getNRestDocsConfig } from "./config";
 import { FieldBuilderOptional } from "./withField";
 import { StrictChecker } from "./strict-checker";
 import { isEmpty } from "es-toolkit/compat";
-import { AsciiDocRenderer } from "./renderer/asciidoc.renderer";
+import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
+import { DocRenderer } from "./renderer/doc-renderer.interface";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -66,8 +67,8 @@ export class DocRequestBuilder {
         // const requestQuery = Object.fromEntries(requestUrl.searchParams);
         // const requestHeaders = request?.header || {};
 
-        const renderer = new AsciiDocRenderer();
-        const doc = renderer.render({
+        const renderer: DocRenderer = new AsciiDocRenderer();
+        const doc = renderer.renderFull({
             identifier,
             method: requestMethod,
             path: requestPath,
