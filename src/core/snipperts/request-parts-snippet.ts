@@ -15,7 +15,7 @@ export function generateRequestPartsSnippet(parts: PartDescriptor[]): string {
     parts.forEach((part) => {
         const isOptional = part.optional ? "true" : "false";
         lines.push(
-            `| \`${part.name}\` | \`${isOptional}\` | ${part.description ?? ""}`
+            `| +${part.name}+ | +${isOptional}+ | ${part.description ?? ""}`
         );
     });
 

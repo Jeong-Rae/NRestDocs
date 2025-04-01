@@ -12,12 +12,12 @@ export function generateRequestFieldsSnippet(
     lines.push("== Request Fields");
     lines.push('[cols="3,2,7", options="header"]');
     lines.push("|===");
-    lines.push("| Field | Optional | Description");
+    lines.push("| Field | Type | Optional | Description");
 
     fields.forEach((field) => {
         const isOptional = field.optional ? "true" : "false";
         lines.push(
-            `| \`${field.name}\` | \`${isOptional}\` | ${
+            `| +${field.name}+ | +${field.type}+ | +${isOptional}+ | ${
                 field.description ?? ""
             }`
         );

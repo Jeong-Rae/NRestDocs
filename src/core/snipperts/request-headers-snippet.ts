@@ -17,9 +17,7 @@ export function generateRequestHeadersSnippet(
     headers.forEach((header) => {
         const isOptional = header.optional ? "true" : "false";
         lines.push(
-            `| \`${header.name}\` | \`${isOptional}\` | ${
-                header.description ?? ""
-            }`
+            `| +${header.name}+ | +${isOptional}+ | ${header.description ?? ""}`
         );
     });
 

@@ -17,9 +17,7 @@ export function generateRequestParametersSnippet(
     params.forEach((param) => {
         const isOptional = param.optional ? "true" : "false";
         lines.push(
-            `| \`${param.name}\` | \`${isOptional}\` | ${
-                param.description ?? ""
-            }`
+            `| +${param.name}+ | +${isOptional}+ | ${param.description ?? ""}`
         );
     });
 
