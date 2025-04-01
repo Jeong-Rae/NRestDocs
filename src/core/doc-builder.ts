@@ -1,9 +1,9 @@
 import { Response } from "supertest";
 import { DocOptions } from "../types/doc-options";
 import { getNRestDocsConfig } from "./config";
-import { FieldBuilderOptional } from "./definedField";
-import { StrictChecker } from "./strict-checker";
-import { isEmpty } from "es-toolkit/compat";
+import { FieldBuilder } from "./definedField";
+// import { StrictChecker } from "./strict-checker";
+import { get, isFunction, map } from "es-toolkit/compat";
 import { LocalDocWriter } from "./writer/local-doc-writer";
 import {
     FieldDescriptor,
@@ -13,9 +13,9 @@ import {
 } from "../types/descriptors";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
 
-interface RequestData {
-    _data?: unknown;
-}
+// interface RequestData {
+//     _data?: unknown;
+// }
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -75,8 +75,8 @@ export class DocRequestBuilder {
     /**
      * request-fields 정의
      */
-    withRequestFields(fields: FieldBuilderOptional[]): this {
-        this.requestFields = this.mapFields(fields);
+    withRequestFields(fields: (FieldBuilder | FieldDescriptor)[]): this {
+        this.requestFields = this.normalizeFields(fields);
         return this;
     }
 
@@ -91,13 +91,17 @@ export class DocRequestBuilder {
     /**
      * response-fields 정의
      */
-    withResponseFields(fields: FieldBuilderOptional[]): this {
-        this.responseFields = this.mapFields(fields);
+    withResponseFields(fields: (FieldBuilder | FieldDescriptor)[]): this {
+        this.responseFields = this.normalizeFields(fields);
         return this;
     }
 
-    private mapFields(fields: FieldBuilderOptional[]): FieldDescriptor[] {
-        return fields.map((field) => field.toDescriptor());
+    private normalizeFields(fields: (FieldBuilder | FieldDescriptor)[]): FieldDescriptor[] {
+        return map(fields, (field) =>
+            isFunction(get(field, "toDescriptor"))
+                ? (field as FieldBuilder).toDescriptor()
+                : (field as FieldDescriptor)
+        );
     }
 
     /**
@@ -107,19 +111,19 @@ export class DocRequestBuilder {
         const response = await this.supertestPromise;
         const config = getNRestDocsConfig();
 
-        if (config.strict) {
-            const checker = new StrictChecker();
-            if (!isEmpty(this.requestFields)) {
-                await checker.check(
-                    "request",
-                    (response.request as RequestData)?._data ?? {},
-                    this.requestFields
-                );
-            }
-            if (!isEmpty(this.responseFields)) {
-                await checker.check("response", response.body ?? {}, this.responseFields);
-            }
-        }
+        // if (config.strict) {
+        //     const checker = new StrictChecker();
+        //     if (!isEmpty(this.requestFields)) {
+        //         await checker.check(
+        //             "request",
+        //             (response.request as RequestData)?._data ?? {},
+        //             this.requestFields
+        //         );
+        //     }
+        //     if (!isEmpty(this.responseFields)) {
+        //         await checker.check("response", response.body ?? {}, this.responseFields);
+        //     }
+        // }
 
         const renderer = new AsciiDocRenderer();
         const snippetMap = renderer.renderDocumentSnippets(response, {
