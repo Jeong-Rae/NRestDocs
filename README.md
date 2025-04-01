@@ -1,4 +1,4 @@
-# NRestDocs
+# 📘 NRestDocs
 
 > NestJS + Jest 기반의 E2E 테스트로부터 API 문서를 자동 생성하는 문서화 도구
 
@@ -20,7 +20,7 @@ NestJS 애플리케이션의 API 문서화는 일반적으로 **Swagger(OpenAPI)
 
 ---
 
-## 기존 Swagger 방식 (As-Is)
+## 📦 기존 Swagger 방식 (As-Is)
 
 다음은 프로덕션 코드에 Swagger 어노테이션이 침투한 예시입니다.
 
@@ -48,7 +48,7 @@ export class UserController {
 }
 ```
 
-### 문제점
+### ⚠️ 문제점
 
 - API 명세를 위한 코드와 비즈니스 로직이 혼재됩니다.
 - API가 변경되었을 때 Swagger 주석이 누락될 위험이 있습니다.
@@ -56,7 +56,7 @@ export class UserController {
 
 ---
 
-## NRestDocs 방식 (To-Be)
+## 🚀 NRestDocs 방식 (To-Be)
 
 NRestDocs를 적용하면, 프로덕션 코드와 완전히 분리된 E2E 테스트에서 문서를 자동 생성할 수 있습니다.
 
@@ -91,7 +91,7 @@ describe("UserController (e2e)", () => {
 });
 ```
 
-### 생성된 문서 구조 예시
+### 🗂 생성된 문서 구조 예시
 
 ```
 docs/create-user/
@@ -104,7 +104,7 @@ docs/create-user/
 └── response-fields.adoc
 ```
 
-### NRestDocs의 장점
+### ✅NRestDocs의 장점
 
 - 프로덕션 코드를 깨끗하게 유지할 수 있습니다.
 - API 변경 시 E2E 테스트도 필수로 변경해야 하므로, 문서 최신화를 자동 보장합니다.
@@ -113,7 +113,7 @@ docs/create-user/
 
 ---
 
-## NRestDocs 도입 전후 비교
+## 🔁 NRestDocs 도입 전후 비교
 
 | 비교 항목     | Swagger (기존 방식)                         | NRestDocs (개선된 방식)              |
 | ------------- | ------------------------------------------- | ------------------------------------ |
@@ -124,7 +124,7 @@ docs/create-user/
 
 ---
 
-## 주요 기능
+## ✨ 주요 기능
 
 - Jest & Supertest E2E 테스트와 완벽한 통합
 - HTTP 요청/응답, 헤더, 파라미터, 필드 문서화 지원
@@ -135,7 +135,7 @@ docs/create-user/
 
 ---
 
-## 설치 방법
+## 📥 설치 방법
 
 ```shell
 npm install --save-dev nrestdocs
@@ -145,7 +145,7 @@ yarn add --dev nrestdocs
 
 ---
 
-## 설정 방법
+## ⚙️ 설정 방법
 
 `nrestdocs.config.ts`를 프로젝트 루트에 생성합니다:
 
@@ -162,7 +162,7 @@ export default defineConfig({
 
 ---
 
-## 문서 통합 가이드
+## 🧩 문서 통합 가이드
 
 생성된 스니펫을 `include`하여 하나의 문서로 통합할 수 있습니다:
 
@@ -184,7 +184,7 @@ include::create-user/response-fields.adoc[]
 
 ---
 
-## 개발환경 지원 및 확장성
+## 🧱 개발환경 지원 및 확장성
 
 - 기본 AsciiDoc 지원 (Markdown 추가 예정)
 - Renderer 및 Writer를 통한 확장 가능
@@ -192,14 +192,14 @@ include::create-user/response-fields.adoc[]
 
 ---
 
-## 향후 지원 예정 기능
+## 🛣 향후 지원 예정 기능
 
 - HTML, PDF, Notion 등 추가 포맷 지원
 - OpenAPI 통합 지원 (Swagger와의 호환성 지원)
 
 ---
 
-## 기여 방법 (Contribution)
+## 🤝 기여 방법 (Contribution)
 
 이 프로젝트는 오픈소스이며 모든 분들의 기여를 환영합니다. 버그 리포트, 기능 요청, PR 등 언제나 환영합니다!
 
@@ -208,7 +208,7 @@ include::create-user/response-fields.adoc[]
 
 ---
 
-## 라이선스 (License)
+## 📄 라이선스 (License)
 
 본 프로젝트는 MIT 라이선스로 배포됩니다.
 
