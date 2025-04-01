@@ -1,5 +1,22 @@
-import { DocumentSnippets } from "./doc-snipperts.type";
 import { HttpMethod } from "../../types/http";
+import { Response } from "supertest";
+import {
+    FieldDescriptor,
+    HeaderDescriptor,
+    ParameterDescriptor,
+    PartDescriptor,
+    SnippetMap,
+} from "../../types/descriptors";
+
+export interface RenderDocumentSnippetsOptions {
+    requestHeaders?: HeaderDescriptor[];
+    pathParameters?: ParameterDescriptor[];
+    requestParameters?: ParameterDescriptor[];
+    requestParts?: PartDescriptor[];
+    requestFields?: FieldDescriptor[];
+    responseHeaders?: HeaderDescriptor[];
+    responseFields?: FieldDescriptor[];
+}
 
 export interface RenderParams {
     identifier: string;
@@ -11,9 +28,10 @@ export interface RenderParams {
 
 export interface DocRenderer {
     /**
-     * 스니펫을 렌더링합니다.
-     * @param _params 렌더링에 필요한 파라미터
-     * @returns 렌더링된 스니펫
+     * HTTP 요청/응답 정보를 기반으로 스니펫을 만들어낸다.
+     * @param response HTTP 응답 객체
+     * @param options 스니펫 생성 옵션
+     * @returns 생성된 스니펫 맵
      */
-    renderSnippets(_params: RenderParams): DocumentSnippets;
+    renderDocumentSnippets(response: Response, options: RenderDocumentSnippetsOptions): SnippetMap;
 }

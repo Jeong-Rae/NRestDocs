@@ -1,11 +1,4 @@
-import { DocRenderer, RenderParams } from "./doc-renderer.interface";
-import {
-    snippetOverview,
-    snippetRequestBlock,
-    snippetResponseBlock,
-    snippetTitle,
-} from "./ascii-doc-snippet";
-import { DocumentSnippets } from "./doc-snipperts.type";
+import { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
 import { Response } from "supertest";
 import { isEmpty } from "es-toolkit/compat";
 import {
@@ -20,13 +13,7 @@ import {
     generateResponseFieldsSnippet,
     generateResponseHeadersSnippet,
 } from "../snipperts";
-import {
-    FieldDescriptor,
-    HeaderDescriptor,
-    ParameterDescriptor,
-    PartDescriptor,
-    SnippetMap,
-} from "../../types/descriptors";
+import { SnippetMap } from "../../types/descriptors";
 import { HttpMethod } from "../../types/http";
 
 interface RequestData {
@@ -37,32 +24,7 @@ interface RequestData {
 }
 
 export class AsciiDocRenderer implements DocRenderer {
-    renderSnippets(params: RenderParams): DocumentSnippets {
-        const { identifier, method, path, requestBody, responseBody } = params;
-
-        return {
-            title: snippetTitle(identifier),
-            overview: snippetOverview(method, path),
-            request: snippetRequestBlock(requestBody),
-            response: snippetResponseBlock(responseBody),
-        };
-    }
-
-    /**
-     * HTTP 요청/응답 정보를 기반으로 모든 스니펫을 생성
-     */
-    renderDocumentSnippets(
-        response: Response,
-        options: {
-            requestHeaders?: HeaderDescriptor[];
-            pathParameters?: ParameterDescriptor[];
-            requestParameters?: ParameterDescriptor[];
-            requestParts?: PartDescriptor[];
-            requestFields?: FieldDescriptor[];
-            responseHeaders?: HeaderDescriptor[];
-            responseFields?: FieldDescriptor[];
-        }
-    ): SnippetMap {
+    renderDocumentSnippets(response: Response, options: RenderDocumentSnippetsOptions): SnippetMap {
         const snippetMap: SnippetMap = {} as SnippetMap;
 
         const request = response.request as RequestData;
