@@ -7,3 +7,6 @@ export { generatePathParametersSnippet } from "./path-parameters-snippet";
 export { generateRequestParametersSnippet } from "./request-parameters-snippet";
 export { generateRequestPartsSnippet } from "./request-parts-snippet";
 export { generateRequestFieldsSnippet } from "./request-fields-snippet";
+
+export { generateResponseHeadersSnippet } from "./response-headers-snippet";
+export { generateResponseFieldsSnippet } from "./response-fields-snippet";

@@ -14,6 +14,8 @@ import {
     generateRequestHeadersSnippet,
     generateRequestParametersSnippet,
     generateRequestPartsSnippet,
+    generateResponseFieldsSnippet,
+    generateResponseHeadersSnippet,
 } from "./snipperts";
 import {
     FieldDescriptor,
@@ -32,6 +34,7 @@ export class DocRequestBuilder {
     private requestParts?: PartDescriptor[];
     private requestFields?: FieldDescriptor[];
 
+    private responseHeaders?: HeaderDescriptor[];
     private responseFields?: FieldDescriptor[];
 
     constructor(supertestPromise: Promise<Response>) {
@@ -76,20 +79,32 @@ export class DocRequestBuilder {
         return this;
     }
 
-    /** 요청 필드 정의 */
+    /**
+     * request-fields 정의
+     */
     withRequestFields(fields: FieldBuilderOptional[]): this {
         this.requestFields = this.mapFields(fields);
         return this;
     }
 
-    /** 응답 필드 정의 */
+    /**
+     * response-headers 정의
+     */
+    withResponseHeaders(headers: HeaderDescriptor[]): this {
+        this.responseHeaders = headers;
+        return this;
+    }
+
+    /**
+     * response-fields 정의
+     */
     withResponseFields(fields: FieldBuilderOptional[]): this {
         this.responseFields = this.mapFields(fields);
         return this;
     }
 
     private mapFields(fields: FieldBuilderOptional[]): FieldDescriptor[] {
-        return fields.map((f) => f.toDescriptor());
+        return fields.map((field) => field.toDescriptor());
     }
 
     /**
@@ -172,6 +187,18 @@ export class DocRequestBuilder {
         if (!isEmpty(this.requestFields)) {
             snippetMap["request-fields"] = generateRequestFieldsSnippet(
                 this.requestFields
+            );
+        }
+
+        // response
+        if (!isEmpty(this.responseHeaders)) {
+            snippetMap["response-headers"] = generateResponseHeadersSnippet(
+                this.responseHeaders
+            );
+        }
+        if (!isEmpty(this.responseFields)) {
+            snippetMap["response-fields"] = generateResponseFieldsSnippet(
+                this.responseFields
             );
         }
 
