@@ -1,17 +1,38 @@
 import { Response } from "supertest";
-import { DocOptions, FieldDescriptor } from "../types/doc-options";
+import { DocOptions } from "../types/doc-options";
 import { getNRestDocsConfig } from "./config";
 import { FieldBuilderOptional } from "./withField";
 import { StrictChecker } from "./strict-checker";
 import { isEmpty } from "es-toolkit/compat";
 import { LocalDocWriter } from "./writer/local-doc-writer";
-import { generateCurlSnippet } from "./snipperts/curl-snippert";
-import { generateHttpRequestSnippet } from "./snipperts/http-request-snippert";
-import { generateHttpResponseSnippet } from "./snipperts/http-response-snippet";
+import {
+    generateCurlSnippet,
+    generateHttpRequestSnippet,
+    generateHttpResponseSnippet,
+    generatePathParametersSnippet,
+    generateRequestFieldsSnippet,
+    generateRequestHeadersSnippet,
+    generateRequestParametersSnippet,
+    generateRequestPartsSnippet,
+} from "./snipperts";
+import {
+    FieldDescriptor,
+    HeaderDescriptor,
+    ParameterDescriptor,
+    PartDescriptor,
+} from "../types/descriptors";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
     private options: DocOptions = {};
+
+    private requestHeaders?: HeaderDescriptor[];
+    private pathParameters?: ParameterDescriptor[];
+    private requestParameters?: ParameterDescriptor[];
+    private requestParts?: PartDescriptor[];
+    private requestFields?: FieldDescriptor[];
+
+    private responseFields?: FieldDescriptor[];
 
     constructor(supertestPromise: Promise<Response>) {
         this.supertestPromise = supertestPromise;
@@ -23,15 +44,47 @@ export class DocRequestBuilder {
         return this;
     }
 
+    /**
+     * request-headers 정의
+     */
+    withRequestHeaders(headers: HeaderDescriptor[]): this {
+        this.requestHeaders = headers;
+        return this;
+    }
+
+    /**
+     * path-parameters 정의
+     */
+    withPathParameters(params: ParameterDescriptor[]): this {
+        this.pathParameters = params;
+        return this;
+    }
+
+    /**
+     * query/form request-parameters 정의
+     */
+    withRequestParameters(params: ParameterDescriptor[]): this {
+        this.requestParameters = params;
+        return this;
+    }
+
+    /**
+     * multipart request-parts 정의
+     */
+    withRequestParts(parts: PartDescriptor[]): this {
+        this.requestParts = parts;
+        return this;
+    }
+
     /** 요청 필드 정의 */
     withRequestFields(fields: FieldBuilderOptional[]): this {
-        this.options.requestFields = this.mapFields(fields);
+        this.requestFields = this.mapFields(fields);
         return this;
     }
 
     /** 응답 필드 정의 */
     withResponseFields(fields: FieldBuilderOptional[]): this {
-        this.options.responseFields = this.mapFields(fields);
+        this.responseFields = this.mapFields(fields);
         return this;
     }
 
@@ -56,20 +109,23 @@ export class DocRequestBuilder {
         const responseHeaders = response.headers ?? {};
         const statusCode = response.status;
 
-        const { requestFields, responseFields } = this.options;
-
         if (config.strict) {
             const checker = new StrictChecker();
-            if (!isEmpty(requestFields)) {
-                await checker.check("request", requestBody, requestFields);
+            if (!isEmpty(this.requestFields)) {
+                await checker.check("request", requestBody, this.requestFields);
             }
-            if (!isEmpty(responseFields)) {
-                await checker.check("response", responseBody, responseFields);
+            if (!isEmpty(this.responseFields)) {
+                await checker.check(
+                    "response",
+                    responseBody,
+                    this.responseFields
+                );
             }
         }
 
         const snippetMap: Record<string, string> = {};
 
+        // 필수 생성 스니펫
         // curl-request
         snippetMap["curl-request"] = generateCurlSnippet(
             requestMethod,
@@ -77,7 +133,6 @@ export class DocRequestBuilder {
             requestHeaders,
             requestBody
         );
-
         // http-request
         snippetMap["http-request"] = generateHttpRequestSnippet(
             requestMethod,
@@ -85,13 +140,40 @@ export class DocRequestBuilder {
             requestHeaders,
             requestBody
         );
-
         // http-response
         snippetMap["http-response"] = generateHttpResponseSnippet(
             statusCode,
             responseHeaders,
             responseBody
         );
+
+        // 선택 생성 스니펫
+        // request
+        if (!isEmpty(this.requestHeaders)) {
+            snippetMap["request-headers"] = generateRequestHeadersSnippet(
+                this.requestHeaders
+            );
+        }
+        if (!isEmpty(this.pathParameters)) {
+            snippetMap["path-parameters"] = generatePathParametersSnippet(
+                this.pathParameters
+            );
+        }
+        if (!isEmpty(this.requestParameters)) {
+            snippetMap["request-parameters"] = generateRequestParametersSnippet(
+                this.requestParameters
+            );
+        }
+        if (!isEmpty(this.requestParts)) {
+            snippetMap["request-parts"] = generateRequestPartsSnippet(
+                this.requestParts
+            );
+        }
+        if (!isEmpty(this.requestFields)) {
+            snippetMap["request-fields"] = generateRequestFieldsSnippet(
+                this.requestFields
+            );
+        }
 
         const writer = new LocalDocWriter({
             outputDir: config.output ?? "./docs",

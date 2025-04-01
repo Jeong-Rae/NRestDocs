@@ -1,4 +1,4 @@
-import { FieldDescriptor, FieldType } from "../types/doc-options";
+import { FieldDescriptor, FieldType } from "../types/descriptors";
 
 /**
  * type() 호출 이전 상태의 필드 빌더 인터페이스
@@ -57,7 +57,7 @@ export type FieldBuilder = FieldBuilderStart | FieldBuilderOptional;
  */
 export function withField(fieldName: string): FieldBuilderStart {
     const internal: FieldDescriptor = {
-        field: fieldName,
+        name: fieldName,
         type: "string",
         description: "",
         optional: false,

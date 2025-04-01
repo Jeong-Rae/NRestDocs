@@ -1,4 +1,4 @@
-import { FieldDescriptor } from "../types/doc-options";
+import { FieldDescriptor } from "../types/descriptors";
 import { isString, isBoolean, isNil } from "es-toolkit";
 import { isNumber, isObjectLike, isArray } from "es-toolkit/compat";
 import { InvalidTypeError } from "../errors/InvalidTypeError";
@@ -48,7 +48,7 @@ export class StrictChecker {
         // 각 필드의 타입 유효성 검사
         const fieldValidationResults = await Promise.allSettled(
             fields.map((field) =>
-                this.validateField(field, actualBody[field.field], context)
+                this.validateField(field, actualBody[field.name], context)
             )
         );
 
@@ -101,7 +101,7 @@ export class StrictChecker {
         fields: FieldDescriptor[],
         context: string
     ): Promise<void> {
-        const definedKeys = new Set(fields.map(({ field }) => field));
+        const definedKeys = new Set(fields.map(({ name }) => name));
 
         // 모든 키가 정의된 필드인지 확인
         const extraKeys = Object.keys(actualBody).filter(
@@ -131,7 +131,7 @@ export class StrictChecker {
         value: any,
         context: string
     ): Promise<void> {
-        const { field: fieldName, type, optional } = field;
+        const { name: fieldName, type, optional } = field;
 
         // 값이 없는 경우: 선택적 필드가 아니면 오류 발생
         if (value === undefined) {

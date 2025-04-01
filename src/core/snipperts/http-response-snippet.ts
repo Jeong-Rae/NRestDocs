@@ -2,9 +2,7 @@ import { HttpHeaders } from "../../types/http";
 import { filterResponseHeaders } from "../utils/header-filter";
 
 /**
- * @param statusCode
- * @param headers
- * @param body
+ * http-response
  */
 export function generateHttpResponseSnippet(
     statusCode: number,

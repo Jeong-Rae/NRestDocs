@@ -2,10 +2,7 @@ import { HttpHeaders, HttpMethod } from "../../types/http";
 import { filterRequestHeaders } from "../utils/header-filter";
 
 /**
- * @param method
- * @param url
- * @param headers
- * @param body
+ * http-request
  */
 export function generateHttpRequestSnippet(
     method: HttpMethod,

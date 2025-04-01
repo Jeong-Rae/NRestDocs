@@ -1,10 +1,8 @@
 import { HttpHeaders, HttpMethod } from "../../types/http";
 import { filterRequestHeaders } from "../utils/header-filter";
+
 /**
- * @param method  예: "POST"
- * @param url     예: new URL("http://localhost/users")
- * @param headers 요청 헤더
- * @param body    요청 바디
+ * curl-request
  */
 export function generateCurlSnippet(
     method: HttpMethod,
