@@ -16,6 +16,17 @@ export class LocalDocWriter implements DocWriter {
         await fs.writeFile(filePath, content, "utf-8");
     }
 
+    async writeDocumentSnippets(
+        identifier: string,
+        snippetMap: Record<string, string>
+    ): Promise<void> {
+        await Promise.all(
+            Object.entries(snippetMap).map(([snippetName, content]) =>
+                this.writeSnippet(identifier, snippetName, content)
+            )
+        );
+    }
+
     private buildFilePath(identifier: string, snippetName: string): string {
         const { outputDir, extension, directoryStructure } = this.config;
         const safeExtension = extension.startsWith(".")

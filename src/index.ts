@@ -1,11 +1,11 @@
 export { docRequest } from "./core/doc-builder";
 export { setNRestDocsConfig, getNRestDocsConfig } from "./core/config";
 export {
-    withField,
+    definedField,
     FieldBuilder,
     FieldBuilderStart,
     FieldBuilderOptional,
-} from "./core/withField";
+} from "./core/definedField";
 
 // errors
 export { MissingFieldError } from "./errors/MissingFieldError";

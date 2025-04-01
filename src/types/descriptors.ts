@@ -35,3 +35,19 @@ export type FieldDescriptor = BaseDescriptor & {
 
 /** JSON 필드 타입 */
 export type FieldType = string;
+
+/** 스니펫 키 타입 */
+export type SnippetKey =
+    | "curl-request"
+    | "http-request"
+    | "http-response"
+    | "request-headers"
+    | "path-parameters"
+    | "request-parameters"
+    | "request-parts"
+    | "request-fields"
+    | "response-headers"
+    | "response-fields";
+
+/** 스니펫 맵 타입 */
+export type SnippetMap = Record<SnippetKey, string>;

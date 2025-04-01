@@ -47,15 +47,15 @@ export type FieldBuilder = FieldBuilderStart | FieldBuilderOptional;
 /**
  * 필드 정보를 구성하기 위한 빌더 함수
  *
- * @example
- * ```typescript
- * withField('username').type('string').description('사용자 이름').optional()
- * ```
- *
  * @param fieldName 필드 이름
  * @returns 필드 빌더 객체 (체이닝 시작)
+ *
+ * @example
+ * ```typescript
+ * definedField('username').type('string').description('사용자 이름').optional()
+ * ```
  */
-export function withField(fieldName: string): FieldBuilderStart {
+export function definedField(fieldName: string): FieldBuilderStart {
     const internal: FieldDescriptor = {
         name: fieldName,
         type: "string",

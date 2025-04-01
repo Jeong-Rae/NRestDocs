@@ -1,28 +1,17 @@
 import { Response } from "supertest";
 import { DocOptions } from "../types/doc-options";
 import { getNRestDocsConfig } from "./config";
-import { FieldBuilderOptional } from "./withField";
+import { FieldBuilderOptional } from "./definedField";
 import { StrictChecker } from "./strict-checker";
 import { isEmpty } from "es-toolkit/compat";
 import { LocalDocWriter } from "./writer/local-doc-writer";
-import {
-    generateCurlSnippet,
-    generateHttpRequestSnippet,
-    generateHttpResponseSnippet,
-    generatePathParametersSnippet,
-    generateRequestFieldsSnippet,
-    generateRequestHeadersSnippet,
-    generateRequestParametersSnippet,
-    generateRequestPartsSnippet,
-    generateResponseFieldsSnippet,
-    generateResponseHeadersSnippet,
-} from "./snipperts";
 import {
     FieldDescriptor,
     HeaderDescriptor,
     ParameterDescriptor,
     PartDescriptor,
 } from "../types/descriptors";
+import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -114,93 +103,34 @@ export class DocRequestBuilder {
         const response = await this.supertestPromise;
         const config = getNRestDocsConfig();
 
-        const request = response.request as any;
-        const requestBody = request?._data ?? {};
-        const requestHeaders = request?.header ?? {};
-        const requestMethod = request?.method ?? "";
-        const requestUrl = new URL(request?.url || "", "http://localhost");
-
-        const responseBody = response.body ?? {};
-        const responseHeaders = response.headers ?? {};
-        const statusCode = response.status;
-
         if (config.strict) {
             const checker = new StrictChecker();
             if (!isEmpty(this.requestFields)) {
-                await checker.check("request", requestBody, this.requestFields);
+                await checker.check(
+                    "request",
+                    (response.request as any)?._data ?? {},
+                    this.requestFields
+                );
             }
             if (!isEmpty(this.responseFields)) {
                 await checker.check(
                     "response",
-                    responseBody,
+                    response.body ?? {},
                     this.responseFields
                 );
             }
         }
 
-        const snippetMap: Record<string, string> = {};
-
-        // 필수 생성 스니펫
-        // curl-request
-        snippetMap["curl-request"] = generateCurlSnippet(
-            requestMethod,
-            requestUrl,
-            requestHeaders,
-            requestBody
-        );
-        // http-request
-        snippetMap["http-request"] = generateHttpRequestSnippet(
-            requestMethod,
-            requestUrl,
-            requestHeaders,
-            requestBody
-        );
-        // http-response
-        snippetMap["http-response"] = generateHttpResponseSnippet(
-            statusCode,
-            responseHeaders,
-            responseBody
-        );
-
-        // 선택 생성 스니펫
-        // request
-        if (!isEmpty(this.requestHeaders)) {
-            snippetMap["request-headers"] = generateRequestHeadersSnippet(
-                this.requestHeaders
-            );
-        }
-        if (!isEmpty(this.pathParameters)) {
-            snippetMap["path-parameters"] = generatePathParametersSnippet(
-                this.pathParameters
-            );
-        }
-        if (!isEmpty(this.requestParameters)) {
-            snippetMap["request-parameters"] = generateRequestParametersSnippet(
-                this.requestParameters
-            );
-        }
-        if (!isEmpty(this.requestParts)) {
-            snippetMap["request-parts"] = generateRequestPartsSnippet(
-                this.requestParts
-            );
-        }
-        if (!isEmpty(this.requestFields)) {
-            snippetMap["request-fields"] = generateRequestFieldsSnippet(
-                this.requestFields
-            );
-        }
-
-        // response
-        if (!isEmpty(this.responseHeaders)) {
-            snippetMap["response-headers"] = generateResponseHeadersSnippet(
-                this.responseHeaders
-            );
-        }
-        if (!isEmpty(this.responseFields)) {
-            snippetMap["response-fields"] = generateResponseFieldsSnippet(
-                this.responseFields
-            );
-        }
+        const renderer = new AsciiDocRenderer();
+        const snippetMap = renderer.renderDocumentSnippets(response, {
+            requestHeaders: this.requestHeaders,
+            pathParameters: this.pathParameters,
+            requestParameters: this.requestParameters,
+            requestParts: this.requestParts,
+            requestFields: this.requestFields,
+            responseHeaders: this.responseHeaders,
+            responseFields: this.responseFields,
+        });
 
         const writer = new LocalDocWriter({
             outputDir: config.output ?? "./docs",
@@ -208,10 +138,7 @@ export class DocRequestBuilder {
             directoryStructure: "nested",
         });
 
-        // 스니펫별로 파일 기록
-        for (const [snippetName, content] of Object.entries(snippetMap)) {
-            await writer.writeSnippet(identifier, snippetName, content);
-        }
+        writer.writeDocumentSnippets(identifier, snippetMap);
 
         return response;
     }
