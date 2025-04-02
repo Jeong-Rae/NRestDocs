@@ -1,5 +1,5 @@
-import { isBoolean, isNil, isString } from "es-toolkit";
-import { isArray, isNumber, isObjectLike } from "es-toolkit/compat";
+import { isNil } from "es-toolkit";
+import { isArray, isObjectLike } from "es-toolkit/compat";
 
 import {
     InvalidTypeError,
@@ -9,13 +9,11 @@ import {
 } from "../errors";
 import { FieldDescriptor } from "../types";
 
-/**
- * StrictChecker는 request 또는 response의 실제 데이터와
- * 문서화 시 제공한 필드 정의(FieldDescriptor[])가 일치하는지 검사합니다.
- */
+import { matchesType, prettyType } from "./utils/type-checker";
+
 export class StrictChecker {
     /**
-     * 실제 데이터와 필드 정의가 일치하는지 비동기적으로 검증합니다.
+     * 실제 데이터와 필드 정의가 일치하는지 검증합니다.
      * 모든 유효성 검사를 수행하고 발생한 모든 오류를 수집하여 보고합니다.
      *
      * @param context 검사 컨텍스트(request 또는 response)
@@ -38,7 +36,6 @@ export class StrictChecker {
             if (errors.length > 0) {
                 this.throwValidationErrors(errors, context);
             }
-            return;
         }
 
         // 추가 필드 검증
@@ -84,7 +81,7 @@ export class StrictChecker {
         const isValidObject = isObjectLike(value) && !isArray(value) && !isNil(value);
 
         if (!isValidObject) {
-            const actualType = await this.prettyType(value);
+            const actualType = prettyType(value);
             throw new InvalidTypeError({
                 context,
                 message: `${context} body must be a non-null object`,
@@ -146,12 +143,11 @@ export class StrictChecker {
                     fieldName,
                 });
             }
-            return; // 선택적 필드면 검증 종료
+            return;
         }
 
-        // 타입 검사
-        if (!(await this.matchesType(type, value))) {
-            const actualType = await this.prettyType(value);
+        if (!matchesType(type, value)) {
+            const actualType = prettyType(value);
             throw new InvalidTypeError({
                 context,
                 message: `${context} field has incorrect type`,
@@ -160,46 +156,6 @@ export class StrictChecker {
                 actual: actualType,
             });
         }
-    }
-
-    /**
-     * 예상 타입(type 문자열)과 실제 값(value)이 일치하는지 검사합니다.
-     *
-     * @param expected 예상 타입 문자열 ("string", "number" 등)
-     * @param value 실제 값
-     * @returns 타입이 일치하면 true, 그렇지 않으면 false
-     */
-    private async matchesType(expected: string, value: unknown): Promise<boolean> {
-        switch (expected) {
-            case "string":
-                return isString(value);
-            case "number":
-                return isNumber(value);
-            case "boolean":
-                return isBoolean(value);
-            case "object":
-                return isObjectLike(value) && !isArray(value) && !isNil(value);
-            case "array":
-                return isArray(value);
-            default:
-                return typeof value === expected;
-        }
-    }
-
-    /**
-     * 디버깅용 타입 이름을 사람이 읽기 쉬운 형태로 반환합니다.
-     *
-     * @param value 타입을 표시할 값
-     * @returns 값의 타입을 나타내는 문자열
-     */
-    private async prettyType(value: unknown): Promise<string> {
-        if (isNil(value)) return "null";
-        if (isArray(value)) return "array";
-        if (isString(value)) return "string";
-        if (isNumber(value)) return "number";
-        if (isBoolean(value)) return "boolean";
-        if (isObjectLike(value)) return "object";
-        return typeof value;
     }
 
     /**
