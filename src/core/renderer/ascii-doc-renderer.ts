@@ -1,6 +1,5 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import { Request, Response, SnippetMap, SupertestResponse } from "../../types";
 import { extractHttpRequest, extractHttpResponse } from "../extractor/http-trace-extractor";
 import {
     generateCurlSnippet,
@@ -15,7 +14,8 @@ import {
     generateResponseHeadersSnippet,
 } from "../snippets";
 
-import { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
+import type { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
+import type { Request, Response, SnippetMap, SupertestResponse } from "../../types";
 
 export class AsciiDocRenderer implements DocRenderer {
     renderDocumentSnippets(

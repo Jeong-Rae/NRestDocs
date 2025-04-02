@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { FieldDescriptor } from "../../types";
-
 import { generateResponseFieldsSnippet } from "./response-fields-snippet";
+
+import type { FieldDescriptor } from "../../types";
 
 describe("response-fields-snippet", () => {
     describe("generateResponseFieldsSnippet", () => {

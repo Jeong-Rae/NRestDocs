@@ -1,7 +1,4 @@
-import { Response } from "supertest";
-import { Mock, beforeEach, describe, expect, it, vi } from "vitest";
-
-import { NRestDocsConfig } from "../types"; // 필요한 타입 추가
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { defineField } from "./builders/defineField";
 import { defineHeader } from "./builders/defineHeader";
@@ -12,6 +9,10 @@ import * as configModule from "./config"; // 모킹 대상
 import { DocRequestBuilder, docRequest } from "./doc-builder";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer"; // 모킹 대상
 import { LocalDocWriter } from "./writer/local-doc-writer"; // 모킹 대상
+
+import type { NRestDocsConfig } from "../types"; // 필요한 타입 추가
+import type { Response } from "supertest";
+import type { Mock } from "vitest";
 
 // 모듈 모킹
 vi.mock("./config");

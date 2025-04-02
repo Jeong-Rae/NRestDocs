@@ -6,9 +6,10 @@ import {
     UnexpectedFieldError,
     ValidationError,
 } from "../errors";
-import { FieldDescriptor } from "../types";
 
 import { StrictChecker } from "./strict-checker";
+
+import type { FieldDescriptor } from "../types";
 
 describe("StrictChecker", () => {
     const checker = new StrictChecker();

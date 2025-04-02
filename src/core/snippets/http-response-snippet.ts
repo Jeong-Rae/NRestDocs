@@ -1,6 +1,7 @@
-import { HttpHeaders } from "../../types";
 import { format } from "../utils/format";
 import { filterResponseHeaders } from "../utils/header-filter";
+
+import type { HttpHeaders } from "../../types";
 
 /**
  * http-response

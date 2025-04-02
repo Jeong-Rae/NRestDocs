@@ -1,7 +1,8 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import { FieldDescriptor } from "../../types";
 import { format } from "../utils/format";
+
+import type { FieldDescriptor } from "../../types";
 
 /**
  * request-fields

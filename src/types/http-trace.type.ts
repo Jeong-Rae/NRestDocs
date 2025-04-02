@@ -1,6 +1,5 @@
-import { Response as SupertestResponseType } from "supertest";
-
-import { HttpMethod } from "./http.type";
+import type { HttpMethod } from "./http.type";
+import type { Response as SupertestResponseType } from "supertest";
 
 export type SupertestResponse = SupertestResponseType;
 

@@ -1,9 +1,8 @@
 import * as fs from "node:fs/promises";
 import path from "node:path";
 
-import { DocWriterConfig } from "../../types/doc-writer-config.type";
-
-import { DocWriter } from "./doc-writer.interface";
+import type { DocWriter } from "./doc-writer.interface";
+import type { DocWriterConfig } from "../../types/doc-writer-config.type";
 
 export class LocalDocWriter implements DocWriter {
     constructor(private readonly _config: DocWriterConfig) {}

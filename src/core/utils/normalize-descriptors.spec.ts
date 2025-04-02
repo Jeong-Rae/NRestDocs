@@ -1,11 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { HeaderDescriptor } from "../../types";
 // DescriptorBuilder import는 더 이상 직접 사용되지 않으므로 제거 가능 (defineHeader를 통해 간접 사용)
 // import { DescriptorBuilder } from "../builders/descriptor-builder";
 import { defineHeader } from "../builders/defineHeader";
 
-import { PartialWithName, normalizeDescriptors } from "./normalize-descriptors";
+import { normalizeDescriptors } from "./normalize-descriptors";
+
+import type { PartialWithName } from "./normalize-descriptors";
+import type { HeaderDescriptor } from "../../types";
 
 // 테스트용 DescriptorBuilder 모의 클래스 제거
 

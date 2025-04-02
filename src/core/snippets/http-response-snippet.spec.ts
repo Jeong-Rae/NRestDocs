@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { HttpHeaders } from "../../types";
-
 import { generateHttpResponseSnippet } from "./http-response-snippet";
+
+import type { HttpHeaders } from "../../types";
 
 describe("http-response-snippet", () => {
     describe("generateHttpResponseSnippet", () => {

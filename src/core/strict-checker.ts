@@ -7,9 +7,10 @@ import {
     UnexpectedFieldError,
     ValidationError,
 } from "../errors";
-import { FieldDescriptor } from "../types";
 
 import { matchesType, prettyType } from "./utils/type-checker";
+
+import type { FieldDescriptor } from "../types";
 
 export class StrictChecker {
     /**

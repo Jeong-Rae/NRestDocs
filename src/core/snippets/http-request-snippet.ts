@@ -1,6 +1,7 @@
-import { HttpHeaders, HttpMethod } from "../../types";
 import { format } from "../utils/format";
 import { filterRequestHeaders } from "../utils/header-filter";
+
+import type { HttpHeaders, HttpMethod } from "../../types";
 
 /**
  * http-request

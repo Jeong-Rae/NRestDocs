@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { ParameterDescriptor } from "../../types";
-
 import { generateRequestParametersSnippet } from "./request-parameters-snippet";
+
+import type { ParameterDescriptor } from "../../types";
 
 describe("request-parameters-snippet", () => {
     describe("generateRequestParametersSnippet", () => {

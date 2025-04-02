@@ -1,4 +1,4 @@
-import { FieldDescriptor } from "./descriptors.type";
+import type { FieldDescriptor } from "./descriptors.type";
 
 /** 문서 포맷 타입 */
 export type DocumentFormat = "adoc" | "md";
