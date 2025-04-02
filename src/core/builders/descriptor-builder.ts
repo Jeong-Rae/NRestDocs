@@ -1,11 +1,5 @@
 import { FieldType } from "../../types";
-
-export type BaseDescriptor = {
-    name: string;
-    type: FieldType;
-    description?: string;
-    optional?: boolean;
-};
+import { BaseDescriptor } from "../../types/descriptors";
 
 /**
  * .type(...) 호출 전 상태
@@ -18,7 +12,7 @@ export type DescriptorBuilderInit<T extends BaseDescriptor> = {
  * .type(...) 호출 이후 상태 (description, optional, toDescriptor)
  */
 export type DescriptorBuilder<T extends BaseDescriptor> = {
-    description(desc: string): DescriptorBuilder<T>;
+    description(description: string): DescriptorBuilder<T>;
     optional(): DescriptorBuilder<T>;
     toDescriptor(): T;
 };

@@ -8,9 +8,10 @@ import {
     ParameterDescriptor,
     PartDescriptor,
 } from "../types";
+import { BaseDescriptor } from "../types/descriptors";
 
+import { DescriptorBuilder } from "./builders/descriptor-builder";
 import { getNRestDocsConfig } from "./config";
-import { FieldBuilder } from "./defined";
 // import { StrictChecker } from "./strict-checker";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
 import { LocalDocWriter } from "./writer/local-doc-writer";
@@ -45,65 +46,79 @@ export class DocRequestBuilder {
     /**
      * request-headers 정의
      */
-    withRequestHeaders(headers: HeaderDescriptor[]): this {
-        this.requestHeaders = headers;
+    withRequestHeaders(
+        headers: (DescriptorBuilder<HeaderDescriptor> | Omit<HeaderDescriptor, "type">)[]
+    ): this {
+        this.requestHeaders = this.normalizeDescriptors(headers);
         return this;
     }
 
     /**
      * path-parameters 정의
      */
-    withPathParameters(params: ParameterDescriptor[]): this {
-        this.pathParameters = params;
+    withPathParameters(
+        params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
+    ): this {
+        this.pathParameters = this.normalizeDescriptors(params);
         return this;
     }
 
     /**
      * query/form request-parameters 정의
      */
-    withRequestParameters(params: ParameterDescriptor[]): this {
-        this.requestParameters = params;
+    withRequestParameters(
+        params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
+    ): this {
+        this.requestParameters = this.normalizeDescriptors(params);
         return this;
     }
 
     /**
      * multipart request-parts 정의
      */
-    withRequestParts(parts: PartDescriptor[]): this {
-        this.requestParts = parts;
+    withRequestParts(parts: (DescriptorBuilder<PartDescriptor> | PartDescriptor)[]): this {
+        this.requestParts = this.normalizeDescriptors(parts);
         return this;
     }
 
     /**
      * request-fields 정의
      */
-    withRequestFields(fields: (FieldBuilder | FieldDescriptor)[]): this {
-        this.requestFields = this.normalizeFields(fields);
+    withRequestFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
+        this.requestFields = this.normalizeDescriptors(fields);
         return this;
     }
 
     /**
      * response-headers 정의
      */
-    withResponseHeaders(headers: HeaderDescriptor[]): this {
-        this.responseHeaders = headers;
+    withResponseHeaders(headers: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[]): this {
+        this.responseHeaders = this.normalizeDescriptors(headers);
         return this;
     }
 
     /**
      * response-fields 정의
      */
-    withResponseFields(fields: (FieldBuilder | FieldDescriptor)[]): this {
-        this.responseFields = this.normalizeFields(fields);
+    withResponseFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
+        this.responseFields = this.normalizeDescriptors(fields);
         return this;
     }
 
-    private normalizeFields(fields: (FieldBuilder | FieldDescriptor)[]): FieldDescriptor[] {
-        return map(fields, (field) =>
-            isFunction(get(field, "toDescriptor"))
-                ? (field as FieldBuilder).toDescriptor()
-                : (field as FieldDescriptor)
-        );
+    private normalizeDescriptors<T extends BaseDescriptor>(
+        descriptors: (DescriptorBuilder<T> | Partial<T>)[]
+    ): T[] {
+        return map(descriptors, (descriptor) => {
+            if (isFunction(get(descriptor, "toDescriptor"))) {
+                return (descriptor as DescriptorBuilder<T>).toDescriptor();
+            }
+
+            const raw = descriptor as Partial<T>;
+            return {
+                ...raw,
+                type: raw.type ?? "string",
+            } as T;
+        });
     }
 
     /**
