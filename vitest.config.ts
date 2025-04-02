@@ -20,6 +20,8 @@ export default defineConfig({
                 "src/**/*.spec.ts", // 테스트 파일 제외
                 "src/**/types.ts", // 타입 정의 파일 제외
                 "src/**/index.ts", // 인덱스 파일 제외
+                "src/**/*.interface.ts", // 인터페이스 파일 제외 추가
+                "src/**/*.type.ts", // 타입 파일 제외 추가
             ],
         },
     },

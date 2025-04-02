@@ -1,8 +1,8 @@
-export { NRestDocsConfig, DocOptions, DocumentFormat } from "./doc-options";
+export { NRestDocsConfig, DocOptions, DocumentFormat } from "./doc-options.type";
 
-export { HttpMethod, HttpHeaders } from "./http";
+export { HttpMethod, HttpHeaders } from "./http.type";
 
-export { SupertestRequest, SupertestResponse, Request, Response } from "./http-trace";
+export { SupertestRequest, SupertestResponse, Request, Response } from "./http-trace.type";
 
 export {
     FieldDescriptor,
@@ -11,6 +11,6 @@ export {
     ParameterDescriptor,
     PartDescriptor,
     SnippetMap,
-} from "./descriptors";
+} from "./descriptors.type";
 
-export { DocumentSnippets } from "./snippets";
+export { DocumentSnippets } from "./snippets.type";
