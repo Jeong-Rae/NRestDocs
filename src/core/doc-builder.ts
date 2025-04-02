@@ -20,6 +20,8 @@ import { LocalDocWriter } from "./writer/local-doc-writer";
 //     _data?: unknown;
 // }
 
+export type PartialWithName<T extends { name: string }> = Partial<T> & { name: T["name"] };
+
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
     private options: DocOptions = {};
@@ -47,7 +49,7 @@ export class DocRequestBuilder {
      * request-headers 정의
      */
     withRequestHeaders(
-        headers: (DescriptorBuilder<HeaderDescriptor> | Omit<HeaderDescriptor, "type">)[]
+        headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
     ): this {
         this.requestHeaders = this.normalizeDescriptors(headers);
         return this;
@@ -106,14 +108,14 @@ export class DocRequestBuilder {
     }
 
     private normalizeDescriptors<T extends BaseDescriptor>(
-        descriptors: (DescriptorBuilder<T> | Partial<T>)[]
+        descriptors: (DescriptorBuilder<T> | PartialWithName<T>)[]
     ): T[] {
         return map(descriptors, (descriptor) => {
             if (isFunction(get(descriptor, "toDescriptor"))) {
                 return (descriptor as DescriptorBuilder<T>).toDescriptor();
             }
 
-            const raw = descriptor as Partial<T>;
+            const raw = descriptor as PartialWithName<T>;
             return {
                 ...raw,
                 type: raw.type ?? "string",

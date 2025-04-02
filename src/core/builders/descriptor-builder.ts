@@ -18,7 +18,7 @@ export type DescriptorBuilder<T extends BaseDescriptor> = {
 };
 
 /**
- * 공통 빌더 생성기
+ * 공통 빌더
  * @param descriptor 초기 descriptor 구조
  */
 export function createDescriptorBuilder<T extends BaseDescriptor>(
