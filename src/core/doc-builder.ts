@@ -8,7 +8,7 @@ import {
     ParameterDescriptor,
     PartDescriptor,
 } from "../types";
-import { BaseDescriptor } from "../types/descriptors";
+import { BaseDescriptor } from "../types/descriptors.type";
 
 import { DescriptorBuilder } from "./builders/descriptor-builder";
 import { getNRestDocsConfig } from "./config";

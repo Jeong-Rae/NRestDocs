@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { BaseDescriptor } from "../../types/descriptors";
+import { BaseDescriptor } from "../../types/descriptors.type";
 
 import { createDescriptorBuilder } from "./descriptor-builder";
 
