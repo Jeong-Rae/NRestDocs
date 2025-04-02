@@ -1,3 +1,5 @@
+import { isEmpty } from "es-toolkit/compat";
+
 import { HeaderDescriptor } from "../../types";
 import { format } from "../utils/format";
 
@@ -5,6 +7,10 @@ import { format } from "../utils/format";
  * request-headers
  */
 export function generateRequestHeadersSnippet(headers: HeaderDescriptor[]): string {
+    if (isEmpty(headers)) {
+        return "";
+    }
+
     let headerRows = "";
 
     headers.forEach((header) => {

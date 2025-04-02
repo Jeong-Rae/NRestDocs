@@ -1,3 +1,5 @@
+import { isEmpty } from "es-toolkit/compat";
+
 import { PartDescriptor } from "../../types";
 import { format } from "../utils/format";
 
@@ -5,6 +7,10 @@ import { format } from "../utils/format";
  * request-parts
  */
 export function generateRequestPartsSnippet(parts: PartDescriptor[]): string {
+    if (isEmpty(parts)) {
+        return "";
+    }
+
     let partRows = "";
 
     parts.forEach((part) => {
