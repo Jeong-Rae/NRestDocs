@@ -1,7 +1,7 @@
 import {
-    HttpMethod,
     FieldDescriptor,
     HeaderDescriptor,
+    HttpMethod,
     ParameterDescriptor,
     PartDescriptor,
     SnippetMap,

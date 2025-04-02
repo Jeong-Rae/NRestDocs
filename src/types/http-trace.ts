@@ -1,4 +1,5 @@
 import { Response as SupertestResponseType } from "supertest";
+
 import { HttpMethod } from "./http";
 
 export type SupertestResponse = SupertestResponseType;

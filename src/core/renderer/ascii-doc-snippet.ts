@@ -1,5 +1,5 @@
-import { format } from "../utils/format";
 import { HttpMethod } from "../../types";
+import { format } from "../utils/format";
 
 /** API 제목 스니펫 */
 export function snippetTitle(identifier: string): string {

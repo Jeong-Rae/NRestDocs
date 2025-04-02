@@ -2,6 +2,7 @@ import eslint from "@eslint/js";
 import tseslint from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
 import prettier from "eslint-plugin-prettier";
+import importPlugin from "eslint-plugin-import";
 
 export default [
     {
@@ -15,6 +16,7 @@ export default [
             parserOptions: {
                 ecmaVersion: 2022,
                 sourceType: "module",
+                project: "./tsconfig.json",
             },
             globals: {
                 URL: "readonly",
@@ -29,6 +31,14 @@ export default [
         plugins: {
             "@typescript-eslint": tseslint,
             prettier: prettier,
+            import: importPlugin,
+        },
+        settings: {
+            "import/resolver": {
+                typescript: {
+                    alwaysTryTypes: true,
+                },
+            },
         },
         rules: {
             "prettier/prettier": "error",
@@ -44,6 +54,36 @@ export default [
                 },
             ],
             "no-unused-vars": "off",
+            "sort-imports": [
+                "error",
+                {
+                    ignoreCase: false,
+                    ignoreDeclarationSort: true,
+                    ignoreMemberSort: false,
+                    memberSyntaxSortOrder: ["none", "all", "multiple", "single"],
+                    allowSeparatedGroups: true,
+                },
+            ],
+            "import/order": [
+                "error",
+                {
+                    groups: [
+                        "builtin",
+                        "external",
+                        "internal",
+                        "parent",
+                        "sibling",
+                        "index",
+                        "object",
+                        "type",
+                    ],
+                    "newlines-between": "always",
+                    alphabetize: {
+                        order: "asc",
+                        caseInsensitive: true,
+                    },
+                },
+            ],
         },
     },
 ];

@@ -4,5 +4,8 @@
     "singleQuote": false,
     "printWidth": 100,
     "tabWidth": 4,
-    "endOfLine": "auto"
+    "endOfLine": "auto",
+    "importOrder": ["^node:", "<THIRD_PARTY_MODULES>", "^@/(.*)$", "^[./]"],
+    "importOrderSeparation": true,
+    "importOrderSortSpecifiers": true
 }

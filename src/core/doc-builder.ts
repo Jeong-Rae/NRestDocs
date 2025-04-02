@@ -1,9 +1,6 @@
-import { Response } from "supertest";
-import { getNRestDocsConfig } from "./config";
-import { FieldBuilder } from "./definedField";
-// import { StrictChecker } from "./strict-checker";
 import { get, isFunction, map } from "es-toolkit/compat";
-import { LocalDocWriter } from "./writer/local-doc-writer";
+import { Response } from "supertest";
+
 import {
     DocOptions,
     FieldDescriptor,
@@ -11,7 +8,12 @@ import {
     ParameterDescriptor,
     PartDescriptor,
 } from "../types";
+
+import { getNRestDocsConfig } from "./config";
+import { FieldBuilder } from "./definedField";
+// import { StrictChecker } from "./strict-checker";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
+import { LocalDocWriter } from "./writer/local-doc-writer";
 
 // interface RequestData {
 //     _data?: unknown;
