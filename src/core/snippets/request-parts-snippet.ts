@@ -1,22 +1,24 @@
 import { PartDescriptor } from "../../types";
+import { format } from "../utils/format";
 
 /**
  * request-parts
  */
 export function generateRequestPartsSnippet(parts: PartDescriptor[]): string {
-    const lines: string[] = [];
-    lines.push("= request-parts");
-    lines.push("");
-    lines.push("== Request Parts");
-    lines.push('[cols="3,2,7", options="header"]');
-    lines.push("|===");
-    lines.push("| Name | Optional | Description");
+    let partRows = "";
 
     parts.forEach((part) => {
         const isOptional = part.optional ? "true" : "false";
-        lines.push(`| +${part.name}+ | +${isOptional}+ | ${part.description ?? ""}`);
+        partRows += `\n| +${part.name}+ | +${isOptional}+ | ${part.description ?? ""}`;
     });
 
-    lines.push("|===");
-    return lines.join("\n");
+    return format`
+= request-parts
+
+== Request Parts
+[cols="3,2,7", options="header"]
+|===
+| Name | Optional | Description${partRows}
+|===
+`.trimStart();
 }

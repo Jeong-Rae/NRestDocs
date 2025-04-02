@@ -1,4 +1,5 @@
 import { HttpHeaders } from "../../types";
+import { format } from "../utils/format";
 import { filterResponseHeaders } from "../utils/header-filter";
 
 /**
@@ -9,25 +10,24 @@ export function generateHttpResponseSnippet(
     headers: HttpHeaders,
     body: unknown
 ): string {
-    const lines: string[] = [];
-
-    lines.push("= http-response");
-    lines.push("[source]");
-    lines.push("----");
-    lines.push(`HTTP/1.1 ${statusCode}`);
+    let headerLines = "";
 
     // headers
     for (const [key, value] of Object.entries(filterResponseHeaders(headers))) {
-        lines.push(`${key}: ${value}`);
+        headerLines += `\n${key}: ${value}`;
     }
-
-    lines.push("");
 
     // body
+    let bodyContent = "";
     if (body && Object.keys(body as Record<string, unknown>).length > 0) {
-        lines.push(JSON.stringify(body, null, 2));
+        bodyContent = `\n\n${JSON.stringify(body, null, 2)}`;
     }
 
-    lines.push("----");
-    return lines.join("\n");
+    return format`
+= http-response
+[source]
+----
+HTTP/1.1 ${statusCode}${headerLines}${bodyContent}
+----
+`.trimStart();
 }

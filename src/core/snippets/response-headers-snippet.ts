@@ -1,22 +1,24 @@
 import { HeaderDescriptor } from "../../types";
+import { format } from "../utils/format";
 
 /**
  * response-headers
  */
 export function generateResponseHeadersSnippet(headers: HeaderDescriptor[]): string {
-    const lines: string[] = [];
-    lines.push("= response-headers");
-    lines.push("");
-    lines.push("== Response Headers");
-    lines.push('[cols="3,2,7", options="header"]');
-    lines.push("|===");
-    lines.push("| Name | Optional | Description");
+    let headerRows = "";
 
     headers.forEach((header) => {
         const isOptional = header.optional ? "true" : "false";
-        lines.push(`| +${header.name}+ | +${isOptional}+ | ${header.description ?? ""}`);
+        headerRows += `\n| +${header.name}+ | +${isOptional}+ | ${header.description ?? ""}`;
     });
 
-    lines.push("|===");
-    return lines.join("\n");
+    return format`
+= response-headers
+
+== Response Headers
+[cols="3,2,7", options="header"]
+|===
+| Name | Optional | Description${headerRows}
+|===
+`.trimStart();
 }

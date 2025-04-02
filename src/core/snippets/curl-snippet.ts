@@ -1,4 +1,5 @@
 import { HttpHeaders, HttpMethod } from "../../types";
+import { format } from "../utils/format";
 import { filterRequestHeaders } from "../utils/header-filter";
 
 /**
@@ -10,28 +11,25 @@ export function generateCurlSnippet(
     headers: HttpHeaders,
     body: unknown
 ): string {
-    const lines: string[] = [];
-
-    lines.push("= curl-request");
-    lines.push("[source,bash]");
-    lines.push("----");
-
-    // curl command
+    // curl command 시작
     let curlCmd = `curl -X ${method.toUpperCase()} "${url.toString()}"`;
 
-    // headers
+    // headers 추가
     Object.entries(filterRequestHeaders(headers)).forEach(([key, value]) => {
         curlCmd += ` \\\n  -H "${key}: ${value}"`;
     });
 
-    // body
+    // body 추가
     if (body && Object.keys(body as Record<string, unknown>).length > 0) {
         const jsonBody = JSON.stringify(body).replace(/"/g, '\\"');
         curlCmd += ` \\\n  -d "${jsonBody}"`;
     }
 
-    lines.push(curlCmd);
-    lines.push("----");
-
-    return lines.join("\n");
+    return format`
+= curl-request
+[source,bash]
+----
+${curlCmd}
+----
+`.trimStart();
 }

@@ -1,24 +1,24 @@
 import { FieldDescriptor } from "../../types";
+import { format } from "../utils/format";
 
 /**
  * response-fields
  */
 export function generateResponseFieldsSnippet(fields: FieldDescriptor[]): string {
-    const lines: string[] = [];
-    lines.push("= response-fields");
-    lines.push("");
-    lines.push("== Response Fields");
-    lines.push('[cols="3,2,7", options="header"]');
-    lines.push("|===");
-    lines.push("| Field | Type | Optional | Description");
+    let fieldRows = "";
 
     fields.forEach((field) => {
         const optionalStr = field.optional ? "true" : "false";
-        lines.push(
-            `| +${field.name}+ | +${field.type}+ | +${optionalStr}+ | ${field.description ?? ""}`
-        );
+        fieldRows += `\n| +${field.name}+ | +${field.type}+ | +${optionalStr}+ | ${field.description ?? ""}`;
     });
 
-    lines.push("|===");
-    return lines.join("\n");
+    return format`
+= response-fields
+
+== Response Fields
+[cols="3,2,7", options="header"]
+|===
+| Field | Type | Optional | Description${fieldRows}
+|===
+`.trimStart();
 }

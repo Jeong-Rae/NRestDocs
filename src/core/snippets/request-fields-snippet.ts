@@ -1,24 +1,24 @@
 import { FieldDescriptor } from "../../types";
+import { format } from "../utils/format";
 
 /**
  * request-fields
  */
 export function generateRequestFieldsSnippet(fields: FieldDescriptor[]): string {
-    const lines: string[] = [];
-    lines.push("= request-fields");
-    lines.push("");
-    lines.push("== Request Fields");
-    lines.push('[cols="3,2,7", options="header"]');
-    lines.push("|===");
-    lines.push("| Field | Type | Optional | Description");
+    let fieldRows = "";
 
     fields.forEach((field) => {
         const isOptional = field.optional ? "true" : "false";
-        lines.push(
-            `| +${field.name}+ | +${field.type}+ | +${isOptional}+ | ${field.description ?? ""}`
-        );
+        fieldRows += `\n| +${field.name}+ | +${field.type}+ | +${isOptional}+ | ${field.description ?? ""}`;
     });
 
-    lines.push("|===");
-    return lines.join("\n");
+    return format`
+= request-fields
+
+== Request Fields
+[cols="3,2,7", options="header"]
+|===
+| Field | Type | Optional | Description${fieldRows}
+|===
+`.trimStart();
 }
