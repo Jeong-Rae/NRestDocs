@@ -51,5 +51,30 @@ describe("response-fields-snippet", () => {
             expect(result).toContain("| +id+ | +number+ | +false+ | 생성된 ID");
             expect(result).toContain("| +createdAt+ | +string+ | +true+ | 생성 시각 (선택)");
         });
+
+        it("description이 없는 필드가 있는 경우 빈 문자열로 처리한다", () => {
+            // Given
+            const fields: FieldDescriptor[] = [
+                { name: "id", type: "number", optional: false, description: undefined },
+            ];
+            const expectedRow = "| +id+ | +number+ | +false+ | ";
+
+            // When
+            const result = generateResponseFieldsSnippet(fields);
+
+            // Then
+            expect(result).toContain(expectedRow);
+        });
+
+        it("필드가 없는 경우 빈 문자열을 반환한다", () => {
+            // Given
+            const fields: FieldDescriptor[] = [];
+
+            // When
+            const result = generateResponseFieldsSnippet(fields);
+
+            // Then
+            expect(result).toBe("");
+        });
     });
 });

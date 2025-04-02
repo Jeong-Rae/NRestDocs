@@ -66,5 +66,35 @@ describe("path-parameters-snippet", () => {
             expect(result).toContain("| +userId+ | +false+ | 사용자 ID");
             expect(result).toContain("| +postId+ | +true+ | 게시물 ID (선택)");
         });
+
+        it("description이 없는 파라미터가 있는 경우 빈 문자열로 처리한다", () => {
+            // Given
+            const params: ParameterDescriptor[] = [
+                {
+                    name: "userId",
+                    type: "string",
+                    optional: false,
+                    description: undefined,
+                },
+            ];
+            const expectedRow = "| +userId+ | +false+ | ";
+
+            // When
+            const result = generatePathParametersSnippet(params);
+
+            // Then
+            expect(result).toContain(expectedRow);
+        });
+
+        it("파라미터가 없는 경우 빈 문자열을 반환한다", () => {
+            // Given
+            const params: ParameterDescriptor[] = [];
+
+            // When
+            const result = generatePathParametersSnippet(params);
+
+            // Then
+            expect(result).toBe("");
+        });
     });
 });

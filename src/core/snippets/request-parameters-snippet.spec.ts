@@ -47,5 +47,30 @@ describe("request-parameters-snippet", () => {
             expect(result).toContain("| +id+ | +false+ | 아이템 ID");
             expect(result).toContain("| +sort+ | +true+ | 정렬 기준 (선택)");
         });
+
+        it("description이 없는 파라미터가 있는 경우 빈 문자열로 처리한다", () => {
+            // Given
+            const params: ParameterDescriptor[] = [
+                { name: "page", type: "number", optional: true, description: undefined },
+            ];
+            const expectedRow = "| +page+ | +true+ | ";
+
+            // When
+            const result = generateRequestParametersSnippet(params);
+
+            // Then
+            expect(result).toContain(expectedRow);
+        });
+
+        it("파라미터가 없는 경우 빈 문자열을 반환한다", () => {
+            // Given
+            const params: ParameterDescriptor[] = [];
+
+            // When
+            const result = generateRequestParametersSnippet(params);
+
+            // Then
+            expect(result).toBe("");
+        });
     });
 });

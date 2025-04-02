@@ -1,3 +1,5 @@
+import { isEmpty } from "es-toolkit/compat";
+
 import { ParameterDescriptor } from "../../types";
 import { format } from "../utils/format";
 
@@ -5,6 +7,10 @@ import { format } from "../utils/format";
  * path-parameters
  */
 export function generatePathParametersSnippet(params: ParameterDescriptor[]): string {
+    if (isEmpty(params)) {
+        return "";
+    }
+
     let paramRows = "";
 
     params.forEach((param) => {

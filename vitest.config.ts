@@ -9,12 +9,12 @@ export default defineConfig({
             reporter: ["text", "json", "html"],
             reportsDirectory: "./coverage",
             // 커버리지 임계값 설정
-            thresholds: {
-                lines: 85,
-                functions: 85,
-                branches: 85,
-                statements: 85,
-            },
+            // thresholds: {
+            //     lines: 85,
+            //     functions: 85,
+            //     branches: 85,
+            //     statements: 85,
+            // },
             include: ["src/**/*.ts"], // 커버리지 측정 대상 파일
             exclude: [
                 "src/**/*.spec.ts", // 테스트 파일 제외

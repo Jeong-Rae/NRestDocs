@@ -51,5 +51,30 @@ describe("response-headers-snippet", () => {
             expect(result).toContain("| +Content-Type+ | +false+ | 응답 형식");
             expect(result).toContain("| +ETag+ | +true+ | 엔티티 태그 (선택)");
         });
+
+        it("description이 없는 헤더가 있는 경우 빈 문자열로 처리한다", () => {
+            // Given
+            const headers: HeaderDescriptor[] = [
+                { name: "Content-Length", type: "string", optional: false, description: undefined },
+            ];
+            const expectedRow = "| +Content-Length+ | +false+ | ";
+
+            // When
+            const result = generateResponseHeadersSnippet(headers);
+
+            // Then
+            expect(result).toContain(expectedRow);
+        });
+
+        it("헤더가 없는 경우 빈 문자열을 반환한다", () => {
+            // Given
+            const headers: HeaderDescriptor[] = [];
+
+            // When
+            const result = generateResponseHeadersSnippet(headers);
+
+            // Then
+            expect(result).toBe("");
+        });
     });
 });

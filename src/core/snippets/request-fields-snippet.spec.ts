@@ -51,5 +51,30 @@ describe("request-fields-snippet", () => {
             expect(result).toContain("| +name+ | +string+ | +false+ | 이름");
             expect(result).toContain("| +email+ | +string+ | +true+ | 이메일 (선택)");
         });
+
+        it("description이 없는 필드가 있는 경우 빈 문자열로 처리한다", () => {
+            // Given
+            const fields: FieldDescriptor[] = [
+                { name: "name", type: "string", optional: false, description: undefined },
+            ];
+            const expectedRow = "| +name+ | +string+ | +false+ | ";
+
+            // When
+            const result = generateRequestFieldsSnippet(fields);
+
+            // Then
+            expect(result).toContain(expectedRow);
+        });
+
+        it("필드가 없는 경우 빈 문자열을 반환한다", () => {
+            // Given
+            const fields: FieldDescriptor[] = [];
+
+            // When
+            const result = generateRequestFieldsSnippet(fields);
+
+            // Then
+            expect(result).toBe("");
+        });
     });
 });
