@@ -90,6 +90,7 @@ describe("local-doc-writer", () => {
             const content = "GET / HTTP/1.1";
             const expectedDir = path.join(config.outputDir, identifier);
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             (fs.access as any).mockRejectedValue(new Error("ENOENT: no such file or directory"));
 
             // When
