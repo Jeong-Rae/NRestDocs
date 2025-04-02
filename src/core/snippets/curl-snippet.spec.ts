@@ -4,7 +4,7 @@ import { HttpHeaders, HttpMethod } from "../../types";
 
 import { generateCurlSnippet } from "./curl-snippet";
 
-describe("curl-snippet.spec.ts", () => {
+describe("curl-snippet", () => {
     describe("generateCurlSnippet", () => {
         it("헤더가 있는 curl 명령어를 생성한다", () => {
             // Given

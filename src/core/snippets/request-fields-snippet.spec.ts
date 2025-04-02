@@ -4,7 +4,7 @@ import { FieldDescriptor } from "../../types";
 
 import { generateRequestFieldsSnippet } from "./request-fields-snippet";
 
-describe("request-fields-snippet.spec.ts", () => {
+describe("request-fields-snippet", () => {
     describe("generateRequestFieldsSnippet", () => {
         it("필드가 있는 요청 필드 스니펫을 생성한다", () => {
             // Given

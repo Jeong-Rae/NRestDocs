@@ -4,7 +4,7 @@ import { FieldDescriptor } from "../../types";
 
 import { generateResponseFieldsSnippet } from "./response-fields-snippet";
 
-describe("response-fields-snippet.spec.ts", () => {
+describe("response-fields-snippet", () => {
     describe("generateResponseFieldsSnippet", () => {
         it("필드가 있는 응답 필드 스니펫을 생성한다", () => {
             // Given

@@ -4,7 +4,7 @@ import { HttpHeaders } from "../../types";
 
 import { generateHttpResponseSnippet } from "./http-response-snippet";
 
-describe("http-response-snippet.spec.ts", () => {
+describe("http-response-snippet", () => {
     describe("generateHttpResponseSnippet", () => {
         it("헤더가 있는 HTTP 응답 스니펫을 생성한다", () => {
             // Given

@@ -4,7 +4,7 @@ import { HeaderDescriptor } from "../../types";
 
 import { generateRequestHeadersSnippet } from "./request-headers-snippet";
 
-describe("request-headers-snippet.spec.ts", () => {
+describe("request-headers-snippet", () => {
     describe("generateRequestHeadersSnippet", () => {
         it("헤더가 있는 요청 헤더 스니펫을 생성한다", () => {
             // Given

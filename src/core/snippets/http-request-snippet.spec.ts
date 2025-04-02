@@ -4,7 +4,7 @@ import { HttpHeaders, HttpMethod } from "../../types";
 
 import { generateHttpRequestSnippet } from "./http-request-snippet";
 
-describe("http-request-snippet.spec.ts", () => {
+describe("http-request-snippet", () => {
     describe("generateHttpRequestSnippet", () => {
         it("헤더가 있는 HTTP 요청 스니펫을 생성한다", () => {
             // Given

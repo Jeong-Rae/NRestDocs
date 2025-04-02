@@ -4,7 +4,7 @@ import { PartDescriptor } from "../../types";
 
 import { generateRequestPartsSnippet } from "./request-parts-snippet";
 
-describe("request-parts-snippet.spec.ts", () => {
+describe("request-parts-snippet", () => {
     describe("generateRequestPartsSnippet", () => {
         it("파트가 있는 요청 파트 스니펫을 생성한다", () => {
             // Given

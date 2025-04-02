@@ -4,7 +4,7 @@ import { ParameterDescriptor } from "../../types";
 
 import { generatePathParametersSnippet } from "./path-parameters-snippet";
 
-describe("path-parameters-snippet.spec.ts", () => {
+describe("path-parameters-snippet", () => {
     describe("generatePathParametersSnippet", () => {
         it("파라미터가 있는 경로 파라미터 스니펫을 생성한다", () => {
             // Given

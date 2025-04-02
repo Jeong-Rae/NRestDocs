@@ -4,7 +4,7 @@ import { ParameterDescriptor } from "../../types";
 
 import { generateRequestParametersSnippet } from "./request-parameters-snippet";
 
-describe("request-parameters-snippet.spec.ts", () => {
+describe("request-parameters-snippet", () => {
     describe("generateRequestParametersSnippet", () => {
         it("파라미터가 있는 요청 파라미터 스니펫을 생성한다", () => {
             // Given
