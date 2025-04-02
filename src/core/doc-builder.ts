@@ -10,7 +10,7 @@ import {
 } from "../types";
 
 import { getNRestDocsConfig } from "./config";
-import { FieldBuilder } from "./definedField";
+import { FieldBuilder } from "./defined";
 // import { StrictChecker } from "./strict-checker";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
 import { LocalDocWriter } from "./writer/local-doc-writer";

@@ -14,17 +14,23 @@ export type BaseDescriptor = {
 /**
  * HTTP 헤더 Descriptor
  */
-export type HeaderDescriptor = BaseDescriptor;
+export type HeaderDescriptor = BaseDescriptor & {
+    type: "string";
+};
 
 /**
  * URL 파라미터 Descriptor
  */
-export type ParameterDescriptor = BaseDescriptor;
+export type ParameterDescriptor = BaseDescriptor & {
+    type: "string";
+};
 
 /**
  * Multipart 요청의 Part Descriptor
  */
-export type PartDescriptor = BaseDescriptor;
+export type PartDescriptor = BaseDescriptor & {
+    type: "string";
+};
 
 /**
  * JSON 필드 Descriptor
