@@ -12,13 +12,8 @@ import { BaseDescriptor } from "../types/descriptors.type";
 
 import { DescriptorBuilder } from "./builders/descriptor-builder";
 import { getNRestDocsConfig } from "./config";
-// import { StrictChecker } from "./strict-checker";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
 import { LocalDocWriter } from "./writer/local-doc-writer";
-
-// interface RequestData {
-//     _data?: unknown;
-// }
 
 export type PartialWithName<T extends { name: string }> = Partial<T> & { name: T["name"] };
 
@@ -129,20 +124,6 @@ export class DocRequestBuilder {
     async doc(identifier: string): Promise<Response> {
         const response = await this.supertestPromise;
         const config = getNRestDocsConfig();
-
-        // if (config.strict) {
-        //     const checker = new StrictChecker();
-        //     if (!isEmpty(this.requestFields)) {
-        //         await checker.check(
-        //             "request",
-        //             (response.request as RequestData)?._data ?? {},
-        //             this.requestFields
-        //         );
-        //     }
-        //     if (!isEmpty(this.responseFields)) {
-        //         await checker.check("response", response.body ?? {}, this.responseFields);
-        //     }
-        // }
 
         const renderer = new AsciiDocRenderer();
         const snippetMap = renderer.renderDocumentSnippets(response, {
