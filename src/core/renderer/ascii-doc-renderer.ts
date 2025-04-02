@@ -1,5 +1,4 @@
 import { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
-import { Response } from "supertest";
 import { isEmpty } from "es-toolkit/compat";
 import {
     generateCurlSnippet,
@@ -12,51 +11,57 @@ import {
     generateRequestPartsSnippet,
     generateResponseFieldsSnippet,
     generateResponseHeadersSnippet,
-} from "../snipperts";
+} from "../snippets";
 import { SnippetMap } from "../../types/descriptors";
-import { HttpMethod } from "../../types/http";
-
-interface RequestData {
-    _data?: unknown;
-    header?: Record<string, string>;
-    method?: HttpMethod;
-    url?: string;
-}
+import { extractHttpRequest, extractHttpResponse } from "../extractor/http-trace-extractor";
+import { SupertestResponse, Request, Response } from "../../types/http-trace";
 
 export class AsciiDocRenderer implements DocRenderer {
-    renderDocumentSnippets(response: Response, options: RenderDocumentSnippetsOptions): SnippetMap {
+    renderDocumentSnippets(
+        response: SupertestResponse,
+        options: RenderDocumentSnippetsOptions
+    ): SnippetMap {
         const snippetMap: SnippetMap = {} as SnippetMap;
 
-        const request = response.request as RequestData;
-        const requestBody = request?._data ?? {};
-        const requestHeaders = request?.header ?? {};
-        const requestMethod = request?.method ?? "GET";
-        const requestUrl = new URL(request?.url || "", "http://localhost");
+        // 정보 추출
+        const extractRequest = extractHttpRequest(response);
+        const extractResponse = extractHttpResponse(response);
 
-        const responseBody = response.body ?? {};
-        const responseHeaders = response.headers ?? {};
-        const statusCode = response.status;
+        // 스니펫 렌더링
+        this.renderRequiredSnippets(snippetMap, extractRequest, extractResponse);
+        this.renderOptionalSnippets(snippetMap, options);
 
-        // 필수 생성 스니펫
+        return snippetMap;
+    }
+
+    private renderRequiredSnippets(
+        snippetMap: SnippetMap,
+        request: Request,
+        response: Response
+    ): void {
         snippetMap["curl-request"] = generateCurlSnippet(
-            requestMethod,
-            requestUrl,
-            requestHeaders,
-            requestBody
+            request.method,
+            request.url,
+            request.headers,
+            request.body
         );
         snippetMap["http-request"] = generateHttpRequestSnippet(
-            requestMethod,
-            requestUrl,
-            requestHeaders,
-            requestBody
+            request.method,
+            request.url,
+            request.headers,
+            request.body
         );
         snippetMap["http-response"] = generateHttpResponseSnippet(
-            statusCode,
-            responseHeaders,
-            responseBody
+            response.statusCode,
+            response.headers,
+            response.body
         );
+    }
 
-        // 선택 생성 스니펫
+    private renderOptionalSnippets(
+        snippetMap: SnippetMap,
+        options: RenderDocumentSnippetsOptions
+    ): void {
         // request
         if (!isEmpty(options.requestHeaders)) {
             snippetMap["request-headers"] = generateRequestHeadersSnippet(options.requestHeaders);
@@ -85,7 +90,5 @@ export class AsciiDocRenderer implements DocRenderer {
         if (!isEmpty(options.responseFields)) {
             snippetMap["response-fields"] = generateResponseFieldsSnippet(options.responseFields);
         }
-
-        return snippetMap;
     }
 }
