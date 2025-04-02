@@ -1,4 +1,4 @@
-import { HttpHeaders } from "../../types/http";
+import { HttpHeaders } from "../../types";
 import { filterResponseHeaders } from "../utils/header-filter";
 
 /**

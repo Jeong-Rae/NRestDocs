@@ -1,4 +1,4 @@
-import { FieldDescriptor } from "../../types/descriptors";
+import { FieldDescriptor } from "../../types";
 
 /**
  * request-fields

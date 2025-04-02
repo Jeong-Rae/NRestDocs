@@ -1,4 +1,4 @@
-import { FieldDescriptor, FieldType } from "../types/descriptors";
+import { FieldDescriptor, FieldType } from "../types";
 
 /**
  * 외부에 노출할 빌더 체이닝 타입 (type() 이후 상태)

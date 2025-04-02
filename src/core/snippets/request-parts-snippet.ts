@@ -1,4 +1,4 @@
-import { PartDescriptor } from "../../types/descriptors";
+import { PartDescriptor } from "../../types";
 
 /**
  * request-parts

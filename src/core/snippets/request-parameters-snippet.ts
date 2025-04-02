@@ -1,4 +1,4 @@
-import { ParameterDescriptor } from "../../types/descriptors";
+import { ParameterDescriptor } from "../../types";
 
 /**
  * request-parameters

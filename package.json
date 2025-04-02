@@ -2,6 +2,7 @@
     "name": "nrest-docs",
     "version": "0.1.0",
     "description": "NRest API 문서 생성기",
+    "type": "module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {

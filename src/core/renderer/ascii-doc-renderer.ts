@@ -12,9 +12,8 @@ import {
     generateResponseFieldsSnippet,
     generateResponseHeadersSnippet,
 } from "../snippets";
-import { SnippetMap } from "../../types/descriptors";
+import { SnippetMap, SupertestResponse, Request, Response } from "../../types";
 import { extractHttpRequest, extractHttpResponse } from "../extractor/http-trace-extractor";
-import { SupertestResponse, Request, Response } from "../../types/http-trace";
 
 export class AsciiDocRenderer implements DocRenderer {
     renderDocumentSnippets(

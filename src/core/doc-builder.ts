@@ -1,16 +1,16 @@
 import { Response } from "supertest";
-import { DocOptions } from "../types/doc-options";
 import { getNRestDocsConfig } from "./config";
 import { FieldBuilder } from "./definedField";
 // import { StrictChecker } from "./strict-checker";
 import { get, isFunction, map } from "es-toolkit/compat";
 import { LocalDocWriter } from "./writer/local-doc-writer";
 import {
+    DocOptions,
     FieldDescriptor,
     HeaderDescriptor,
     ParameterDescriptor,
     PartDescriptor,
-} from "../types/descriptors";
+} from "../types";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
 
 // interface RequestData {

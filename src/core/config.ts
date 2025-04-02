@@ -1,4 +1,4 @@
-import { NRestDocsConfig } from "../types/doc-options";
+import { NRestDocsConfig } from "../types";
 
 let globalNRestDocsConfig: NRestDocsConfig = {
     output: "./docs",

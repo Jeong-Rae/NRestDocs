@@ -1,10 +1,12 @@
-import { FieldDescriptor } from "../types/descriptors";
+import { FieldDescriptor } from "../types";
 import { isString, isBoolean, isNil } from "es-toolkit";
 import { isNumber, isObjectLike, isArray } from "es-toolkit/compat";
-import { InvalidTypeError } from "../errors/InvalidTypeError";
-import { UnexpectedFieldError } from "../errors/UnexpectedFieldError";
-import { MissingFieldError } from "../errors/MissingFieldError";
-import { ValidationError } from "../errors/ValidationError";
+import {
+    InvalidTypeError,
+    UnexpectedFieldError,
+    MissingFieldError,
+    ValidationError,
+} from "../errors";
 
 /**
  * StrictChecker는 request 또는 response의 실제 데이터와

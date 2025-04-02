@@ -1,4 +1,4 @@
-import { HttpHeaders, HttpMethod } from "../../types/http";
+import { HttpHeaders, HttpMethod } from "../../types";
 import { filterRequestHeaders } from "../utils/header-filter";
 
 /**

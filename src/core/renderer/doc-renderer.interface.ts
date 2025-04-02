@@ -1,12 +1,12 @@
-import { HttpMethod } from "../../types/http";
 import {
+    HttpMethod,
     FieldDescriptor,
     HeaderDescriptor,
     ParameterDescriptor,
     PartDescriptor,
     SnippetMap,
-} from "../../types/descriptors";
-import { SupertestResponse } from "../../types/http-trace";
+    SupertestResponse,
+} from "../../types";
 
 export type RenderDocumentSnippetsOptions = {
     requestHeaders?: HeaderDescriptor[];

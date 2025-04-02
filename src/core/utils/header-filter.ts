@@ -1,4 +1,4 @@
-import { HttpHeaders } from "../../types/http";
+import { HttpHeaders } from "../../types";
 import {
     DEFAULT_REQUEST_HEADER_WHITELIST,
     DEFAULT_RESPONSE_HEADER_WHITELIST,

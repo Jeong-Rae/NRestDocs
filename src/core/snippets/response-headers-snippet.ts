@@ -1,4 +1,4 @@
-import { HeaderDescriptor } from "../../types/descriptors";
+import { HeaderDescriptor } from "../../types";
 
 /**
  * response-headers
