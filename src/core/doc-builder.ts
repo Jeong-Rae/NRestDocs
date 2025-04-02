@@ -1,4 +1,3 @@
-import { get, isFunction, map } from "es-toolkit/compat";
 import { Response } from "supertest";
 
 import {
@@ -8,19 +7,12 @@ import {
     ParameterDescriptor,
     PartDescriptor,
 } from "../types";
-import { BaseDescriptor } from "../types/descriptors.type";
 
 import { DescriptorBuilder } from "./builders/descriptor-builder";
 import { getNRestDocsConfig } from "./config";
-// import { StrictChecker } from "./strict-checker";
 import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
+import { PartialWithName, normalizeDescriptors } from "./utils/normalize-descriptors";
 import { LocalDocWriter } from "./writer/local-doc-writer";
-
-// interface RequestData {
-//     _data?: unknown;
-// }
-
-export type PartialWithName<T extends { name: string }> = Partial<T> & { name: T["name"] };
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -51,7 +43,7 @@ export class DocRequestBuilder {
     withRequestHeaders(
         headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
     ): this {
-        this.requestHeaders = this.normalizeDescriptors(headers);
+        this.requestHeaders = normalizeDescriptors(headers);
         return this;
     }
 
@@ -61,7 +53,7 @@ export class DocRequestBuilder {
     withPathParameters(
         params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
     ): this {
-        this.pathParameters = this.normalizeDescriptors(params);
+        this.pathParameters = normalizeDescriptors(params);
         return this;
     }
 
@@ -71,7 +63,7 @@ export class DocRequestBuilder {
     withRequestParameters(
         params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
     ): this {
-        this.requestParameters = this.normalizeDescriptors(params);
+        this.requestParameters = normalizeDescriptors(params);
         return this;
     }
 
@@ -79,7 +71,7 @@ export class DocRequestBuilder {
      * multipart request-parts 정의
      */
     withRequestParts(parts: (DescriptorBuilder<PartDescriptor> | PartDescriptor)[]): this {
-        this.requestParts = this.normalizeDescriptors(parts);
+        this.requestParts = normalizeDescriptors(parts);
         return this;
     }
 
@@ -87,7 +79,7 @@ export class DocRequestBuilder {
      * request-fields 정의
      */
     withRequestFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
-        this.requestFields = this.normalizeDescriptors(fields);
+        this.requestFields = normalizeDescriptors(fields);
         return this;
     }
 
@@ -95,7 +87,7 @@ export class DocRequestBuilder {
      * response-headers 정의
      */
     withResponseHeaders(headers: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[]): this {
-        this.responseHeaders = this.normalizeDescriptors(headers);
+        this.responseHeaders = normalizeDescriptors(headers);
         return this;
     }
 
@@ -103,24 +95,8 @@ export class DocRequestBuilder {
      * response-fields 정의
      */
     withResponseFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
-        this.responseFields = this.normalizeDescriptors(fields);
+        this.responseFields = normalizeDescriptors(fields);
         return this;
-    }
-
-    private normalizeDescriptors<T extends BaseDescriptor>(
-        descriptors: (DescriptorBuilder<T> | PartialWithName<T>)[]
-    ): T[] {
-        return map(descriptors, (descriptor) => {
-            if (isFunction(get(descriptor, "toDescriptor"))) {
-                return (descriptor as DescriptorBuilder<T>).toDescriptor();
-            }
-
-            const raw = descriptor as PartialWithName<T>;
-            return {
-                ...raw,
-                type: raw.type ?? "string",
-            } as T;
-        });
     }
 
     /**
@@ -129,20 +105,6 @@ export class DocRequestBuilder {
     async doc(identifier: string): Promise<Response> {
         const response = await this.supertestPromise;
         const config = getNRestDocsConfig();
-
-        // if (config.strict) {
-        //     const checker = new StrictChecker();
-        //     if (!isEmpty(this.requestFields)) {
-        //         await checker.check(
-        //             "request",
-        //             (response.request as RequestData)?._data ?? {},
-        //             this.requestFields
-        //         );
-        //     }
-        //     if (!isEmpty(this.responseFields)) {
-        //         await checker.check("response", response.body ?? {}, this.responseFields);
-        //     }
-        // }
 
         const renderer = new AsciiDocRenderer();
         const snippetMap = renderer.renderDocumentSnippets(response, {
