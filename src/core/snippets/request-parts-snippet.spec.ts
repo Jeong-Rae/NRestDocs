@@ -6,20 +6,42 @@ import { generateRequestPartsSnippet } from "./request-parts-snippet";
 
 describe("request-parts-snippet", () => {
     describe("generateRequestPartsSnippet", () => {
-        it("파트가 있는 요청 파트 스니펫을 생성한다", () => {
+        it("필수 파트만 있는 경우 스니펫을 생성한다", () => {
             // Given
             const parts: PartDescriptor[] = [
+                { name: "file", type: "string", optional: false, description: "업로드 파일" },
+            ];
+
+            // When
+            const result = generateRequestPartsSnippet(parts);
+
+            // Then
+            // 실제 생성 형식: | +Name+ | +Optional+ | Description
+            expect(result).toContain("| +file+ | +false+ | 업로드 파일");
+        });
+
+        it("선택적 파트만 있는 경우 스니펫을 생성한다", () => {
+            // Given
+            const parts: PartDescriptor[] = [
+                { name: "metadata", type: "string", optional: true, description: "메타데이터" },
+            ];
+
+            // When
+            const result = generateRequestPartsSnippet(parts);
+
+            // Then
+            expect(result).toContain("| +metadata+ | +true+ | 메타데이터");
+        });
+
+        it("필수 파트와 선택적 파트가 모두 있는 경우 스니펫을 생성한다", () => {
+            // Given
+            const parts: PartDescriptor[] = [
+                { name: "file", type: "string", optional: false, description: "업로드 파일" },
                 {
-                    name: "file",
-                    type: "file",
-                    optional: false,
-                    description: "업로드할 파일",
-                },
-                {
-                    name: "metadata",
+                    name: "thumbnail",
                     type: "string",
                     optional: true,
-                    description: "파일 메타데이터",
+                    description: "썸네일 (선택)",
                 },
             ];
 
@@ -27,8 +49,8 @@ describe("request-parts-snippet", () => {
             const result = generateRequestPartsSnippet(parts);
 
             // Then
-            expect(result).toContain("| +file+ | +false+ | 업로드할 파일");
-            expect(result).toContain("| +metadata+ | +true+ | 파일 메타데이터");
+            expect(result).toContain("| +file+ | +false+ | 업로드 파일");
+            expect(result).toContain("| +thumbnail+ | +true+ | 썸네일 (선택)");
         });
     });
 });

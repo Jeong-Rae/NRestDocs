@@ -6,26 +6,41 @@ import { generateResponseFieldsSnippet } from "./response-fields-snippet";
 
 describe("response-fields-snippet", () => {
     describe("generateResponseFieldsSnippet", () => {
-        it("필드가 있는 응답 필드 스니펫을 생성한다", () => {
+        it("필수 필드만 있는 경우 스니펫을 생성한다", () => {
             // Given
             const fields: FieldDescriptor[] = [
+                { name: "id", type: "number", optional: false, description: "생성된 ID" },
+            ];
+
+            // When
+            const result = generateResponseFieldsSnippet(fields);
+
+            // Then
+            expect(result).toContain("| +id+ | +number+ | +false+ | 생성된 ID");
+        });
+
+        it("선택적 필드만 있는 경우 스니펫을 생성한다", () => {
+            // Given
+            const fields: FieldDescriptor[] = [
+                { name: "name", type: "string", optional: true, description: "이름" },
+            ];
+
+            // When
+            const result = generateResponseFieldsSnippet(fields);
+
+            // Then
+            expect(result).toContain("| +name+ | +string+ | +true+ | 이름");
+        });
+
+        it("필수 필드와 선택적 필드가 모두 있는 경우 스니펫을 생성한다", () => {
+            // Given
+            const fields: FieldDescriptor[] = [
+                { name: "id", type: "number", optional: false, description: "생성된 ID" },
                 {
-                    name: "id",
-                    type: "string",
-                    optional: false,
-                    description: "사용자 ID",
-                },
-                {
-                    name: "name",
-                    type: "string",
-                    optional: false,
-                    description: "사용자 이름",
-                },
-                {
-                    name: "email",
+                    name: "createdAt",
                     type: "string",
                     optional: true,
-                    description: "사용자 이메일",
+                    description: "생성 시각 (선택)",
                 },
             ];
 
@@ -33,9 +48,8 @@ describe("response-fields-snippet", () => {
             const result = generateResponseFieldsSnippet(fields);
 
             // Then
-            expect(result).toContain("| +id+ | +string+ | +false+ | 사용자 ID");
-            expect(result).toContain("| +name+ | +string+ | +false+ | 사용자 이름");
-            expect(result).toContain("| +email+ | +string+ | +true+ | 사용자 이메일");
+            expect(result).toContain("| +id+ | +number+ | +false+ | 생성된 ID");
+            expect(result).toContain("| +createdAt+ | +string+ | +true+ | 생성 시각 (선택)");
         });
     });
 });

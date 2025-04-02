@@ -163,5 +163,105 @@ describe("ascii-doc-renderer", () => {
                 "http-response": "http-response-snippet",
             });
         });
+
+        it("모든 선택적 스니펫 옵션이 제공되면 해당 스니펫을 모두 생성한다", () => {
+            // Given
+            const mockResponse = {} as SupertestResponse;
+            const mockRequest = {
+                method: "POST",
+                url: new URL("http://example.com/api/items"),
+                headers: { "X-Custom-Header": "value" },
+                body: { data: "payload" },
+            };
+            const mockExtractedResponse = {
+                statusCode: 201,
+                headers: { Location: "/api/items/1" },
+                body: { id: 1 },
+            };
+            const mockOptions = {
+                requestHeaders: [
+                    {
+                        name: "X-Custom-Header",
+                        type: "string",
+                        description: "Custom header",
+                        optional: false,
+                    },
+                ],
+                pathParameters: [
+                    { name: "itemId", type: "number", description: "Item ID", optional: false },
+                ],
+                requestParameters: [
+                    { name: "query", type: "string", description: "Search query", optional: true },
+                ],
+                requestParts: [
+                    { name: "file", type: "string", description: "Uploaded file", optional: false },
+                ],
+                requestFields: [
+                    { name: "data", type: "string", description: "Payload data", optional: false },
+                ],
+                responseHeaders: [
+                    {
+                        name: "Location",
+                        type: "string",
+                        description: "Resource location",
+                        optional: false,
+                    },
+                ],
+                responseFields: [
+                    { name: "id", type: "number", description: "Created item ID", optional: false },
+                ],
+            };
+
+            // 모의 함수 반환값 설정
+            (extractHttpRequest as any).mockReturnValue(mockRequest);
+            (extractHttpResponse as any).mockReturnValue(mockExtractedResponse);
+            (generateCurlSnippet as any).mockReturnValue("curl-request");
+            (generateHttpRequestSnippet as any).mockReturnValue("http-request");
+            (generateHttpResponseSnippet as any).mockReturnValue("http-response");
+            (generateRequestHeadersSnippet as any).mockReturnValue("request-headers");
+            (generatePathParametersSnippet as any).mockReturnValue("path-parameters");
+            (generateRequestParametersSnippet as any).mockReturnValue("request-parameters");
+            (generateRequestPartsSnippet as any).mockReturnValue("request-parts");
+            (generateRequestFieldsSnippet as any).mockReturnValue("request-fields");
+            (generateResponseHeadersSnippet as any).mockReturnValue("response-headers");
+            (generateResponseFieldsSnippet as any).mockReturnValue("response-fields");
+
+            // When
+            const renderer = new AsciiDocRenderer();
+            const result = renderer.renderDocumentSnippets(mockResponse, mockOptions);
+
+            // Then
+            // 필수 스니펫 생성 확인
+            expect(generateCurlSnippet).toHaveBeenCalled();
+            expect(generateHttpRequestSnippet).toHaveBeenCalled();
+            expect(generateHttpResponseSnippet).toHaveBeenCalled();
+
+            // 모든 선택적 스니펫 생성 함수가 호출되었는지 확인
+            expect(generateRequestHeadersSnippet).toHaveBeenCalledWith(mockOptions.requestHeaders);
+            expect(generatePathParametersSnippet).toHaveBeenCalledWith(mockOptions.pathParameters);
+            expect(generateRequestParametersSnippet).toHaveBeenCalledWith(
+                mockOptions.requestParameters
+            );
+            expect(generateRequestPartsSnippet).toHaveBeenCalledWith(mockOptions.requestParts);
+            expect(generateRequestFieldsSnippet).toHaveBeenCalledWith(mockOptions.requestFields);
+            expect(generateResponseHeadersSnippet).toHaveBeenCalledWith(
+                mockOptions.responseHeaders
+            );
+            expect(generateResponseFieldsSnippet).toHaveBeenCalledWith(mockOptions.responseFields);
+
+            // 결과 SnippetMap에 모든 스니펫이 포함되었는지 확인
+            expect(result).toEqual({
+                "curl-request": "curl-request",
+                "http-request": "http-request",
+                "http-response": "http-response",
+                "request-headers": "request-headers",
+                "path-parameters": "path-parameters",
+                "request-parameters": "request-parameters",
+                "request-parts": "request-parts",
+                "request-fields": "request-fields",
+                "response-headers": "response-headers",
+                "response-fields": "response-fields",
+            });
+        });
     });
 });
