@@ -54,6 +54,11 @@ export default [
                 },
             ],
             "no-unused-vars": "off",
+            "@typescript-eslint/no-floating-promises": "error",
+            "@typescript-eslint/no-misused-promises": "error",
+            "@typescript-eslint/consistent-type-imports": "error",
+            "@typescript-eslint/no-shadow": "error",
+            "no-param-reassign": "error",
             "sort-imports": [
                 "error",
                 {
@@ -84,6 +89,8 @@ export default [
                     },
                 },
             ],
+            "import/no-cycle": "error",
+            "import/no-useless-path-segments": "error",
         },
     },
 ];
