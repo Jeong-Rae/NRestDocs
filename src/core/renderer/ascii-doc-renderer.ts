@@ -24,11 +24,9 @@ export class AsciiDocRenderer implements DocRenderer {
     ): SnippetMap {
         const snippetMap: SnippetMap = {} as SnippetMap;
 
-        // 정보 추출
         const extractRequest = extractHttpRequest(response);
         const extractResponse = extractHttpResponse(response);
 
-        // 스니펫 렌더링
         this.renderRequiredSnippets(snippetMap, extractRequest, extractResponse);
         this.renderOptionalSnippets(snippetMap, options);
 
