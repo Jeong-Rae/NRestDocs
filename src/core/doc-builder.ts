@@ -1,18 +1,18 @@
-import { Response } from "supertest";
+import { getNRestDocsConfig } from "./config";
+import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
+import { normalizeDescriptors } from "./utils/normalize-descriptors";
+import { LocalDocWriter } from "./writer/local-doc-writer";
 
-import {
+import type {
     DocOptions,
     FieldDescriptor,
     HeaderDescriptor,
     ParameterDescriptor,
     PartDescriptor,
 } from "../types";
-
-import { DescriptorBuilder } from "./builders/descriptor-builder";
-import { getNRestDocsConfig } from "./config";
-import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
-import { PartialWithName, normalizeDescriptors } from "./utils/normalize-descriptors";
-import { LocalDocWriter } from "./writer/local-doc-writer";
+import type { DescriptorBuilder } from "./builders/descriptor-builder";
+import type { PartialWithName } from "./utils/normalize-descriptors";
+import type { Response } from "supertest";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -123,7 +123,7 @@ export class DocRequestBuilder {
             directoryStructure: "nested",
         });
 
-        writer.writeDocumentSnippets(identifier, snippetMap);
+        await writer.writeDocumentSnippets(identifier, snippetMap);
 
         return response;
     }

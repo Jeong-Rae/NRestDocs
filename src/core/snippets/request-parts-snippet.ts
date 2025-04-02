@@ -1,7 +1,8 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import { PartDescriptor } from "../../types";
 import { format } from "../utils/format";
+
+import type { PartDescriptor } from "../../types";
 
 /**
  * request-parts

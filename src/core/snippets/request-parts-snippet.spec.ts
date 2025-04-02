@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { PartDescriptor } from "../../types";
-
 import { generateRequestPartsSnippet } from "./request-parts-snippet";
+
+import type { PartDescriptor } from "../../types";
 
 describe("request-parts-snippet", () => {
     describe("generateRequestPartsSnippet", () => {

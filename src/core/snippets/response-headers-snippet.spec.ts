@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { HeaderDescriptor } from "../../types";
-
 import { generateResponseHeadersSnippet } from "./response-headers-snippet";
+
+import type { HeaderDescriptor } from "../../types";
 
 describe("response-headers-snippet", () => {
     describe("generateResponseHeadersSnippet", () => {

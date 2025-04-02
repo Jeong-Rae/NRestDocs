@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { SupertestResponse } from "../../types";
 import { extractHttpRequest, extractHttpResponse } from "../extractor/http-trace-extractor";
 import {
     generateCurlSnippet,
@@ -16,6 +15,8 @@ import {
 } from "../snippets";
 
 import { AsciiDocRenderer } from "./ascii-doc-renderer";
+
+import type { SupertestResponse } from "../../types";
 
 // 모의 함수 설정
 vi.mock("../extractor/http-trace-extractor", () => ({

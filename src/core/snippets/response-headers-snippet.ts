@@ -1,7 +1,8 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import { HeaderDescriptor } from "../../types";
 import { format } from "../utils/format";
+
+import type { HeaderDescriptor } from "../../types";
 
 /**
  * response-headers

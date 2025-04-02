@@ -3,9 +3,9 @@ import path from "node:path";
 
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DocWriterConfig } from "../../types/doc-writer-config.type";
-
 import { LocalDocWriter } from "./local-doc-writer";
+
+import type { DocWriterConfig } from "../../types/doc-writer-config.type";
 
 // fs 모듈 모킹
 vi.mock("node:fs/promises");

@@ -1,6 +1,7 @@
-import { HeaderDescriptor } from "../../types";
+import { createDescriptorBuilder } from "./descriptor-builder";
 
-import { DescriptorBuilder, createDescriptorBuilder } from "./descriptor-builder";
+import type { DescriptorBuilder } from "./descriptor-builder";
+import type { HeaderDescriptor } from "../../types";
 
 export function defineHeader(name: string): DescriptorBuilder<HeaderDescriptor> {
     const descriptor: HeaderDescriptor = {

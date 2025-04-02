@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { NRestDocsConfig } from "../types";
-
 import { getNRestDocsConfig, setNRestDocsConfig } from "./config";
+
+import type { NRestDocsConfig } from "../types";
 
 describe("config", () => {
     beforeEach(() => {

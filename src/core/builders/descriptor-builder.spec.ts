@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { BaseDescriptor } from "../../types/descriptors.type";
-
 import { createDescriptorBuilder } from "./descriptor-builder";
+
+import type { BaseDescriptor } from "../../types/descriptors.type";
 
 describe("descriptor-builder", () => {
     describe("createDescriptorBuilder", () => {

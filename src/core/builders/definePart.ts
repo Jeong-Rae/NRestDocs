@@ -1,7 +1,8 @@
 // core/builders/definePart.ts
-import { PartDescriptor } from "../../types";
+import { createDescriptorBuilder } from "./descriptor-builder";
 
-import { DescriptorBuilderInit, createDescriptorBuilder } from "./descriptor-builder";
+import type { DescriptorBuilderInit } from "./descriptor-builder";
+import type { PartDescriptor } from "../../types";
 
 export function definePart(name: string): DescriptorBuilderInit<PartDescriptor> {
     const descriptor: PartDescriptor = {

@@ -1,7 +1,8 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import { ParameterDescriptor } from "../../types";
 import { format } from "../utils/format";
+
+import type { ParameterDescriptor } from "../../types";
 
 /**
  * path-parameters

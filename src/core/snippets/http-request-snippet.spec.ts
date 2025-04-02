@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { HttpHeaders, HttpMethod } from "../../types";
-
 import { generateHttpRequestSnippet } from "./http-request-snippet";
+
+import type { HttpHeaders, HttpMethod } from "../../types";
 
 describe("http-request-snippet", () => {
     describe("generateHttpRequestSnippet", () => {
@@ -12,7 +12,7 @@ describe("http-request-snippet", () => {
             const url = new URL("https://api.example.com/users");
             const headers: HttpHeaders = {
                 "Content-Type": "application/json",
-                Authorization: "Bearer token123",
+                "Authorization": "Bearer token123",
             };
             const body = {};
 

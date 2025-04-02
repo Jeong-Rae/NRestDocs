@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { ParameterDescriptor } from "../../types";
-
 import { generatePathParametersSnippet } from "./path-parameters-snippet";
+
+import type { ParameterDescriptor } from "../../types";
 
 describe("path-parameters-snippet", () => {
     describe("generatePathParametersSnippet", () => {
