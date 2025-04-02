@@ -135,6 +135,230 @@ docs/create-user/
 
 ---
 
+## 📚 메서드 사용법
+
+각 메서드는 체이닝으로 이어 호출할 수 있으며, 아래와 같은 구조로 구성되어 있습니다.
+
+### 기본 사용법
+
+```typescript
+await docRequest(request(app.getHttpServer()).get('/path').expect(200))
+    .withDescription('API 설명')
+    .withRequestHeaders([...])
+    .withRequestFields([...])
+    .withRequestParameters([...])
+    .withPathParameters([...])
+    .withRequestParts([...])
+    .withResponseHeaders([...])
+    .withResponseFields([...])
+    .doc('api-identifier');
+```
+
+---
+
+## 📖 상세 메서드 정의
+
+### 1️⃣ `withDescription`
+
+| 인자 | 필수 | 설명            |
+| ---- | ---- | --------------- |
+| desc | ✅   | API에 대한 설명 |
+
+**사용 예시**
+
+```typescript
+.withDescription('사용자 생성 API')
+```
+
+---
+
+### 2️⃣ `withRequestHeaders`
+
+| 필드명      | 필수                  | 타입    | 설명      |
+| ----------- | --------------------- | ------- | --------- |
+| name        | ✅                    | string  | 헤더 이름 |
+| type        | ❌ (기본: `"string"`) | string  | 헤더 타입 |
+| description | ❌                    | string  | 헤더 설명 |
+| optional    | ❌ (기본: `false`)    | boolean | 필수 여부 |
+
+**사용 예시**
+
+```typescript
+.withRequestHeaders([
+    defineHeader('Authorization').description('Bearer 인증 토큰'),
+    { name: 'X-Request-ID', description: '요청 추적 ID', optional: true },
+])
+```
+
+---
+
+### 3️⃣ `withResponseHeaders`
+
+`withRequestHeaders`와 동일한 구조로 사용합니다.
+
+**사용 예시**
+
+```typescript
+.withResponseHeaders([
+    defineHeader('Set-Cookie').description('세션 쿠키'),
+])
+```
+
+---
+
+### 4️⃣ `withRequestFields` / `withResponseFields`
+
+| 필드명      | 필수               | 타입    | 설명      |
+| ----------- | ------------------ | ------- | --------- |
+| name        | ✅                 | string  | 필드 이름 |
+| type        | ✅                 | string  | 필드 타입 |
+| description | ❌                 | string  | 필드 설명 |
+| optional    | ❌ (기본: `false`) | boolean | 필수 여부 |
+
+**사용 예시**
+
+```typescript
+.withRequestFields([
+    defineField('name').type('string').description('사용자 이름'),
+    defineField('age').type('number').description('사용자 나이').optional(),
+])
+```
+
+---
+
+### 5️⃣ `withRequestParameters`
+
+URL 쿼리 파라미터 문서화에 사용됩니다.
+
+| 필드명      | 필수                  | 타입    | 설명          |
+| ----------- | --------------------- | ------- | ------------- |
+| name        | ✅                    | string  | 파라미터 이름 |
+| type        | ❌ (기본: `"string"`) | string  | 파라미터 타입 |
+| description | ❌                    | string  | 파라미터 설명 |
+| optional    | ❌ (기본: `false`)    | boolean | 필수 여부     |
+
+**사용 예시**
+
+```typescript
+.withRequestParameters([
+    defineQueryParam('search').description('검색 키워드'),
+    { name: 'page', description: '페이지 번호', optional: true },
+])
+```
+
+---
+
+### 6️⃣ `withPathParameters`
+
+URL 경로의 동적 파라미터 문서화에 사용됩니다.
+
+`withRequestParameters`와 동일한 구조로 사용합니다.
+
+**사용 예시**
+
+```typescript
+.withPathParameters([
+    definePathParam('userId').description('사용자 ID'),
+])
+```
+
+---
+
+### 7️⃣ `withRequestParts`
+
+멀티파트 요청 문서화에 사용됩니다. (파일 업로드 등)
+
+| 필드명      | 필수                | 타입    | 설명      |
+| ----------- | ------------------- | ------- | --------- |
+| name        | ✅                  | string  | 파트 이름 |
+| type        | ❌ (기본: `"file"`) | string  | 파트 타입 |
+| description | ❌                  | string  | 파트 설명 |
+| optional    | ❌ (기본: `false`)  | boolean | 필수 여부 |
+
+**사용 예시**
+
+```typescript
+.withRequestParts([
+    { name: 'avatar', description: '사용자 아바타 이미지' },
+    definePart('metadata').type('json').description('부가 정보').optional(),
+])
+```
+
+---
+
+### 8️⃣ `doc`
+
+마지막으로 호출하는 메서드로, 스니펫 파일을 작성합니다.
+
+| 인자       | 필수 | 설명                                           |
+| ---------- | ---- | ---------------------------------------------- |
+| identifier | ✅   | API를 구별할 고유 식별자 (예: `'create-user'`) |
+
+**사용 예시**
+
+```typescript
+.doc('create-user')
+```
+
+---
+
+## 📝 정의 헬퍼 (Define Helper)
+
+- 각 필드나 헤더, 파라미터의 정의를 선언적으로 작성할 수 있는 헬퍼 함수가 제공됩니다.
+
+| 함수                     | 기본 type  | 설명                     |
+| ------------------------ | ---------- | ------------------------ |
+| `defineHeader(name)`     | `"string"` | 헤더 정의                |
+| `defineField(name)`      | 필수 입력  | 요청/응답 필드 정의      |
+| `defineQueryParam(name)` | `"string"` | 쿼리 파라미터 정의       |
+| `definePathParam(name)`  | `"string"` | 경로 파라미터 정의       |
+| `definePart(name)`       | `"file"`   | Multipart 요청 파트 정의 |
+
+### 사용 예시
+
+```typescript
+defineHeader("Authorization").description("인증 헤더");
+
+defineField("age").type("number").description("사용자 나이");
+
+defineQueryParam("keyword").description("검색 키워드").optional();
+
+definePathParam("userId").description("사용자 ID");
+
+definePart("image").description("프로필 이미지").optional();
+```
+
+---
+
+## 📌 종합 예시 (모든 메서드 사용 예)
+
+```typescript
+await docRequest(
+    request(app.getHttpServer())
+        .post("/users/:userId/avatar?replace=true")
+        .set("Authorization", "Bearer token")
+        .field("description", "프로필 이미지")
+        .attach("avatar", "./test/avatar.png")
+        .expect(200)
+)
+    .withDescription("사용자 아바타 업데이트")
+    .withRequestHeaders([defineHeader("Authorization").description("Bearer 인증 토큰")])
+    .withPathParameters([definePathParam("userId").description("사용자 ID")])
+    .withRequestParameters([defineQueryParam("replace").description("이미지 교체 여부").optional()])
+    .withRequestParts([
+        definePart("avatar").description("아바타 이미지 파일"),
+        definePart("description").type("string").description("이미지 설명").optional(),
+    ])
+    .withResponseHeaders([defineHeader("Set-Cookie").description("세션 쿠키").optional()])
+    .withResponseFields([
+        defineField("success").type("boolean").description("성공 여부"),
+        defineField("url").type("string").description("업로드된 이미지 URL"),
+    ])
+    .doc("update-user-avatar");
+```
+
+---
+
 ## 📥 설치 방법
 
 ```shell
