@@ -5,12 +5,12 @@ import { defineHeader } from "./builders/defineHeader";
 import { definePart } from "./builders/definePart";
 import { definePathParam } from "./builders/definePathParam";
 import { defineQueryParam } from "./builders/defineQueryParam";
-import * as configModule from "./config"; // 모킹 대상
+import * as configModule from "./config";
 import { DocRequestBuilder, docRequest } from "./doc-builder";
-import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer"; // 모킹 대상
-import { LocalDocWriter } from "./writer/local-doc-writer"; // 모킹 대상
+import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
+import { LocalDocWriter } from "./writer/local-doc-writer";
 
-import type { NRestDocsConfig } from "../types"; // 필요한 타입 추가
+import type { NRestDocsConfig } from "../types";
 import type { Response } from "supertest";
 import type { Mock } from "vitest";
 
@@ -20,8 +20,8 @@ vi.mock("./renderer/ascii-doc-renderer");
 vi.mock("./writer/local-doc-writer");
 
 // supertest Response 모의 객체 생성
-const mockResponsePromise = Promise.resolve({ status: 200 } as Response); // 실제 값으로 resolve되도록 준비
-const mockResponse = { status: 200 } as Response; // await 결과로 사용할 객체
+const mockResponsePromise = Promise.resolve({ status: 200 } as Response);
+const mockResponse = { status: 200 } as Response;
 const mockConfig: NRestDocsConfig = {
     output: "test-docs",
     format: "adoc",
@@ -43,7 +43,6 @@ describe("doc-builder", () => {
     });
 
     describe("DocRequestBuilder", () => {
-        // Mock 인스턴스 및 스파이 접근을 위한 변수 선언
         let renderSpy: Mock;
         let writeSpy: Mock;
 
@@ -116,7 +115,6 @@ describe("doc-builder", () => {
                 const builder = new DocRequestBuilder(mockResponsePromise);
                 const identifier = "test-doc-call-all-with";
 
-                // 샘플 데이터 정의
                 const reqHeaders = [defineHeader("Content-Type").description("요청 타입")];
                 const pathParams = [
                     definePathParam("userId").type("number").description("사용자 ID"),
