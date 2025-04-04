@@ -24,6 +24,17 @@ export class AsciiDocRenderer implements DocRenderer {
     ): SnippetMap {
         const snippetMap: SnippetMap = {} as SnippetMap;
 
+        if (options.operation) {
+            const { method, path, servers } = options.operation;
+            if (method) {
+                response.request.method = method;
+            }
+            if (path && servers) {
+                const serverUrl = servers[0];
+                response.request.url = new URL(path, serverUrl).toString();
+            }
+        }
+
         const extractRequest = extractHttpRequest(response);
         const extractResponse = extractHttpResponse(response);
 

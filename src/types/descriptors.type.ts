@@ -1,3 +1,5 @@
+import type { HttpMethod } from "./http.type";
+
 /**
  * 기본 Descriptor 타입
  * 모든 Descriptor 타입의 기본이 되는 공통 필드를 정의
@@ -28,6 +30,13 @@ export type PartDescriptor = BaseDescriptor;
  * JSON 필드 Descriptor
  */
 export type FieldDescriptor = BaseDescriptor;
+
+export type OperationDescriptor = {
+    method: HttpMethod;
+    path: string;
+    description: string;
+    servers: string[];
+};
 
 /** JSON 필드 타입 */
 export type FieldType = string;

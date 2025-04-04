@@ -288,5 +288,59 @@ describe("ascii-doc-renderer", () => {
                 "response-fields": "response-fields",
             });
         });
+
+        it("options.operation이 제공되면 HTTP 메서드와 경로가 설정된다", () => {
+            // Given
+            const mockResponse = {
+                request: {
+                    method: "GET" as const,
+                    url: "http://example.com/original-path",
+                },
+            } as unknown as SupertestResponse;
+            const mockRequest = {
+                method: "POST" as const,
+                url: new URL("http://example.com/api/users"),
+                headers: {},
+                body: {},
+            };
+            const mockExtractedResponse = {
+                statusCode: 200,
+                headers: {},
+                body: {},
+            };
+            const mockOptions = {
+                operation: {
+                    method: "PUT" as const,
+                    path: "/api/users/updated",
+                    servers: ["http://api.example.com", "http://api2.example.com"],
+                },
+            };
+
+            // 모의 함수 반환값 설정
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (extractHttpRequest as any).mockReturnValue(mockRequest);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (extractHttpResponse as any).mockReturnValue(mockExtractedResponse);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (generateCurlSnippet as any).mockReturnValue("curl-request-snippet");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (generateHttpRequestSnippet as any).mockReturnValue("http-request-snippet");
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (generateHttpResponseSnippet as any).mockReturnValue("http-response-snippet");
+
+            // When
+            const renderer = new AsciiDocRenderer();
+            renderer.renderDocumentSnippets(mockResponse, mockOptions);
+
+            // Then
+            // options.operation 값이 request에 제대로 적용되었는지 확인
+            expect(mockResponse.request.method).toBe(mockOptions.operation.method);
+            expect(mockResponse.request.url).toBe(
+                new URL(mockOptions.operation.path, mockOptions.operation.servers[0]).toString()
+            );
+
+            // extractHttpRequest가 업데이트된 request로 호출되었는지 확인
+            expect(extractHttpRequest).toHaveBeenCalledWith(mockResponse);
+        });
     });
 });

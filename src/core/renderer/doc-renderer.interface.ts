@@ -2,6 +2,7 @@ import type {
     FieldDescriptor,
     HeaderDescriptor,
     HttpMethod,
+    OperationDescriptor,
     ParameterDescriptor,
     PartDescriptor,
     SnippetMap,
@@ -16,6 +17,7 @@ export type RenderDocumentSnippetsOptions = {
     requestFields?: FieldDescriptor[];
     responseHeaders?: HeaderDescriptor[];
     responseFields?: FieldDescriptor[];
+    operation?: Partial<OperationDescriptor>;
 };
 
 export type RenderParams = {

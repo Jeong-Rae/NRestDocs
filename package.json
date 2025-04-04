@@ -7,7 +7,7 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "build": "pnpm lint:fix && tsc",
-        "test": "pnpm test:cov",
+        "test": "vitest run --coverage --exclude sample",
         "test:watch": "vitest watch",
         "test:cov": "vitest run --coverage",
         "test:ui": "vitest ui",

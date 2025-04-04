@@ -1,4 +1,4 @@
-import type { HttpMethod } from "./http.type";
+import type { HttpMethod, HttpStatusCode } from "./http.type";
 import type { Response as SupertestResponseType } from "supertest";
 
 export type SupertestResponse = SupertestResponseType;
@@ -21,5 +21,5 @@ export type Request = {
 export type Response = {
     body: unknown;
     headers: Record<string, string>;
-    statusCode: number;
+    statusCode: HttpStatusCode;
 };
