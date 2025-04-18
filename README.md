@@ -2,7 +2,7 @@
 
 > A documentation tool that automatically generates API documentation from NestJS + Supertest-based E2E tests
 
-Document: [English](../en/README.md), [한국어](../ko/README.md)
+Document: [English](./docs/en/README.md), [한국어](./docs/ko/README.md)
 
 ---
 
