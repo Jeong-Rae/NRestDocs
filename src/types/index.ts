@@ -11,6 +11,7 @@ export {
     OperationDescriptor,
     ParameterDescriptor,
     PartDescriptor,
+    ResponseDescriptor,
     SnippetMap,
 } from "./descriptors.type";
 

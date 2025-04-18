@@ -38,6 +38,12 @@ export type OperationDescriptor = {
     servers: string[];
 };
 
+export type ResponseDescriptor = {
+    headers: HeaderDescriptor[];
+    fields: FieldDescriptor[];
+    description: string;
+};
+
 /** JSON 필드 타입 */
 export type FieldType = string;
 
@@ -52,7 +58,9 @@ export type SnippetKey =
     | "request-parts"
     | "request-fields"
     | "response-headers"
-    | "response-fields";
+    | `response-headers-${number}`
+    | "response-fields"
+    | `response-fields-${number}`;
 
 /** 스니펫 맵 타입 */
 export type SnippetMap = Record<SnippetKey, string>;

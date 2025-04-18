@@ -29,7 +29,7 @@ export class AsciiDocRenderer implements DocRenderer {
             if (method) {
                 response.request.method = method;
             }
-            if (path && servers) {
+            if (path && servers && servers.length > 0) {
                 const serverUrl = servers[0];
                 response.request.url = new URL(path, serverUrl).toString();
             }
@@ -92,6 +92,21 @@ export class AsciiDocRenderer implements DocRenderer {
         }
 
         // response
+        if (!isEmpty(options.responses)) {
+            for (const [statusCode, response] of Object.entries(options.responses)) {
+                const numericStatusCode = parseInt(statusCode, 10);
+                if (isNaN(numericStatusCode)) continue;
+
+                if (!isEmpty(response.headers)) {
+                    snippetMap[`response-headers-${numericStatusCode}`] =
+                        generateResponseHeadersSnippet(response.headers);
+                }
+                if (!isEmpty(response.fields)) {
+                    snippetMap[`response-fields-${numericStatusCode}`] =
+                        generateResponseFieldsSnippet(response.fields);
+                }
+            }
+        }
         if (!isEmpty(options.responseHeaders)) {
             snippetMap["response-headers"] = generateResponseHeadersSnippet(
                 options.responseHeaders

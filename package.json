@@ -1,5 +1,5 @@
 {
-    "name": "nrest-docs",
+    "name": "nrestdocs",
     "version": "0.1.0",
     "description": "NRest API 문서 생성기",
     "type": "module",

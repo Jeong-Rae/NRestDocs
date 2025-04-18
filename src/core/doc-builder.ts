@@ -10,16 +10,11 @@ import type {
     HttpStatusCode,
     ParameterDescriptor,
     PartDescriptor,
+    ResponseDescriptor,
 } from "../types";
 import type { DescriptorBuilder } from "./builders/descriptor-builder";
 import type { PartialWithName } from "./utils/normalize-descriptors";
 import type { Response } from "supertest";
-
-type ResponseDescriptor = {
-    headers: HeaderDescriptor[];
-    fields: FieldDescriptor[];
-    description: string;
-};
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -163,6 +158,7 @@ export class DocRequestBuilder {
             requestFields: this.requestFields,
             responseHeaders: this.responseHeaders,
             responseFields: this.responseFields,
+            responses: this.responses,
             operation: {
                 method: this.httpMethod,
                 path: this.httpPath,
