@@ -1,6 +1,5 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import { extractHttpRequest, extractHttpResponse } from "../extractor/http-trace-extractor";
 import {
     generateCurlSnippet,
     generateHttpRequestSnippet,
@@ -13,6 +12,7 @@ import {
     generateResponseFieldsSnippet,
     generateResponseHeadersSnippet,
 } from "../snippets";
+import { extractHttpRequest, extractHttpResponse } from "../utils/http-trace-extractor";
 
 import type { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
 import type { Request, Response, SnippetMap, SupertestResponse } from "../../types";

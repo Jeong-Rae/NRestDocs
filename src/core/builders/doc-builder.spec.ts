@@ -1,16 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { defineField } from "./builders/defineField";
-import { defineHeader } from "./builders/defineHeader";
-import { definePart } from "./builders/definePart";
-import { definePathParam } from "./builders/definePathParam";
-import { defineQueryParam } from "./builders/defineQueryParam";
-import * as configModule from "./config";
-import { DocRequestBuilder, docRequest } from "./doc-builder";
-import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
-import { LocalDocWriter } from "./writer/local-doc-writer";
+import * as configModule from "../config/config";
+import { AsciiDocRenderer } from "../renderers/ascii-doc-renderer";
+import { LocalDocWriter } from "../writers/local-doc-writer";
 
-import type { NRestDocsConfig } from "../types";
+import { defineField } from "./defineField";
+import { defineHeader } from "./defineHeader";
+import { definePart } from "./definePart";
+import { definePathParam } from "./definePathParam";
+import { defineQueryParam } from "./defineQueryParam";
+import { DocRequestBuilder, docRequest } from "./doc-builder";
+
+import type { NRestDocsConfig } from "../../types";
 import type { Response } from "supertest";
 import type { Mock } from "vitest";
 

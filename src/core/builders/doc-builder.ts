@@ -1,8 +1,9 @@
-import { getNRestDocsConfig } from "./config";
-import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
-import { normalizeDescriptors } from "./utils/normalize-descriptors";
-import { LocalDocWriter } from "./writer/local-doc-writer";
+import { getNRestDocsConfig } from "../config/config";
+import { AsciiDocRenderer } from "../renderers/ascii-doc-renderer";
+import { normalizeDescriptors } from "../utils/normalize-descriptors";
+import { LocalDocWriter } from "../writers/local-doc-writer";
 
+import type { DescriptorBuilder } from "./descriptor-builder";
 import type {
     FieldDescriptor,
     HeaderDescriptor,
@@ -11,9 +12,8 @@ import type {
     ParameterDescriptor,
     PartDescriptor,
     ResponseDescriptor,
-} from "../types";
-import type { DescriptorBuilder } from "./builders/descriptor-builder";
-import type { PartialWithName } from "./utils/normalize-descriptors";
+} from "../../types";
+import type { PartialWithName } from "../utils/normalize-descriptors";
 import type { Response } from "supertest";
 
 export class DocRequestBuilder {

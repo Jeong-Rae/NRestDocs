@@ -1,6 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { extractHttpRequest, extractHttpResponse } from "../extractor/http-trace-extractor";
 import {
     generateCurlSnippet,
     generateHttpRequestSnippet,
@@ -13,6 +12,7 @@ import {
     generateResponseFieldsSnippet,
     generateResponseHeadersSnippet,
 } from "../snippets";
+import { extractHttpRequest, extractHttpResponse } from "../utils/http-trace-extractor";
 
 import { AsciiDocRenderer } from "./ascii-doc-renderer";
 
