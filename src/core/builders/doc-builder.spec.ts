@@ -11,9 +11,9 @@ import { definePathParam } from "./definePathParam";
 import { defineQueryParam } from "./defineQueryParam";
 import { DocRequestBuilder, docRequest } from "./doc-builder";
 
-import type { NRestDocsConfig } from "../../types";
 import type { Response } from "supertest";
 import type { Mock } from "vitest";
+import type { NRestDocsConfig } from "../../types";
 
 // 모듈 모킹
 vi.mock("./config");

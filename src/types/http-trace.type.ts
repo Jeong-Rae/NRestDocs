@@ -1,5 +1,5 @@
-import type { HttpMethod, HttpStatusCode } from "./http.type";
 import type { Response as SupertestResponseType } from "supertest";
+import type { HttpMethod, HttpStatusCode } from "./http.type";
 
 export type SupertestResponse = SupertestResponseType;
 

@@ -6,8 +6,8 @@ import { defineHeader } from "../builders/defineHeader";
 
 import { normalizeDescriptors } from "./normalize-descriptors";
 
-import type { PartialWithName } from "./normalize-descriptors";
 import type { HeaderDescriptor } from "../../types";
+import type { PartialWithName } from "./normalize-descriptors";
 
 // 테스트용 DescriptorBuilder 모의 클래스 제거
 

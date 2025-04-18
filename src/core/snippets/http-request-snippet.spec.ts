@@ -12,7 +12,7 @@ describe("http-request-snippet", () => {
             const url = new URL("https://api.example.com/users");
             const headers: HttpHeaders = {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer token123",
+                Authorization: "Bearer token123",
             };
             const body = {};
 
