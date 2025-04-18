@@ -1,49 +1,44 @@
 # 📘 NRestDocs
 
-> NestJS + Supertest 기반의 E2E 테스트로부터 API 문서를 자동 생성하는 문서화 도구
+> A documentation tool that automatically generates API documentation from NestJS + Supertest-based E2E tests
 
 Document: [English](./docs/en/README.md), [한국어](./docs/ko/README.md)
 
 ---
 
-## 개요
+## Overview
 
-NestJS 애플리케이션의 API 문서화는 일반적으로 **Swagger(OpenAPI)**를 통해 관리됩니다. Swagger는
-편리한 UI와 직관적인 문법을 제공하지만, 다음과 같은 문제점이 있습니다.
+API documentation for NestJS applications is typically managed via **Swagger (OpenAPI)**. While Swagger provides a convenient UI and intuitive syntax, it has the following drawbacks:
 
-- **코드 침투 문제**: Swagger를 사용하기 위해 프로덕션 코드에 Swagger 어노테이션을 추가해야 합니다.
-  이는 비즈니스 로직과 API 문서화 코드가 뒤섞이는 문제를 발생시킵니다.
-- **문서 최신화 문제**: API가 변경되었을 때 Swagger 문서 주석을 업데이트하지 않으면 실제 API와
-  문서가 일치하지 않게 됩니다. 이는 팀의 혼란과 운영 비용 증가로 이어질 수 있습니다.
+- **Code intrusion**: To use Swagger you must add annotations to your production code, mixing documentation code with business logic.
+- **Outdated documentation**: If the API evolves and you forget to update your Swagger comments, the docs no longer match the implementation—leading to confusion and increased maintenance costs.
 
-**NRestDocs**는 이 문제를 **테스트 기반 문서화** 방식으로 해결합니다.
+**NRestDocs** solves these issues with a **test‑based documentation** approach:
 
-- 프로덕션 코드와 완벽히 분리된 문서화 방식으로 코드의 복잡성을 최소화합니다.
-- 이미 작성해야 하는 E2E 테스트를 기반으로 자동으로 문서가 생성되어 항상 최신 상태의 문서를 유지할
-  수 있습니다.
-- 문서와 실제 API가 불일치하면 즉시 테스트가 실패하여, 정확성을 보장합니다.
-- 결국 Swagger 문서화와 E2E 테스트를 별도로 작성하는 이중의 비용을 제거하고 효율적으로 관리할 수
-  있습니다.
+- Completely separates documentation from production code, minimizing complexity.
+- Automatically generates up‑to‑date docs from your existing E2E tests.
+- Fails tests immediately if docs and API responses drift out of sync, guaranteeing accuracy.
+- Eliminates the need to maintain Swagger annotations and tests separately, reducing overhead.
 
 ---
 
-## 📦 기존 Swagger 방식 (As-Is)
+## 📦 Existing Swagger Approach (As‑Is)
 
-다음은 프로덕션 코드에 Swagger 어노테이션이 침투한 예시입니다.
+Here’s an example showing Swagger annotations invading production code:
 
 ```typescript
 // user.controller.ts
 @ApiTags("users")
 @Controller("users")
 export class UserController {
-    @ApiOperation({ summary: "사용자 생성" })
+    @ApiOperation({ summary: "Create User" })
     @ApiResponse({
         status: 201,
-        description: "생성된 사용자 반환",
+        description: "Returns the created user",
         type: User,
         headers: {
             "Set-Cookie": {
-                description: "세션 쿠키",
+                description: "Session cookie",
                 schema: { type: "string" },
             },
         },
@@ -55,59 +50,57 @@ export class UserController {
 }
 ```
 
-### ⚠️ 문제점
+### ⚠️ Issues
 
-- API 명세를 위한 코드와 비즈니스 로직이 혼재됩니다.
-- API가 변경되었을 때 Swagger 주석이 누락될 위험이 있습니다.
-- 문서의 최신성과 정확성을 보장하는 장치가 없습니다.
+- Business logic and documentation code are mixed.
+- Swagger comments can easily become outdated when the API changes.
+- No built‑in mechanism ensures docs stay current and accurate.
 
 ---
 
-## 🚀 NRestDocs 방식 (To-Be)
+## 🚀 NRestDocs Approach (To‑Be)
 
-NRestDocs를 적용하면, 프로덕션 코드와 완전히 분리된 E2E 테스트에서 문서를 자동 생성할 수 있습니다.
+With NRestDocs, you write your E2E tests as usual, and the documentation is automatically generated—completely separated from production code:
 
 ```typescript
 // user.controller.e2e-spec.ts
 describe("UserController (e2e)", () => {
-    it("POST /users - 사용자 생성", async () => {
+    it("POST /users - Create User", async () => {
         await docRequest(
             request(app.getHttpServer())
                 .post("/users")
                 .set("Authorization", "Bearer <token>")
-                .send({ name: "홍길동", age: 30 })
+                .send({ name: "John Doe", age: 30 })
                 .expect(201)
         )
-            .withDescription("사용자 생성 API")
+            .withDescription("User creation API")
             .withRequestHeaders([
-                definedHeader("Authorization")
+                defineHeader("Authorization")
                     .type("string")
-                    .description("Bearer 토큰 인증"),
+                    .description("Bearer token authentication"),
             ])
             .withRequestFields([
-                definedField("name").type("string").description("사용자 이름"),
-                definedField("age").type("number").description("사용자 나이"),
+                defineField("name").type("string").description("User name"),
+                defineField("age").type("number").description("User age"),
             ])
             .withResponseHeaders([
-                definedHeader("Set-Cookie")
+                defineHeader("Set-Cookie")
                     .type("string")
-                    .description("세션 쿠키")
+                    .description("Session cookie")
                     .optional(),
             ])
             .withResponseFields([
-                definedField("id")
-                    .type("number")
-                    .description("생성된 사용자 ID"),
-                definedField("name")
+                defineField("id").type("number").description("Created user ID"),
+                defineField("name")
                     .type("string")
-                    .description("생성된 사용자 이름"),
+                    .description("Created user name"),
             ])
             .doc("create-user");
     });
 });
 ```
 
-### 🗂 생성된 문서 구조 예시
+### 🗂 Generated Documentation Structure Example
 
 ```
 docs/create-user/
@@ -120,91 +113,92 @@ docs/create-user/
 └── response-fields.adoc
 ```
 
-### ✅NRestDocs의 장점
+### ✅ Advantages of NRestDocs
 
-- 프로덕션 코드를 깨끗하게 유지할 수 있습니다.
-- API 변경 시 E2E 테스트도 필수로 변경해야 하므로, 문서 최신화를 자동 보장합니다.
-- Strict 모드를 통해 실제 API 응답과 문서 간 불일치가 있으면 즉각적으로 탐지하여 테스트를
-  실패시킵니다.
-- E2E 테스트 코드를 작성하며 문서까지 관리하므로, Swagger와 E2E 테스트를 별도로 관리할 필요가 없어
-  비용을 효율적으로 관리할 수 있습니다.
+- Keeps production code clean.
+- Guarantees up‑to‑date docs by tying them to E2E tests.
+- Strict mode fails tests on any mismatch between API and docs.
+- Eliminates dual maintenance of Swagger annotations and tests.
 
 ---
 
-## 🔁 NRestDocs 도입 전후 비교
+## 🔁 Before and After Comparison
 
-| 비교 항목     | Swagger (기존 방식)                         | NRestDocs (개선된 방식)              |
-| ------------- | ------------------------------------------- | ------------------------------------ |
-| 코드 침투     | 프로덕션 코드에 Swagger 어노테이션 추가     | 프로덕션 코드 영향 없음              |
-| 문서 최신화   | 수동 업데이트로 최신성 보장 어려움          | 테스트와 동기화되어 자동 최신화 유지 |
-| 정확성 보장   | 문서와 API 불일치 가능성 존재               | Strict 모드로 정확성 자동 보장       |
-| 유지보수 비용 | 문서, 테스트 이중 관리로 유지보수 비용 높음 | 테스트 하나로 문서 자동 관리         |
-
----
-
-## ✨ 주요 기능
-
-- Jest & Supertest E2E 테스트와 완벽한 통합
-- HTTP 요청/응답, 헤더, 파라미터, 필드 문서화 지원
-- cURL 명령어를 포함한 상세한 요청 문서 자동 생성
-- 엄격한(strict) 모드 지원으로 정확성 보장
-- 기본적으로 AsciiDoc 문서 생성 (Markdown 확장 가능)
-- 선언적이고 간결한 API 제공
+| Comparison Item    | Swagger (Existing)                     | NRestDocs (Improved)                |
+| ------------------ | -------------------------------------- | ----------------------------------- |
+| Code Intrusion     | Swagger annotations in production code | No impact on production code        |
+| Doc Updates        | Manual, error‑prone                    | Auto‑synced with tests              |
+| Accuracy Guarantee | No enforcement                         | Strict mode ensures accuracy        |
+| Maintenance Cost   | High (docs + tests separately)         | Efficient single‑source maintenance |
 
 ---
 
-## 📚 메서드 사용법
+## ✨ Key Features
 
-각 메서드는 체이닝으로 이어 호출할 수 있으며, 아래와 같은 구조로 구성되어 있습니다.
+- Seamless Jest & Supertest E2E integration
+- Automatic doc of HTTP requests/responses, headers, parameters, fields
+- Includes cURL snippets
+- Strict mode for guaranteed accuracy
+- Outputs AsciiDoc by default (Markdown upcoming)
+- Declarative, chainable API
 
-### 기본 사용법
+---
+
+## 📚 How to Use
+
+All methods can be chained. Basic structure:
 
 ```typescript
-await docRequest(request(app.getHttpServer()).get('/path').expect(200))
-    .withDescription('API 설명')
-    .withRequestHeaders([...])
-    .withRequestFields([...])
-    .withRequestParameters([...])
-    .withPathParameters([...])
-    .withRequestParts([...])
-    .withResponseHeaders([...])
-    .withResponseFields([...])
-    .doc('api-identifier');
+await docRequest(
+  request(app.getHttpServer())
+    .get('/path')
+    .expect(200)
+)
+  .withDescription('API description')
+  .withRequestHeaders([...])
+  .withRequestFields([...])
+  .withRequestParameters([...])
+  .withPathParameters([...])
+  .withRequestParts([...])
+  .withResponseHeaders([...])
+  .withResponseFields([...])
+  .doc('api-identifier');
 ```
 
 ---
 
-## 📖 상세 메서드 정의
+## 📖 Detailed Method Definitions
 
 ### 1️⃣ `withDescription`
 
-| 인자 | 필수 | 설명            |
-| ---- | ---- | --------------- |
-| desc | ✅   | API에 대한 설명 |
+| Parameter | Required | Description         |
+| --------- | -------- | ------------------- |
+| desc      | ✅       | The API description |
 
-**사용 예시**
+**Example**
 
 ```typescript
-.withDescription('사용자 생성 API')
+.withDescription('User creation API')
 ```
 
 ---
 
 ### 2️⃣ `withRequestHeaders`
 
-| 필드명      | 필수                  | 타입    | 설명      |
-| ----------- | --------------------- | ------- | --------- |
-| name        | ✅                    | string  | 헤더 이름 |
-| type        | ❌ (기본: `"string"`) | string  | 헤더 타입 |
-| description | ❌                    | string  | 헤더 설명 |
-| optional    | ❌ (기본: `false`)    | boolean | 필수 여부 |
+| Field         | Required                 | Type    | Description           |
+| ------------- | ------------------------ | ------- | --------------------- |
+| `name`        | ✅                       | string  | Header name           |
+| `type`        | ❌ (default: `"string"`) | string  | Header type           |
+| `description` | ❌                       | string  | Header description    |
+| `optional`    | ❌ (default: `false`)    | boolean | Whether it’s optional |
 
-**사용 예시**
+**Example**
 
 ```typescript
 .withRequestHeaders([
-    defineHeader('Authorization').description('Bearer 인증 토큰'),
-    { name: 'X-Request-ID', description: '요청 추적 ID', optional: true },
+  defineHeader('Authorization')
+    .description('Bearer auth token'),
+  { name: 'X-Request-ID', description: 'Request trace ID', optional: true },
 ])
 ```
 
@@ -212,13 +206,11 @@ await docRequest(request(app.getHttpServer()).get('/path').expect(200))
 
 ### 3️⃣ `withResponseHeaders`
 
-`withRequestHeaders`와 동일한 구조로 사용합니다.
-
-**사용 예시**
+Same signature as `withRequestHeaders`.
 
 ```typescript
 .withResponseHeaders([
-    defineHeader('Set-Cookie').description('세션 쿠키'),
+  defineHeader('Set-Cookie').description('Session cookie'),
 ])
 ```
 
@@ -226,19 +218,24 @@ await docRequest(request(app.getHttpServer()).get('/path').expect(200))
 
 ### 4️⃣ `withRequestFields` / `withResponseFields`
 
-| 필드명      | 필수               | 타입    | 설명      |
-| ----------- | ------------------ | ------- | --------- |
-| name        | ✅                 | string  | 필드 이름 |
-| type        | ✅                 | string  | 필드 타입 |
-| description | ❌                 | string  | 필드 설명 |
-| optional    | ❌ (기본: `false`) | boolean | 필수 여부 |
+| Field         | Required              | Type    | Description       |
+| ------------- | --------------------- | ------- | ----------------- |
+| `name`        | ✅                    | string  | Field name        |
+| `type`        | ✅                    | string  | Field type        |
+| `description` | ❌                    | string  | Field description |
+| `optional`    | ❌ (default: `false`) | boolean | Optional flag     |
 
-**사용 예시**
+**Example**
 
 ```typescript
 .withRequestFields([
-    defineField('name').type('string').description('사용자 이름'),
-    defineField('age').type('number').description('사용자 나이').optional(),
+  defineField('name')
+    .type('string')
+    .description('User name'),
+  defineField('age')
+    .type('number')
+    .description('User age')
+    .optional(),
 ])
 ```
 
@@ -246,21 +243,12 @@ await docRequest(request(app.getHttpServer()).get('/path').expect(200))
 
 ### 5️⃣ `withRequestParameters`
 
-URL 쿼리 파라미터 문서화에 사용됩니다.
-
-| 필드명      | 필수                  | 타입    | 설명          |
-| ----------- | --------------------- | ------- | ------------- |
-| name        | ✅                    | string  | 파라미터 이름 |
-| type        | ❌ (기본: `"string"`) | string  | 파라미터 타입 |
-| description | ❌                    | string  | 파라미터 설명 |
-| optional    | ❌ (기본: `false`)    | boolean | 필수 여부     |
-
-**사용 예시**
+For URL query parameters, same structure as headers/fields.
 
 ```typescript
 .withRequestParameters([
-    defineQueryParam('search').description('검색 키워드'),
-    { name: 'page', description: '페이지 번호', optional: true },
+  defineQueryParam('search').description('Search keyword'),
+  { name: 'page', description: 'Page number', optional: true },
 ])
 ```
 
@@ -268,15 +256,11 @@ URL 쿼리 파라미터 문서화에 사용됩니다.
 
 ### 6️⃣ `withPathParameters`
 
-URL 경로의 동적 파라미터 문서화에 사용됩니다.
-
-`withRequestParameters`와 동일한 구조로 사용합니다.
-
-**사용 예시**
+For dynamic URL segments, same structure:
 
 ```typescript
 .withPathParameters([
-    definePathParam('userId').description('사용자 ID'),
+  definePathParam('userId').description('User ID'),
 ])
 ```
 
@@ -284,21 +268,24 @@ URL 경로의 동적 파라미터 문서화에 사용됩니다.
 
 ### 7️⃣ `withRequestParts`
 
-멀티파트 요청 문서화에 사용됩니다. (파일 업로드 등)
+For multipart requests (file uploads):
 
-| 필드명      | 필수                | 타입    | 설명      |
-| ----------- | ------------------- | ------- | --------- |
-| name        | ✅                  | string  | 파트 이름 |
-| type        | ❌ (기본: `"file"`) | string  | 파트 타입 |
-| description | ❌                  | string  | 파트 설명 |
-| optional    | ❌ (기본: `false`)  | boolean | 필수 여부 |
+| Field         | Required               | Type    | Description      |
+| ------------- | ---------------------- | ------- | ---------------- |
+| `name`        | ✅                     | string  | Part name        |
+| `type`        | ❌ (default: `"file"`) | string  | Part type        |
+| `description` | ❌                     | string  | Part description |
+| `optional`    | ❌ (default: `false`)  | boolean | Optional flag    |
 
-**사용 예시**
+**Example**
 
 ```typescript
 .withRequestParts([
-    { name: 'avatar', description: '사용자 아바타 이미지' },
-    definePart('metadata').type('json').description('부가 정보').optional(),
+  { name: 'avatar', description: 'User avatar image' },
+  definePart('metadata')
+    .type('json')
+    .description('Additional data')
+    .optional(),
 ])
 ```
 
@@ -306,13 +293,10 @@ URL 경로의 동적 파라미터 문서화에 사용됩니다.
 
 ### 8️⃣ `doc`
 
-마지막으로 호출하는 메서드로, 스니펫 파일을 작성합니다.
-
-| 인자       | 필수 | 설명                                           |
-| ---------- | ---- | ---------------------------------------------- |
-| identifier | ✅   | API를 구별할 고유 식별자 (예: `'create-user'`) |
-
-**사용 예시**
+Writes the snippet files.  
+| Argument | Required | Description |
+| ----------- | -------- | ---------------------------------------- |
+| identifier | ✅ | Unique API identifier (e.g., `'create-user'`) |
 
 ```typescript
 .doc('create-user')
@@ -322,18 +306,16 @@ URL 경로의 동적 파라미터 문서화에 사용됩니다.
 
 ### 9️⃣ `withServers`
 
-OpenAPI 서버 URL을 설정합니다.
+Sets OpenAPI server URLs.
 
-| 인자    | 필수 | 설명                     |
-| ------- | ---- | ------------------------ |
-| servers | ✅   | 서버 URL 배열 (string[]) |
-
-**사용 예시**
+| Argument  | Required | Description          |
+| --------- | -------- | -------------------- |
+| `servers` | ✅       | Array of server URLs |
 
 ```typescript
 .withServers([
-    'http://api.example.com',
-    'http://api2.example.com'
+  'http://api.example.com',
+  'http://api2.example.com'
 ])
 ```
 
@@ -341,14 +323,12 @@ OpenAPI 서버 URL을 설정합니다.
 
 ### 🔟 `withOperation`
 
-HTTP 메서드와 경로를 설정합니다.
+Specifies HTTP method and path.
 
-| 인자   | 필수 | 설명        |
-| ------ | ---- | ----------- |
-| method | ✅   | HTTP 메서드 |
-| path   | ✅   | API 경로    |
-
-**사용 예시**
+| Argument | Required | Description  |
+| -------- | -------- | ------------ |
+| method   | ✅       | HTTP method  |
+| path     | ✅       | API endpoint |
 
 ```typescript
 .withOperation('POST', '/api/users')
@@ -358,149 +338,146 @@ HTTP 메서드와 경로를 설정합니다.
 
 ### 1️⃣1️⃣ `withResponse`
 
-상태 코드별 응답 정보를 설정합니다.
+Defines response details per status code.
 
-| 인자       | 필수 | 설명           |
-| ---------- | ---- | -------------- |
-| statusCode | ✅   | HTTP 상태 코드 |
-| response   | ✅   | 응답 정보 객체 |
+| Argument   | Required | Description          |
+| ---------- | -------- | -------------------- |
+| statusCode | ✅       | HTTP status code     |
+| response   | ✅       | Response info object |
 
-**response 객체 구조**
+Response object structure:
 
-| 필드명      | 필수 | 타입   | 설명           |
-| ----------- | ---- | ------ | -------------- |
-| headers     | ❌   | array  | 응답 헤더 배열 |
-| fields      | ❌   | array  | 응답 필드 배열 |
-| description | ❌   | string | 응답 설명      |
+| Field         | Required | Type   | Description      |
+| ------------- | -------- | ------ | ---------------- |
+| `headers`     | ❌       | array  | Response headers |
+| `fields`      | ❌       | array  | Response fields  |
+| `description` | ❌       | string | Description      |
 
-**사용 예시**
+**Examples**
+
+With fields:
 
 ```typescript
 .withResponse(201, {
-    description: '리소스 생성 성공',
-    headers: [
-        defineHeader('Location').description('생성된 리소스 위치')
-    ],
-    fields: [
-        defineField('id').type('number').description('생성된 ID'),
-        defineField('createdAt').type('string').description('생성 일시')
-    ]
-})
-
-.withResponse(400, {
-    description: '잘못된 요청',
-    fields: [
-        defineField('error').type('string').description('에러 메시지')
-    ]
+  description: 'Resource created successfully',
+  headers: [
+    defineHeader('Location').description('Location of the new resource')
+  ],
+  fields: [
+    defineField('id').type('number').description('New resource ID'),
+    defineField('createdAt').type('string').description('Creation timestamp')
+  ]
 })
 ```
 
-**응답 필드가 없는 경우**
+Without fields:
 
 ```typescript
 .withResponse(204, {
-    description: '리소스 삭제 성공'
+  description: 'Resource deleted successfully'
 })
 ```
 
-**여러 상태 코드의 응답 설정**
+Multiple status codes:
 
 ```typescript
 .withResponse(200, {
-    description: '성공 응답',
-    fields: [defineField('result').type('object').description('결과 데이터')]
+  description: 'Success',
+  fields: [defineField('result').type('object').description('Result data')]
 })
 .withResponse(400, {
-    description: '잘못된 요청',
-    fields: [defineField('error').type('string').description('에러 메시지')]
+  description: 'Bad request',
+  fields: [defineField('error').type('string').description('Error message')]
 })
 .withResponse(500, {
-    description: '서버 오류',
-    fields: [defineField('message').type('string').description('오류 메시지')]
+  description: 'Server error',
+  fields: [defineField('message').type('string').description('Error details')]
 })
 ```
 
 ---
 
-## 📝 정의 헬퍼 (Define Helper)
+## 📝 Define Helpers
 
-- 각 필드나 헤더, 파라미터의 정의를 선언적으로 작성할 수 있는 헬퍼 함수가 제공됩니다.
+Helper functions to declaratively build definitions:
 
-| 함수                     | 기본 type  | 설명                     |
-| ------------------------ | ---------- | ------------------------ |
-| `defineHeader(name)`     | `"string"` | 헤더 정의                |
-| `defineField(name)`      | 필수 입력  | 요청/응답 필드 정의      |
-| `defineQueryParam(name)` | `"string"` | 쿼리 파라미터 정의       |
-| `definePathParam(name)`  | `"string"` | 경로 파라미터 정의       |
-| `definePart(name)`       | `"file"`   | Multipart 요청 파트 정의 |
+| Function                 | Default Type | Description                      |
+| ------------------------ | ------------ | -------------------------------- |
+| `defineHeader(name)`     | `"string"`   | Defines a header                 |
+| `defineField(name)`      | _required_   | Defines a request/response field |
+| `defineQueryParam(name)` | `"string"`   | Defines a query parameter        |
+| `definePathParam(name)`  | `"string"`   | Defines a path parameter         |
+| `definePart(name)`       | `"file"`     | Defines a multipart part         |
 
-### 사용 예시
+**Examples**
 
 ```typescript
-defineHeader("Authorization").description("인증 헤더");
+defineHeader("Authorization").description("Auth header");
 
-defineField("age").type("number").description("사용자 나이");
+defineField("age").type("number").description("User age");
 
-defineQueryParam("keyword").description("검색 키워드").optional();
+defineQueryParam("keyword").description("Search keyword").optional();
 
-definePathParam("userId").description("사용자 ID");
+definePathParam("userId").description("User ID");
 
-definePart("image").description("프로필 이미지").optional();
+definePart("image").description("Profile image").optional();
 ```
 
 ---
 
-## 📌 종합 예시 (모든 메서드 사용 예)
+## 📌 Comprehensive Example
 
 ```typescript
 await docRequest(
     request(app.getHttpServer())
         .post("/users/:userId/avatar?replace=true")
         .set("Authorization", "Bearer token")
-        .field("description", "프로필 이미지")
+        .field("description", "Profile image")
         .attach("avatar", "./test/avatar.png")
         .expect(200)
 )
-    .withDescription("사용자 아바타 업데이트")
+    .withDescription("User avatar update")
     .withRequestHeaders([
-        defineHeader("Authorization").description("Bearer 인증 토큰"),
+        defineHeader("Authorization").description("Bearer auth token"),
     ])
-    .withPathParameters([definePathParam("userId").description("사용자 ID")])
+    .withPathParameters([definePathParam("userId").description("User ID")])
     .withRequestParameters([
-        defineQueryParam("replace").description("이미지 교체 여부").optional(),
+        defineQueryParam("replace")
+            .description("Replace existing image")
+            .optional(),
     ])
     .withRequestParts([
-        definePart("avatar").description("아바타 이미지 파일"),
+        definePart("avatar").description("Avatar image file"),
         definePart("description")
             .type("string")
-            .description("이미지 설명")
+            .description("Image description")
             .optional(),
     ])
     .withResponseHeaders([
-        defineHeader("Set-Cookie").description("세션 쿠키").optional(),
+        defineHeader("Set-Cookie").description("Session cookie").optional(),
     ])
     .withResponseFields([
-        defineField("success").type("boolean").description("성공 여부"),
-        defineField("url").type("string").description("업로드된 이미지 URL"),
+        defineField("success").type("boolean").description("Operation status"),
+        defineField("url").type("string").description("Uploaded image URL"),
     ])
     .doc("update-user-avatar");
 ```
 
 ---
 
-## 📥 설치 방법
+## 📥 Installation
 
-```shell
+```bash
 npm install --save-dev nrestdocs
-# 또는 yarn
+# or with yarn
 yarn add --dev nrestdocs
 ```
 
 ---
 
-## ⚙️ 설정 방법
+## ⚙️ Configuration
 
-`nrestdocs.config.ts`를 프로젝트 루트에 생성합니다:
+Create `nrestdocs.config.ts` in your project root:
 
 ```typescript
 // nrestdocs.config.ts
@@ -509,27 +486,27 @@ import { defineConfig } from "nrestdocs";
 export default defineConfig({
     output: "./docs",
     format: "adoc", // or 'md'
-    strict: true, // 문서와 요청/응답 불일치 시 테스트 실패
+    strict: true, // fails tests on any doc/API mismatch
 });
 ```
 
 ---
 
-## 🧩 문서 통합 가이드
+## 🧩 Documentation Integration Guide
 
-생성된 스니펫을 `include`하여 하나의 문서로 통합할 수 있습니다:
+Include the generated snippets to assemble a single document:
 
 ```asciidoc
-= 사용자 API 문서
+= User API Documentation
 
-== 사용자 생성 API
+== Create User API
 
-=== 요청
+=== Request
 include::create-user/curl-request.adoc[]
 include::create-user/request-headers.adoc[]
 include::create-user/request-fields.adoc[]
 
-=== 응답
+=== Response
 include::create-user/http-response.adoc[]
 include::create-user/response-headers.adoc[]
 include::create-user/response-fields.adoc[]
@@ -537,34 +514,33 @@ include::create-user/response-fields.adoc[]
 
 ---
 
-## 🧱 개발환경 지원 및 확장성
+## 🧱 Development Environment Support & Extensibility
 
-- 기본 AsciiDoc 지원 (Markdown 추가 예정)
-- Renderer 및 Writer를 통한 확장 가능
-- 테스트와 문서화를 단일 코드로 관리
-
----
-
-## 🛣 향후 지원 예정 기능
-
-- HTML, PDF, Notion 등 추가 포맷 지원
-- OpenAPI 통합 지원 (Swagger와의 호환성 지원)
+- Native AsciiDoc support (Markdown coming soon)
+- Extensible via custom renderers and writers
+- Consolidates tests and docs into a single workflow
 
 ---
 
-## 🤝 기여 방법 (Contribution)
+## 🛣 Upcoming Features
 
-이 프로젝트는 오픈소스이며 모든 분들의 기여를 환영합니다. 버그 리포트, 기능 요청, PR 등 언제나
-환영합니다!
-
-- [GitHub 이슈](https://github.com/Jeong-Rae/NRestDocs/issues)에 버그 또는 개선사항을 등록해주세요.
-- PR은 main 브랜치를 기반으로 작성해주세요.
+- Support for HTML, PDF, Notion and other formats
+- OpenAPI/Swagger compatibility layer
 
 ---
 
-## 📄 라이선스 (License)
+## 🤝 Contribution
 
-본 프로젝트는 MIT 라이선스로 배포됩니다.
+This project is open source and welcomes contributions! Bug reports, feature requests, and PRs are all appreciated.
+
+- Open an issue at [GitHub Issues](https://github.com/Jeong-Rae/NRestDocs)
+- Base your PR on the `main` branch
+
+---
+
+## 📄 License
+
+Distributed under the MIT License.
 
 ```text
 Copyright (c) Jeong-Rae
