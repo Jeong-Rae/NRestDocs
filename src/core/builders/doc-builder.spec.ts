@@ -220,7 +220,7 @@ describe("doc-builder", () => {
                 // Given
                 const configWithoutOutput = { ...mockConfig, output: undefined };
                 vi.mocked(configModule.getNRestDocsConfig).mockReturnValueOnce(
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    // biome-ignore lint/suspicious/noExplicitAny: use any
                     configWithoutOutput as any
                 );
 
@@ -295,9 +295,9 @@ describe("doc-builder", () => {
                 expect(result).toBeInstanceOf(DocRequestBuilder);
 
                 // private 속성 테스트를 위한 접근
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // biome-ignore lint/suspicious/noExplicitAny: use any
                 expect((builder as any).httpMethod).toEqual(method);
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // biome-ignore lint/suspicious/noExplicitAny: use any
                 expect((builder as any).httpPath).toEqual(path);
             });
 
@@ -357,7 +357,7 @@ describe("doc-builder", () => {
                 expect(result).toBeInstanceOf(DocRequestBuilder);
 
                 // private 속성 테스트를 위한 접근
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // biome-ignore lint/suspicious/noExplicitAny: use any
                 const responses = (builder as any).responses;
                 expect(responses[statusCode]).toBeDefined();
                 expect(responses[statusCode].description).toEqual(responseInfo.description);
@@ -378,7 +378,7 @@ describe("doc-builder", () => {
                 builder.withResponse(statusCode, responseInfo);
 
                 // Then
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // biome-ignore lint/suspicious/noExplicitAny: use any
                 const responses = (builder as any).responses;
                 expect(responses[statusCode].description).toEqual("");
             });
@@ -404,7 +404,7 @@ describe("doc-builder", () => {
                 });
 
                 // Then
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // biome-ignore lint/suspicious/noExplicitAny: use any
                 const responses = (builder as any).responses;
                 expect(Object.keys(responses)).toHaveLength(3);
                 expect(responses[200]).toBeDefined();
