@@ -35,6 +35,7 @@ export function matchesType(expected: string, value: unknown): boolean {
         case "function":
             return isFunction(value);
         default:
+            // biome-ignore lint/suspicious/useValidTypeof: 런타임 동적 타입 비교
             return typeof value === expected;
     }
 }

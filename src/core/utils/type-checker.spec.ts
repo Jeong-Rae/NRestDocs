@@ -24,6 +24,7 @@ describe("type-checker", () => {
             expect(matchesType("object", null)).toBe(false);
             expect(matchesType("object", undefined)).toBe(false);
             expect(matchesType("object", "string")).toBe(false);
+            // biome-ignore lint/suspicious/noEmptyBlockStatements: 테스트용 빈 함수
             expect(matchesType("object", () => {})).toBe(false);
         });
 
@@ -35,6 +36,7 @@ describe("type-checker", () => {
         });
 
         it("typeof로 비교되는 다른 타입들을 처리해야 한다", () => {
+            // biome-ignore lint/suspicious/noEmptyBlockStatements: 테스트용 빈 함수
             expect(matchesType("function", () => {})).toBe(true);
             expect(matchesType("function", {})).toBe(false);
             expect(matchesType("symbol", Symbol("test"))).toBe(true);
@@ -62,6 +64,7 @@ describe("type-checker", () => {
         });
 
         it("함수 타입을 'function'으로 반환해야 한다", () => {
+            // biome-ignore lint/suspicious/noEmptyBlockStatements: 테스트용 빈 함수
             expect(prettyType(() => {})).toBe("function");
         });
 

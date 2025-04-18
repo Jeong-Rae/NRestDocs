@@ -10,7 +10,7 @@ describe("header-filter", () => {
             // Given
             const headers: HttpHeaders = {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer token123",
+                Authorization: "Bearer token123",
                 "X-Custom-Header": "custom-value",
             };
             const allowedList = ["Content-Type", "Authorization"];
@@ -21,7 +21,7 @@ describe("header-filter", () => {
             // Then
             expect(result).toEqual({
                 "Content-Type": "application/json",
-                "Authorization": "Bearer token123",
+                Authorization: "Bearer token123",
             });
         });
 
@@ -29,7 +29,7 @@ describe("header-filter", () => {
             // Given
             const headers: HttpHeaders = {
                 "Content-Type": "application/json",
-                "authorization": "Bearer token123",
+                authorization: "Bearer token123",
             };
             const allowedList = ["Content-Type", "Authorization"];
 
@@ -39,7 +39,7 @@ describe("header-filter", () => {
             // Then
             expect(result).toEqual({
                 "Content-Type": "application/json",
-                "authorization": "Bearer token123",
+                authorization: "Bearer token123",
             });
         });
     });
@@ -49,7 +49,7 @@ describe("header-filter", () => {
             // Given
             const headers: HttpHeaders = {
                 "Content-Type": "application/json",
-                "Authorization": "Bearer token123",
+                Authorization: "Bearer token123",
                 "X-Custom-Header": "custom-value",
             };
 

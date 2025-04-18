@@ -14,8 +14,8 @@ import {
 } from "../snippets";
 import { extractHttpRequest, extractHttpResponse } from "../utils/http-trace-extractor";
 
-import type { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
 import type { Request, Response, SnippetMap, SupertestResponse } from "../../types";
+import type { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
 
 export class AsciiDocRenderer implements DocRenderer {
     renderDocumentSnippets(

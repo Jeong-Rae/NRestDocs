@@ -72,19 +72,19 @@ describe("ascii-doc-renderer", () => {
             };
 
             // 모의 함수 반환값 설정
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (extractHttpRequest as any).mockReturnValue(mockRequest);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (extractHttpResponse as any).mockReturnValue(mockExtractedResponse);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateCurlSnippet as any).mockReturnValue("curl-request-snippet");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateHttpRequestSnippet as any).mockReturnValue("http-request-snippet");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateHttpResponseSnippet as any).mockReturnValue("http-response-snippet");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateRequestHeadersSnippet as any).mockReturnValue("request-headers-snippet");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generatePathParametersSnippet as any).mockReturnValue("path-parameters-snippet");
 
             // When
@@ -147,15 +147,15 @@ describe("ascii-doc-renderer", () => {
             };
 
             // 모의 함수 반환값 설정
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (extractHttpRequest as any).mockReturnValue(mockRequest);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (extractHttpResponse as any).mockReturnValue(mockExtractedResponse);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateCurlSnippet as any).mockReturnValue("curl-request-snippet");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateHttpRequestSnippet as any).mockReturnValue("http-request-snippet");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateHttpResponseSnippet as any).mockReturnValue("http-response-snippet");
 
             // When
@@ -226,29 +226,29 @@ describe("ascii-doc-renderer", () => {
             };
 
             // 모의 함수 반환값 설정
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (extractHttpRequest as any).mockReturnValue(mockRequest);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (extractHttpResponse as any).mockReturnValue(mockExtractedResponse);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateCurlSnippet as any).mockReturnValue("curl-request");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateHttpRequestSnippet as any).mockReturnValue("http-request");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateHttpResponseSnippet as any).mockReturnValue("http-response");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateRequestHeadersSnippet as any).mockReturnValue("request-headers");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generatePathParametersSnippet as any).mockReturnValue("path-parameters");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateRequestParametersSnippet as any).mockReturnValue("request-parameters");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateRequestPartsSnippet as any).mockReturnValue("request-parts");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateRequestFieldsSnippet as any).mockReturnValue("request-fields");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateResponseHeadersSnippet as any).mockReturnValue("response-headers");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateResponseFieldsSnippet as any).mockReturnValue("response-fields");
 
             // When
@@ -317,15 +317,15 @@ describe("ascii-doc-renderer", () => {
             };
 
             // 모의 함수 반환값 설정
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (extractHttpRequest as any).mockReturnValue(mockRequest);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (extractHttpResponse as any).mockReturnValue(mockExtractedResponse);
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateCurlSnippet as any).mockReturnValue("curl-request-snippet");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateHttpRequestSnippet as any).mockReturnValue("http-request-snippet");
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // biome-ignore lint/suspicious/noExplicitAny: use any
             (generateHttpResponseSnippet as any).mockReturnValue("http-response-snippet");
 
             // When

@@ -3,7 +3,7 @@ import { AsciiDocRenderer } from "../renderers/ascii-doc-renderer";
 import { normalizeDescriptors } from "../utils/normalize-descriptors";
 import { LocalDocWriter } from "../writers/local-doc-writer";
 
-import type { DescriptorBuilder } from "./descriptor-builder";
+import type { Response } from "supertest";
 import type {
     FieldDescriptor,
     HeaderDescriptor,
@@ -14,7 +14,7 @@ import type {
     ResponseDescriptor,
 } from "../../types";
 import type { PartialWithName } from "../utils/normalize-descriptors";
-import type { Response } from "supertest";
+import type { DescriptorBuilder } from "./descriptor-builder";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
