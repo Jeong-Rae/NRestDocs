@@ -2,7 +2,7 @@
 
 > NestJS + Supertest 기반의 E2E 테스트로부터 API 문서를 자동 생성하는 문서화 도구
 
-Document: [English](./docs/en/README.md), [한국어](./docs/ko/README.md)
+Document: [English](../en/README.md), [한국어](../ko/README.md)
 
 ---
 
