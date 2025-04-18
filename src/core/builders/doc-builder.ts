@@ -1,22 +1,23 @@
-import { getNRestDocsConfig } from "./config";
-import { AsciiDocRenderer } from "./renderer/ascii-doc-renderer";
-import { normalizeDescriptors } from "./utils/normalize-descriptors";
-import { LocalDocWriter } from "./writer/local-doc-writer";
+import { getNRestDocsConfig } from "../config/config";
+import { AsciiDocRenderer } from "../renderers/ascii-doc-renderer";
+import { normalizeDescriptors } from "../utils/normalize-descriptors";
+import { LocalDocWriter } from "../writers/local-doc-writer";
 
+import type { DescriptorBuilder } from "./descriptor-builder";
 import type {
-    DocOptions,
     FieldDescriptor,
     HeaderDescriptor,
+    HttpMethod,
+    HttpStatusCode,
     ParameterDescriptor,
     PartDescriptor,
-} from "../types";
-import type { DescriptorBuilder } from "./builders/descriptor-builder";
-import type { PartialWithName } from "./utils/normalize-descriptors";
+    ResponseDescriptor,
+} from "../../types";
+import type { PartialWithName } from "../utils/normalize-descriptors";
 import type { Response } from "supertest";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
-    private options: DocOptions = {};
 
     private requestHeaders?: HeaderDescriptor[];
     private pathParameters?: ParameterDescriptor[];
@@ -27,13 +28,33 @@ export class DocRequestBuilder {
     private responseHeaders?: HeaderDescriptor[];
     private responseFields?: FieldDescriptor[];
 
+    private responses: Record<HttpStatusCode, ResponseDescriptor> = {};
+
+    private httpMethod?: HttpMethod;
+    private httpPath?: string;
+    private servers: string[] = [];
+    private description: string = "";
+
     constructor(supertestPromise: Promise<Response>) {
         this.supertestPromise = supertestPromise;
     }
 
+    /** HTTP 메서드 & 경로 */
+    withOperation(method: HttpMethod, path: string): this {
+        this.httpMethod = method;
+        this.httpPath = path;
+        return this;
+    }
+
+    /** 다중 서버 설정 (OpenAPI servers) */
+    withServers(servers: string[]): this {
+        this.servers = servers;
+        return this;
+    }
+
     /** API 설명 추가 */
-    withDescription(desc: string): this {
-        this.options.description = desc;
+    withDescription(description: string): this {
+        this.description = description;
         return this;
     }
 
@@ -84,6 +105,28 @@ export class DocRequestBuilder {
     }
 
     /**
+     * responses 정의
+     */
+    withResponse(
+        statusCode: HttpStatusCode,
+        response: {
+            headers?: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[];
+            fields?: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[];
+            description?: string;
+        }
+    ): this {
+        const fields = response.fields ? normalizeDescriptors(response.fields) : [];
+        const headers = response.headers ? normalizeDescriptors(response.headers) : [];
+
+        this.responses[statusCode] = {
+            fields,
+            headers,
+            description: response.description ?? "",
+        };
+        return this;
+    }
+
+    /**
      * response-headers 정의
      */
     withResponseHeaders(headers: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[]): this {
@@ -115,6 +158,13 @@ export class DocRequestBuilder {
             requestFields: this.requestFields,
             responseHeaders: this.responseHeaders,
             responseFields: this.responseFields,
+            responses: this.responses,
+            operation: {
+                method: this.httpMethod,
+                path: this.httpPath,
+                description: this.description,
+                servers: this.servers,
+            },
         });
 
         const writer = new LocalDocWriter({

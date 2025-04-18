@@ -1,6 +1,5 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import { extractHttpRequest, extractHttpResponse } from "../extractor/http-trace-extractor";
 import {
     generateCurlSnippet,
     generateHttpRequestSnippet,
@@ -13,6 +12,7 @@ import {
     generateResponseFieldsSnippet,
     generateResponseHeadersSnippet,
 } from "../snippets";
+import { extractHttpRequest, extractHttpResponse } from "../utils/http-trace-extractor";
 
 import type { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
 import type { Request, Response, SnippetMap, SupertestResponse } from "../../types";
@@ -23,6 +23,17 @@ export class AsciiDocRenderer implements DocRenderer {
         options: RenderDocumentSnippetsOptions
     ): SnippetMap {
         const snippetMap: SnippetMap = {} as SnippetMap;
+
+        if (options.operation) {
+            const { method, path, servers } = options.operation;
+            if (method) {
+                response.request.method = method;
+            }
+            if (path && servers && servers.length > 0) {
+                const serverUrl = servers[0];
+                response.request.url = new URL(path, serverUrl).toString();
+            }
+        }
 
         const extractRequest = extractHttpRequest(response);
         const extractResponse = extractHttpResponse(response);
@@ -81,6 +92,21 @@ export class AsciiDocRenderer implements DocRenderer {
         }
 
         // response
+        if (!isEmpty(options.responses)) {
+            for (const [statusCode, response] of Object.entries(options.responses)) {
+                const numericStatusCode = parseInt(statusCode, 10);
+                if (isNaN(numericStatusCode)) continue;
+
+                if (!isEmpty(response.headers)) {
+                    snippetMap[`response-headers-${numericStatusCode}`] =
+                        generateResponseHeadersSnippet(response.headers);
+                }
+                if (!isEmpty(response.fields)) {
+                    snippetMap[`response-fields-${numericStatusCode}`] =
+                        generateResponseFieldsSnippet(response.fields);
+                }
+            }
+        }
         if (!isEmpty(options.responseHeaders)) {
             snippetMap["response-headers"] = generateResponseHeadersSnippet(
                 options.responseHeaders

@@ -2,8 +2,11 @@ import type {
     FieldDescriptor,
     HeaderDescriptor,
     HttpMethod,
+    HttpStatusCode,
+    OperationDescriptor,
     ParameterDescriptor,
     PartDescriptor,
+    ResponseDescriptor,
     SnippetMap,
     SupertestResponse,
 } from "../../types";
@@ -16,6 +19,8 @@ export type RenderDocumentSnippetsOptions = {
     requestFields?: FieldDescriptor[];
     responseHeaders?: HeaderDescriptor[];
     responseFields?: FieldDescriptor[];
+    responses?: Record<HttpStatusCode, ResponseDescriptor>;
+    operation?: Partial<OperationDescriptor>;
 };
 
 export type RenderParams = {

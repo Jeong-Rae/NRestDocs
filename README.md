@@ -6,17 +6,22 @@
 
 ## 개요
 
-NestJS 애플리케이션의 API 문서화는 일반적으로 **Swagger(OpenAPI)**를 통해 관리됩니다. Swagger는 편리한 UI와 직관적인 문법을 제공하지만, 다음과 같은 문제점이 있습니다.
+NestJS 애플리케이션의 API 문서화는 일반적으로 **Swagger(OpenAPI)**를 통해 관리됩니다. Swagger는
+편리한 UI와 직관적인 문법을 제공하지만, 다음과 같은 문제점이 있습니다.
 
-- **코드 침투 문제**: Swagger를 사용하기 위해 프로덕션 코드에 Swagger 어노테이션을 추가해야 합니다. 이는 비즈니스 로직과 API 문서화 코드가 뒤섞이는 문제를 발생시킵니다.
-- **문서 최신화 문제**: API가 변경되었을 때 Swagger 문서 주석을 업데이트하지 않으면 실제 API와 문서가 일치하지 않게 됩니다. 이는 팀의 혼란과 운영 비용 증가로 이어질 수 있습니다.
+- **코드 침투 문제**: Swagger를 사용하기 위해 프로덕션 코드에 Swagger 어노테이션을 추가해야 합니다.
+  이는 비즈니스 로직과 API 문서화 코드가 뒤섞이는 문제를 발생시킵니다.
+- **문서 최신화 문제**: API가 변경되었을 때 Swagger 문서 주석을 업데이트하지 않으면 실제 API와
+  문서가 일치하지 않게 됩니다. 이는 팀의 혼란과 운영 비용 증가로 이어질 수 있습니다.
 
 **NRestDocs**는 이 문제를 **테스트 기반 문서화** 방식으로 해결합니다.
 
 - 프로덕션 코드와 완벽히 분리된 문서화 방식으로 코드의 복잡성을 최소화합니다.
-- 이미 작성해야 하는 E2E 테스트를 기반으로 자동으로 문서가 생성되어 항상 최신 상태의 문서를 유지할 수 있습니다.
+- 이미 작성해야 하는 E2E 테스트를 기반으로 자동으로 문서가 생성되어 항상 최신 상태의 문서를 유지할
+  수 있습니다.
 - 문서와 실제 API가 불일치하면 즉시 테스트가 실패하여, 정확성을 보장합니다.
-- 결국 Swagger 문서화와 E2E 테스트를 별도로 작성하는 이중의 비용을 제거하고 효율적으로 관리할 수 있습니다.
+- 결국 Swagger 문서화와 E2E 테스트를 별도로 작성하는 이중의 비용을 제거하고 효율적으로 관리할 수
+  있습니다.
 
 ---
 
@@ -108,8 +113,10 @@ docs/create-user/
 
 - 프로덕션 코드를 깨끗하게 유지할 수 있습니다.
 - API 변경 시 E2E 테스트도 필수로 변경해야 하므로, 문서 최신화를 자동 보장합니다.
-- Strict 모드를 통해 실제 API 응답과 문서 간 불일치가 있으면 즉각적으로 탐지하여 테스트를 실패시킵니다.
-- E2E 테스트 코드를 작성하며 문서까지 관리하므로, Swagger와 E2E 테스트를 별도로 관리할 필요가 없어 비용을 효율적으로 관리할 수 있습니다.
+- Strict 모드를 통해 실제 API 응답과 문서 간 불일치가 있으면 즉각적으로 탐지하여 테스트를
+  실패시킵니다.
+- E2E 테스트 코드를 작성하며 문서까지 관리하므로, Swagger와 E2E 테스트를 별도로 관리할 필요가 없어
+  비용을 효율적으로 관리할 수 있습니다.
 
 ---
 
@@ -302,6 +309,108 @@ URL 경로의 동적 파라미터 문서화에 사용됩니다.
 
 ---
 
+### 9️⃣ `withServers`
+
+OpenAPI 서버 URL을 설정합니다.
+
+| 인자    | 필수 | 설명                     |
+| ------- | ---- | ------------------------ |
+| servers | ✅   | 서버 URL 배열 (string[]) |
+
+**사용 예시**
+
+```typescript
+.withServers([
+    'http://api.example.com',
+    'http://api2.example.com'
+])
+```
+
+---
+
+### 🔟 `withOperation`
+
+HTTP 메서드와 경로를 설정합니다.
+
+| 인자   | 필수 | 설명        |
+| ------ | ---- | ----------- |
+| method | ✅   | HTTP 메서드 |
+| path   | ✅   | API 경로    |
+
+**사용 예시**
+
+```typescript
+.withOperation('POST', '/api/users')
+```
+
+---
+
+### 1️⃣1️⃣ `withResponse`
+
+상태 코드별 응답 정보를 설정합니다.
+
+| 인자       | 필수 | 설명           |
+| ---------- | ---- | -------------- |
+| statusCode | ✅   | HTTP 상태 코드 |
+| response   | ✅   | 응답 정보 객체 |
+
+**response 객체 구조**
+
+| 필드명      | 필수 | 타입   | 설명           |
+| ----------- | ---- | ------ | -------------- |
+| headers     | ❌   | array  | 응답 헤더 배열 |
+| fields      | ❌   | array  | 응답 필드 배열 |
+| description | ❌   | string | 응답 설명      |
+
+**사용 예시**
+
+```typescript
+.withResponse(201, {
+    description: '리소스 생성 성공',
+    headers: [
+        defineHeader('Location').description('생성된 리소스 위치')
+    ],
+    fields: [
+        defineField('id').type('number').description('생성된 ID'),
+        defineField('createdAt').type('string').description('생성 일시')
+    ]
+})
+
+.withResponse(400, {
+    description: '잘못된 요청',
+    fields: [
+        defineField('error').type('string').description('에러 메시지')
+    ]
+})
+```
+
+**응답 필드가 없는 경우**
+
+```typescript
+.withResponse(204, {
+    description: '리소스 삭제 성공'
+})
+```
+
+**여러 상태 코드의 응답 설정**
+
+```typescript
+.withResponse(200, {
+    description: '성공 응답',
+    fields: [defineField('result').type('object').description('결과 데이터')]
+})
+.withResponse(400, {
+    description: '잘못된 요청',
+    fields: [defineField('error').type('string').description('에러 메시지')]
+})
+.withResponse(500, {
+    description: '서버 오류',
+    fields: [defineField('message').type('string').description('오류 메시지')]
+})
+```
+
+---
+
 ## 📝 정의 헬퍼 (Define Helper)
 
 - 각 필드나 헤더, 파라미터의 정의를 선언적으로 작성할 수 있는 헬퍼 함수가 제공됩니다.
@@ -425,7 +534,8 @@ include::create-user/response-fields.adoc[]
 
 ## 🤝 기여 방법 (Contribution)
 
-이 프로젝트는 오픈소스이며 모든 분들의 기여를 환영합니다. 버그 리포트, 기능 요청, PR 등 언제나 환영합니다!
+이 프로젝트는 오픈소스이며 모든 분들의 기여를 환영합니다. 버그 리포트, 기능 요청, PR 등 언제나
+환영합니다!
 
 - [GitHub 이슈](https://github.com/Jeong-Rae/NRestDocs/issues)에 버그 또는 개선사항을 등록해주세요.
 - PR은 main 브랜치를 기반으로 작성해주세요.
