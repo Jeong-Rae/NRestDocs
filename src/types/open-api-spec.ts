@@ -19,6 +19,7 @@ interface Components {
     examples: Record<string, Example | Reference>;
     requestBodies: Record<string, RequestBody | Reference>;
     headers: Record<string, Header | Reference>;
+    securitySchemes: Record<string, SecurityScheme | Reference>;
 }
 
 interface ExternalDocumentation {
@@ -151,4 +152,79 @@ interface XML {
     prefix?: string;
     attribute?: boolean;
     wrapped?: boolean;
+}
+
+export type SecurityScheme =
+    | ApiKeySecurityScheme
+    | HttpSecurityScheme
+    | MutualTlsSecurityScheme
+    | OAuth2SecurityScheme
+    | OpenIdConnectSecurityScheme;
+
+export type SecuritySchemeType = "apiKey" | "http" | "mutualTLS" | "oauth2" | "openIdConnect";
+
+interface SecuritySchemeBase {
+    type: SecuritySchemeType;
+    description?: string;
+}
+
+export interface ApiKeySecurityScheme extends SecuritySchemeBase {
+    type: "apiKey";
+    name: string;
+    in: "query" | "header" | "cookie";
+}
+
+export interface HttpSecurityScheme extends SecuritySchemeBase {
+    type: "http";
+    scheme: string;
+    bearerFormat?: string;
+}
+
+export interface MutualTlsSecurityScheme extends SecuritySchemeBase {
+    type: "mutualTLS";
+}
+
+export interface OAuth2SecurityScheme extends SecuritySchemeBase {
+    type: "oauth2";
+    flows: OAuthFlows;
+}
+
+export interface OpenIdConnectSecurityScheme extends SecuritySchemeBase {
+    type: "openIdConnect";
+    openIdConnectUrl: string;
+}
+
+interface OAuthFlows {
+    implicit?: OAuthFlow;
+    password?: OAuthFlow;
+    clientCredentials?: OAuthFlow;
+    authorizationCode?: OAuthFlow;
+}
+
+type OAuthFlow =
+    | OAuthFlowImplicit
+    | OAuthFlowAuthorizationCode
+    | OAuthFlowPassword
+    | OAuthFlowClientCredentials;
+
+interface OAuthFlowBase {
+    refreshUrl?: string;
+    scopes: Record<string, string>;
+}
+
+interface OAuthFlowImplicit extends OAuthFlowBase {
+    authorizationUrl: string;
+}
+
+interface OAuthFlowAuthorizationCode extends OAuthFlowBase {
+    authorizationUrl: string;
+    tokenUrl: string;
+}
+
+interface OAuthFlowPassword extends OAuthFlowBase {
+    tokenUrl: string;
+}
+
+interface OAuthFlowClientCredentials extends OAuthFlowBase {
+    tokenUrl: string;
 }
