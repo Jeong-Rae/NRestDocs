@@ -16,6 +16,7 @@ interface Components {
     schemas: Record<string, Schema>;
     responses: Record<string, Response | Reference>;
     parameters: Record<string, Parameter | Reference>;
+    examples: Record<string, Example | Reference>;
 }
 
 interface ExternalDocumentation {
