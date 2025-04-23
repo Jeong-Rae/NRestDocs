@@ -18,6 +18,7 @@ interface Components {
     parameters: Record<string, Parameter | Reference>;
     examples: Record<string, Example | Reference>;
     requestBodies: Record<string, RequestBody | Reference>;
+    headers: Record<string, Header | Reference>;
 }
 
 interface ExternalDocumentation {
