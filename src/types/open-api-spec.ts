@@ -21,6 +21,32 @@ interface Components {
     headers: Record<string, Header | Reference>;
     securitySchemes: Record<string, SecurityScheme | Reference>;
     links: Record<string, Link | Reference>;
+    callbacks: Record<string, Callback | Reference>;
+}
+
+type HttpMethod = "get" | "post" | "put" | "delete" | "options" | "head" | "patch" | "trace";
+
+interface PathItem extends Partial<Record<HttpMethod, Operation>> {
+    $ref?: string;
+    summary?: string;
+    description?: string;
+    servers?: Server[];
+    parameters?: (Parameter | Reference)[];
+}
+
+interface Operation {
+    tags?: string[];
+    summary?: string;
+    description?: string;
+    externalDocs?: ExternalDocumentation;
+    operationId?: string;
+    parameters?: (Parameter | Reference)[];
+    requestBody?: RequestBody | Reference;
+    responses?: Responses;
+    callbacks?: Record<string, Callback | Reference>;
+    deprecated?: boolean;
+    security?: SecurityRequirement[];
+    servers?: Server[];
 }
 
 interface ExternalDocumentation {
@@ -64,12 +90,46 @@ interface RequestBody {
     required: boolean; // default: false
 }
 
+export type HttpStatusCode =
+    | HttpStatusCodeInformational
+    | HttpStatusCodeSuccess
+    | HttpStatusCodeRedirection
+    | HttpStatusCodeClientError
+    | HttpStatusCodeServerError;
+
+type HttpStatusCodeInformational = 100 | 101 | 102 | 103 | 104;
+type HttpStatusCodeSuccess = 200 | 201 | 202 | 203 | 204 | 205 | 206 | 207 | 208 | 226;
+type HttpStatusCodeRedirection = 300 | 301 | 302 | 303 | 304 | 305 | 306 | 307 | 308;
+type HttpStatusCodeClientError =
+    | 400
+    | 401
+    | 402
+    | 403
+    | 404
+    | 405
+    | 406
+    | 407
+    | 408
+    | 409
+    | 410
+    | 411
+    | 412
+    | 413
+    | 414;
+type HttpStatusCodeServerError = 500 | 501 | 502 | 503 | 504 | 505 | 506 | 507 | 508 | 510 | 511;
+
+interface Responses extends Partial<Record<HttpStatusCode, Response | Reference>> {
+    default: Response | Reference;
+}
+
 interface Response {
     description: string;
     headers: Record<string, Header | Reference>;
     content: Record<string, MediaType>;
     links: Record<string, Link | Reference>;
 }
+
+interface Callback extends Record<Expression, PathItem> {}
 
 interface MediaType {
     schema: Schema;
@@ -229,3 +289,9 @@ interface OAuthFlowPassword extends OAuthFlowBase {
 interface OAuthFlowClientCredentials extends OAuthFlowBase {
     tokenUrl: string;
 }
+
+interface SecurityRequirement extends Record<string, string[]> {}
+
+// Utility types
+
+type Expression = string;
