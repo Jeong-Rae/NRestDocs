@@ -20,6 +20,7 @@ interface Components {
     requestBodies: Record<string, RequestBody | Reference>;
     headers: Record<string, Header | Reference>;
     securitySchemes: Record<string, SecurityScheme | Reference>;
+    links: Record<string, Link | Reference>;
 }
 
 interface ExternalDocumentation {
