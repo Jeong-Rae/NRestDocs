@@ -17,6 +17,7 @@ interface Components {
     responses: Record<string, Response | Reference>;
     parameters: Record<string, Parameter | Reference>;
     examples: Record<string, Example | Reference>;
+    requestBodies: Record<string, RequestBody | Reference>;
 }
 
 interface ExternalDocumentation {
@@ -52,6 +53,12 @@ interface ParameterWithContent extends ParameterBase {
     schema: never;
     example: never;
     examples: never;
+}
+
+interface RequestBody {
+    description?: string;
+    content: Record<string, MediaType>;
+    required: boolean; // default: false
 }
 
 interface Response {
