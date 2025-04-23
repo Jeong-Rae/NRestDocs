@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      es-toolkit:
-        specifier: ^1.34.1
-        version: 1.34.1
       supertest:
         specifier: ^6.3.4
         version: 6.3.4
@@ -27,6 +24,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@20.17.30)(yaml@2.7.1))
+      es-toolkit:
+        specifier: ^1.34.1
+        version: 1.34.1
       husky:
         specifier: ^9.0.11
         version: 9.1.7

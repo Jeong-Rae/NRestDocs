@@ -17,14 +17,20 @@
         "postinstall": "husky",
         "prepare": "husky install"
     },
-    "keywords": ["api", "documentation", "asciidoc", "rest"],
+    "keywords": [
+        "api",
+        "documentation",
+        "asciidoc",
+        "rest"
+    ],
     "author": "Jeong-Rae",
     "license": "MIT",
     "lint-staged": {
-        "*.ts": ["pnpm biome check --write"]
+        "*.ts": [
+            "pnpm biome check --write"
+        ]
     },
     "dependencies": {
-        "es-toolkit": "^1.34.1",
         "supertest": "^6.3.4"
     },
     "devDependencies": {
@@ -32,6 +38,7 @@
         "@types/node": "^20.11.24",
         "@types/supertest": "^6.0.2",
         "@vitest/coverage-v8": "3.1.1",
+        "es-toolkit": "^1.34.1",
         "husky": "^9.0.11",
         "lint-staged": "^15.2.2",
         "prettier": "^3.2.5",
