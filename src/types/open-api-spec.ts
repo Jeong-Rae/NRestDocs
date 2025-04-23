@@ -1,5 +1,40 @@
 import type { JSONSchema } from "./json";
 
+interface OpenAPI {
+    openapi: string;
+    info: Info;
+    jsonSchemaDialect: string;
+    servers?: Server[];
+    paths: Paths;
+    webhooks?: Record<string, PathItem>;
+    components?: Components;
+    security?: SecurityRequirement[];
+    tags?: Tag[];
+    externalDocs?: ExternalDocumentation;
+}
+
+interface Info {
+    title: string;
+    summary?: string;
+    description?: string;
+    termsOfService?: string;
+    contact?: Contact;
+    license?: License;
+    version: string;
+}
+
+interface Contact {
+    name?: string;
+    url?: string;
+    email?: string;
+}
+
+interface License {
+    name: string;
+    identifier?: string;
+    url?: string;
+}
+
 interface Server {
     url: string;
     description?: string;
@@ -23,6 +58,10 @@ interface Components {
     links: Record<string, Link | Reference>;
     callbacks: Record<string, Callback | Reference>;
     pathItems: Record<string, PathItem>;
+}
+
+interface Paths {
+    [key: `/${string}`]: PathItem;
 }
 
 type HttpMethod = "get" | "post" | "put" | "delete" | "options" | "head" | "patch" | "trace";
@@ -61,15 +100,15 @@ interface ParameterBase {
     name: string;
     in: "query" | "header" | "path" | "cookie";
     description?: string;
-    required: boolean;
-    deprecated?: boolean;
-    allowEmptyValue?: boolean;
+    required: boolean; // default: false
+    deprecated: boolean; // default: false
+    allowEmptyValue: boolean; // default: false
 }
 
 interface ParameterWithSchema extends ParameterBase {
-    style?: "simple";
-    explode?: boolean;
-    allowReserved?: boolean;
+    style: "simple";
+    explode: boolean; // default: false
+    allowReserved: boolean; // default: false
     schema: Schema;
     example?: unknown;
     examples?: Record<string, Example | Reference>;
@@ -142,7 +181,7 @@ interface MediaType {
 interface Encoding {
     contentType: string;
     headers: Record<string, Header | Reference>;
-    style: "string";
+    style: string;
     explode: boolean;
     allowReserved: boolean;
 }
@@ -167,13 +206,13 @@ type Header = HeaderWithSchema | HeaderWithContent;
 
 interface HeaderBase {
     description?: string;
-    required: boolean;
-    deprecated: boolean;
+    required: boolean; // default: false
+    deprecated: boolean; // default: false
 }
 
 interface HeaderWithSchema extends HeaderBase {
     style: "simple";
-    explode: boolean;
+    explode: boolean; // default: false
     schema: Schema | Reference;
     example?: unknown;
     examples?: Record<string, Example | Reference>;
@@ -187,6 +226,12 @@ interface HeaderWithContent extends HeaderBase {
     schema: never;
     example: never;
     examples: never;
+}
+
+interface Tag {
+    name: string;
+    description?: string;
+    externalDocs?: ExternalDocumentation;
 }
 
 interface Reference {
@@ -212,8 +257,8 @@ interface XML {
     name?: string;
     namespace?: string;
     prefix?: string;
-    attribute?: boolean;
-    wrapped?: boolean;
+    attribute: boolean; // default: false
+    wrapped: boolean; // default: false
 }
 
 export type SecurityScheme =
