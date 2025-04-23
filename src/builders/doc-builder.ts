@@ -15,6 +15,7 @@ import { extractHttpRequest } from "../utils/http-trace-extractor";
 import type { PartialWithName } from "../utils/normalize-descriptors";
 import type { DescriptorBuilder } from "./descriptor-builder";
 import { applyPathParameters, applyQueryParameters, renderParameters } from "./withParameters";
+import { applyRequestFields, applyRequestHeaders, applyRequestParts } from "./withRequest";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -69,16 +70,6 @@ export class DocRequestBuilder {
     }
 
     /**
-     * request-headers 정의
-     */
-    withRequestHeaders(
-        headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
-    ): this {
-        this.requestHeaders = normalizeDescriptors(headers);
-        return this;
-    }
-
-    /**
      * path-parameters 정의
      */
     withPathParameters(
@@ -109,25 +100,27 @@ export class DocRequestBuilder {
     //     return this;
     // }
 
-    /**
-     * multipart request-parts 정의
-     */
+    /** request-headers 정의  */
+    withRequestHeaders(
+        headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
+    ): this {
+        this.requestHeaders = applyRequestHeaders(headers);
+        return this;
+    }
+
+    /** multipart request-parts 정의  */
     withRequestParts(parts: (DescriptorBuilder<PartDescriptor> | PartDescriptor)[]): this {
-        this.requestParts = normalizeDescriptors(parts);
+        this.requestParts = applyRequestParts(parts);
         return this;
     }
 
-    /**
-     * request-fields 정의
-     */
+    /** request-fields 정의  */
     withRequestFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
-        this.requestFields = normalizeDescriptors(fields);
+        this.requestFields = applyRequestFields(fields);
         return this;
     }
 
-    /**
-     * responses 정의
-     */
+    /** responses 정의  */
     withResponse(
         statusCode: HttpStatusCode,
         response: {
@@ -147,17 +140,13 @@ export class DocRequestBuilder {
         return this;
     }
 
-    /**
-     * response-headers 정의
-     */
+    /** response-headers 정의  */
     withResponseHeaders(headers: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[]): this {
         this.responseHeaders = normalizeDescriptors(headers);
         return this;
     }
 
-    /**
-     * response-fields 정의
-     */
+    /** response-fields 정의  */
     withResponseFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
         this.responseFields = normalizeDescriptors(fields);
         return this;
@@ -169,13 +158,13 @@ export class DocRequestBuilder {
         return this;
     }
 
-    /**
-     * supertest 요청을 실행하고, 설정된 옵션과 응답 정보를 콘솔에 출력
-     */
+    /** supertest 요청을 실행하고, 설정된 옵션과 응답 정보를 콘솔에 출력 */
     async doc(identifier: string): Promise<Response> {
         const supertestResponse = await this.supertestPromise;
 
         const { body, headers, method, url } = extractHttpRequest(supertestResponse);
+        const mediaType = headers["content-type"] || headers["Content-Type"];
+        console.log(mediaType);
 
         this.operationId = identifier;
 
@@ -183,8 +172,14 @@ export class DocRequestBuilder {
 
         const pathParameters = renderParameters(this.pathParameters, "path");
         const queryParameters = renderParameters(this.queryParameters, "query");
-        console.log(pathParameters);
-        console.log(queryParameters);
+
+        const requestBody = {
+            content: {
+                [mediaType]: {
+                    schema: { type: "object" },
+                },
+            },
+        };
 
         return supertestResponse;
     }

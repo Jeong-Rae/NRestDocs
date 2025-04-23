@@ -194,7 +194,7 @@ describe("doc-builder", () => {
                     .withDescription("Test API Full Description")
                     .withRequestHeaders(reqHeaders)
                     .withPathParameters(pathParams)
-                    .withRequestParameters(reqParams)
+                    .withQueryParameters(reqParams)
                     .withRequestParts(reqParts)
                     .withRequestFields(reqFields)
                     .withResponseHeaders(resHeaders)
