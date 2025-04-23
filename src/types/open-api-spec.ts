@@ -15,11 +15,42 @@ interface ServerVariable {
 interface Components {
     schemas: Record<string, Schema>;
     responses: Record<string, Response | Reference>;
+    parameters: Record<string, Parameter | Reference>;
 }
 
 interface ExternalDocumentation {
     url: string;
     description?: string;
+}
+
+type Parameter = ParameterWithSchema | ParameterWithContent;
+
+interface ParameterBase {
+    name: string;
+    in: "query" | "header" | "path" | "cookie";
+    description?: string;
+    required: boolean;
+    deprecated?: boolean;
+    allowEmptyValue?: boolean;
+}
+
+interface ParameterWithSchema extends ParameterBase {
+    style?: "simple";
+    explode?: boolean;
+    allowReserved?: boolean;
+    schema: Schema;
+    example?: unknown;
+    examples?: Record<string, Example | Reference>;
+    content: never;
+}
+
+interface ParameterWithContent extends ParameterBase {
+    content: Record<string, MediaType>;
+    style: never;
+    explode: never;
+    schema: never;
+    example: never;
+    examples: never;
 }
 
 interface Response {
