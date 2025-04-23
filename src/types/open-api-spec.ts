@@ -22,6 +22,7 @@ interface Components {
     securitySchemes: Record<string, SecurityScheme | Reference>;
     links: Record<string, Link | Reference>;
     callbacks: Record<string, Callback | Reference>;
+    pathItems: Record<string, PathItem>;
 }
 
 type HttpMethod = "get" | "post" | "put" | "delete" | "options" | "head" | "patch" | "trace";
