@@ -13,6 +13,7 @@ import type {
     PartDescriptor,
     ResponseDescriptor,
 } from "../types";
+import { extractHttpRequest } from "../utils/http-trace-extractor";
 import type { PartialWithName } from "../utils/normalize-descriptors";
 import type { DescriptorBuilder } from "./descriptor-builder";
 
@@ -146,36 +147,17 @@ export class DocRequestBuilder {
      * supertest 요청을 실행하고, 설정된 옵션과 응답 정보를 콘솔에 출력
      */
     async doc(identifier: string): Promise<Response> {
-        const response = await this.supertestPromise;
-        const config = getNRestDocsConfig();
+        const supertestResponse = await this.supertestPromise;
 
-        const renderer = new AsciiDocRenderer();
-        const snippetMap = renderer.renderDocumentSnippets(response, {
-            requestHeaders: this.requestHeaders,
-            pathParameters: this.pathParameters,
-            requestParameters: this.requestParameters,
-            requestParts: this.requestParts,
-            requestFields: this.requestFields,
-            responseHeaders: this.responseHeaders,
-            responseFields: this.responseFields,
-            responses: this.responses,
-            operation: {
-                method: this.httpMethod,
-                path: this.httpPath,
-                description: this.description,
-                servers: this.servers,
-            },
-        });
+        const { body, headers, method, url } = extractHttpRequest(supertestResponse);
 
-        const writer = new LocalDocWriter({
-            outputDir: config.output ?? "./docs",
-            extension: "adoc",
-            directoryStructure: "nested",
-        });
+        console.log(identifier);
+        console.log(body);
+        console.log(headers);
+        console.log(method);
+        console.log(url);
 
-        await writer.writeDocumentSnippets(identifier, snippetMap);
-
-        return response;
+        return supertestResponse;
     }
 }
 
