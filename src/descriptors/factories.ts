@@ -1,4 +1,4 @@
-import { type Builder, createBuilder } from "./builder";
+import { type Builder, type TypeUnset, createBuilder } from "./builder";
 import { ParamKinds } from "./types";
 import type {
     FieldDescriptor,
@@ -8,36 +8,28 @@ import type {
     QueryParamDescriptor,
 } from "./types";
 
-/** Path Parameter */
-export const pathParam = (
-    name: string
-): Builder<
-    Partial<PathParamDescriptor> & { kind: typeof ParamKinds.Path; name: string },
-    unknown
-> => createBuilder(ParamKinds.Path, name);
+type FactoryReturn<D, K extends keyof typeof ParamKinds, N extends string> = Builder<
+    Partial<D> & { kind: (typeof ParamKinds)[K]; name: N },
+    TypeUnset,
+    (typeof ParamKinds)[K]
+>;
 
-/** Query Parameter */
-export const queryParam = (
-    name: string
-): Builder<
-    Partial<QueryParamDescriptor> & { kind: typeof ParamKinds.Query; name: string },
-    unknown
-> => createBuilder(ParamKinds.Query, name);
+export const pathParam = <N extends string = string>(
+    name: N
+): FactoryReturn<PathParamDescriptor, "Path", N> => createBuilder(ParamKinds.Path, name);
 
-/** Header */
-export const header = (
-    name: string
-): Builder<Partial<HeaderDescriptor> & { kind: typeof ParamKinds.Header; name: string }, unknown> =>
-    createBuilder(ParamKinds.Header, name);
+export const queryParam = <N extends string = string>(
+    name: N
+): FactoryReturn<QueryParamDescriptor, "Query", N> => createBuilder(ParamKinds.Query, name);
 
-/** JSON Field */
-export const field = (
-    name: string
-): Builder<Partial<FieldDescriptor> & { kind: typeof ParamKinds.Field; name: string }, unknown> =>
-    createBuilder(ParamKinds.Field, name);
+export const header = <N extends string = string>(
+    name: N
+): FactoryReturn<HeaderDescriptor, "Header", N> => createBuilder(ParamKinds.Header, name);
 
-/** Multipart Part */
-export const part = (
-    name: string
-): Builder<Partial<PartDescriptor> & { kind: typeof ParamKinds.Part; name: string }, unknown> =>
-    createBuilder(ParamKinds.Part, name);
+export const field = <N extends string = string>(
+    name: N
+): FactoryReturn<FieldDescriptor, "Field", N> => createBuilder(ParamKinds.Field, name);
+
+export const part = <N extends string = string>(
+    name: N
+): FactoryReturn<PartDescriptor, "Part", N> => createBuilder(ParamKinds.Part, name);

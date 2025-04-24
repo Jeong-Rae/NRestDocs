@@ -1,5 +1,5 @@
 import { isArray, isFunction } from "es-toolkit/compat";
-import { type Builder, ParamKinds, type QueryParamDescriptor } from "../descriptors";
+import { type Builder, ParamKinds, type QueryParamDescriptor, type TypeSet } from "../descriptors";
 import type { PartialQueryParam, QueryParamsInput } from "./input.type";
 
 /** 배열,Record,Builder -> QueryParamDescriptor[] 로 정규화 */
@@ -11,9 +11,13 @@ export function applyQueryParameters(input: QueryParamsInput): QueryParamDescrip
 }
 
 /* 단일 항목 정규화 */
-function normalize(raw: Builder<any, any> | PartialQueryParam): QueryParamDescriptor {
-    if (isFunction((raw as any).build)) {
-        return (raw as Builder<QueryParamDescriptor, any>).build();
+function normalize(
+    raw:
+        | Builder<Partial<QueryParamDescriptor>, TypeSet, typeof ParamKinds.Query>
+        | PartialQueryParam
+): QueryParamDescriptor {
+    if (isFunction((raw as Record<string, unknown>)["build"])) {
+        return (raw as Builder<QueryParamDescriptor, TypeSet, typeof ParamKinds.Query>).build();
     }
 
     const descriptor = raw as PartialQueryParam;
