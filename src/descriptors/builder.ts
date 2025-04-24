@@ -16,6 +16,7 @@ export interface Builder<D extends Partial<BaseDescriptor>, S> {
 
     description(description: string): Builder<D & { description: string }, S>;
 
+    // optinal일때 값이 true만 가능하므로, 타입적으로 보장
     optional(): Builder<D & { optional: true }, S>;
 
     build(this: Builder<D & BaseDescriptor, TypeSet>): Readonly<D & BaseDescriptor>;
