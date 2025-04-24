@@ -15,7 +15,12 @@ import { extractHttpRequest } from "../utils/http-trace-extractor";
 import type { PartialWithName } from "../utils/normalize-descriptors";
 import type { DescriptorBuilder } from "./descriptor-builder";
 import { applyPathParameters, applyQueryParameters, renderParameters } from "./withParameters";
-import { applyRequestFields, applyRequestHeaders, applyRequestParts } from "./withRequest";
+import {
+    applyRequestFields,
+    applyRequestHeaders,
+    applyRequestParts,
+    renderRequestBody,
+} from "./withRequest";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -173,13 +178,7 @@ export class DocRequestBuilder {
         const pathParameters = renderParameters(this.pathParameters, "path");
         const queryParameters = renderParameters(this.queryParameters, "query");
 
-        const requestBody = {
-            content: {
-                [mediaType]: {
-                    schema: { type: "object" },
-                },
-            },
-        };
+        const requestBody = renderRequestBody(mediaType, this.requestFields, this.requestParts);
 
         return supertestResponse;
     }
