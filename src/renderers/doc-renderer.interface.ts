@@ -9,7 +9,7 @@ import type {
     ResponseDescriptor,
     SnippetMap,
     SupertestResponse,
-} from "../types";
+} from "@/types";
 
 export type RenderDocumentSnippetsOptions = {
     requestHeaders?: HeaderDescriptor[];

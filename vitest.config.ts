@@ -1,3 +1,4 @@
+import path from "path";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -24,5 +25,13 @@ export default defineConfig({
                 "src/**/*.type.ts", // 타입 파일 제외 추가
             ],
         },
+    },
+    resolve: {
+        alias: [
+            {
+                find: "@",
+                replacement: path.resolve(__dirname, "src"),
+            },
+        ],
     },
 });

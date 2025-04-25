@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { generateCurlSnippet } from "./curl-snippet";
 
-import type { HttpHeaders, HttpMethod } from "../types";
+import type { HttpHeaders, HttpMethod } from "@/types";
 
 describe("curl-snippet", () => {
     describe("generateCurlSnippet", () => {

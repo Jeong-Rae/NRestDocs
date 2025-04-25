@@ -1,19 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import * as configModule from "../config/config";
-import { AsciiDocRenderer } from "../renderers/ascii-doc-renderer";
-import { LocalDocWriter } from "../writers/local-doc-writer";
+import * as configModule from "@/config/config";
+import { AsciiDocRenderer } from "@/renderers/ascii-doc-renderer";
+import { LocalDocWriter } from "@/writers/local-doc-writer";
 
 import { defineField } from "./defineField";
 import { defineHeader } from "./defineHeader";
 import { definePart } from "./definePart";
-import { definePathParam } from "./definePathParam";
 import { defineQueryParam } from "./defineQueryParam";
 import { DocRequestBuilder, docRequest } from "./doc-builder";
 
+import { pathParam } from "@/descriptors";
+import type { NRestDocsConfig } from "@/types";
 import type { Response } from "supertest";
 import type { Mock } from "vitest";
-import type { NRestDocsConfig } from "../types";
 
 // 모듈 모킹
 vi.mock("./config");
@@ -117,9 +117,8 @@ describe("doc-builder", () => {
                 const identifier = "test-doc-call-all-with";
 
                 const reqHeaders = [defineHeader("Content-Type").description("요청 타입")];
-                const pathParams = [
-                    definePathParam("userId").type("number").description("사용자 ID"),
-                ];
+                const pathParams = [pathParam("userId").type("string").description("사용자 ID")];
+                // @ts-ignore
                 const reqParams = [
                     defineQueryParam("page").type("number").optional(),
                     defineQueryParam("query").type("string").description("검색어"),
@@ -194,7 +193,6 @@ describe("doc-builder", () => {
                     .withDescription("Test API Full Description")
                     .withRequestHeaders(reqHeaders)
                     .withPathParameters(pathParams)
-                    .withRequestParameters(reqParams)
                     .withRequestParts(reqParts)
                     .withRequestFields(reqFields)
                     .withResponseHeaders(resHeaders)

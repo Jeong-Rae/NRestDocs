@@ -1,9 +1,14 @@
-import { getNRestDocsConfig } from "../config/config";
-import { AsciiDocRenderer } from "../renderers/ascii-doc-renderer";
-import { normalizeDescriptors } from "../utils/normalize-descriptors";
-import { LocalDocWriter } from "../writers/local-doc-writer";
+import { getNRestDocsConfig } from "@/config/config";
+import { AsciiDocRenderer } from "@/renderers/ascii-doc-renderer";
+import { normalizeDescriptors } from "@/utils/normalize-descriptors";
+import { LocalDocWriter } from "@/writers/local-doc-writer";
 
-import type { Response } from "supertest";
+import {
+    type PathParamsInput,
+    type QueryParamsInput,
+    applyPathParameters,
+    applyQueryParameters,
+} from "@/inputs";
 import type {
     FieldDescriptor,
     HeaderDescriptor,
@@ -12,15 +17,20 @@ import type {
     ParameterDescriptor,
     PartDescriptor,
     ResponseDescriptor,
-} from "../types";
-import type { PartialWithName } from "../utils/normalize-descriptors";
+} from "@/types";
+import type { PartialWithName } from "@/utils/normalize-descriptors";
+import type { Response } from "supertest";
 import type { DescriptorBuilder } from "./descriptor-builder";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
 
     private requestHeaders?: HeaderDescriptor[];
+
     private pathParameters?: ParameterDescriptor[];
+    // @ts-ignore
+    private queryParameters?: ParameterDescriptor[];
+
     private requestParameters?: ParameterDescriptor[];
     private requestParts?: PartDescriptor[];
     private requestFields?: FieldDescriptor[];
@@ -69,22 +79,30 @@ export class DocRequestBuilder {
     }
 
     /**
-     * path-parameters 정의
+     * Path Parameters를 등록할 수 있다.
+     * @param params {PathParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
+     * @example
+     * / [ definePathParam("name").type("string") ]
+     * / [ { name: "name", "type": "string" } ]
+     * / { name: { type: "string" } }
+     * @returns
      */
-    withPathParameters(
-        params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
-    ): this {
-        this.pathParameters = normalizeDescriptors(params);
+    withPathParameters(params: PathParamsInput): this {
+        this.pathParameters = applyPathParameters(params);
         return this;
     }
 
     /**
-     * query/form request-parameters 정의
+     * Query Parameters를 등록할 수 있다.
+     * @param params {QueryParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
+     * @example
+     * / [ defineQueryParam("name").type("string") ]
+     * / [ { name: "name", "type": "string" } ]
+     * / { name: { type: "string" } }
+     * @returns
      */
-    withRequestParameters(
-        params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
-    ): this {
-        this.requestParameters = normalizeDescriptors(params);
+    withQueryParameters(params: QueryParamsInput): this {
+        this.queryParameters = applyQueryParameters(params);
         return this;
     }
 

@@ -1,7 +1,7 @@
 import { get, isFunction, map } from "es-toolkit/compat";
 
-import type { DescriptorBuilder } from "../builders/descriptor-builder";
-import type { BaseDescriptor } from "../types/descriptors.type";
+import type { DescriptorBuilder } from "@/builders/descriptor-builder";
+import type { BaseDescriptor } from "@/types/descriptors.type";
 
 /**
  * 객체에 name 속성을 필수로 포함하는 Partial 타입

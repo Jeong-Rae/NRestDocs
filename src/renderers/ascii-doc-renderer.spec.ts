@@ -11,20 +11,20 @@ import {
     generateRequestPartsSnippet,
     generateResponseFieldsSnippet,
     generateResponseHeadersSnippet,
-} from "../snippets";
-import { extractHttpRequest, extractHttpResponse } from "../utils/http-trace-extractor";
+} from "@/snippets";
+import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 
 import { AsciiDocRenderer } from "./ascii-doc-renderer";
 
-import type { SupertestResponse } from "../types";
+import type { SupertestResponse } from "@/types";
 
 // 모의 함수 설정
-vi.mock("../extractor/http-trace-extractor", () => ({
+vi.mock("@/extractor/http-trace-extractor", () => ({
     extractHttpRequest: vi.fn(),
     extractHttpResponse: vi.fn(),
 }));
 
-vi.mock("../snippets", () => ({
+vi.mock("@/snippets", () => ({
     generateCurlSnippet: vi.fn(),
     generateHttpRequestSnippet: vi.fn(),
     generateHttpResponseSnippet: vi.fn(),

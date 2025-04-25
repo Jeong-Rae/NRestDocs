@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { generateRequestHeadersSnippet } from "./request-headers-snippet";
 
-import type { HeaderDescriptor } from "../types";
+import type { HeaderDescriptor } from "@/types";
 
 describe("request-headers-snippet", () => {
     describe("generateRequestHeadersSnippet", () => {

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { createDescriptorBuilder } from "./descriptor-builder";
 
-import type { BaseDescriptor } from "../types/descriptors.type";
+import type { BaseDescriptor } from "@/types/descriptors.type";
 
 describe("descriptor-builder", () => {
     describe("createDescriptorBuilder", () => {

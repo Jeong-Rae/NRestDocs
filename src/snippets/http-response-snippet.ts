@@ -1,7 +1,7 @@
-import { format } from "../utils/format";
-import { filterResponseHeaders } from "../utils/header-filter";
+import { format } from "@/utils/format";
+import { filterResponseHeaders } from "@/utils/header-filter";
 
-import type { HttpHeaders } from "../types";
+import type { HttpHeaders } from "@/types";
 
 /**
  * http-response

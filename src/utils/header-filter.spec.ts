@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { filterHeaders, filterRequestHeaders, filterResponseHeaders } from "./header-filter";
 
-import type { HttpHeaders } from "../types";
+import type { HttpHeaders } from "@/types";
 
 describe("header-filter", () => {
     describe("filterHeaders", () => {

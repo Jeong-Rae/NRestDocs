@@ -1,5 +1,5 @@
-import type { FieldType } from "../types";
-import type { BaseDescriptor } from "../types/descriptors.type";
+import type { FieldType } from "@/types";
+import type { BaseDescriptor } from "@/types/descriptors.type";
 
 /**
  * .type(...) 호출 전 상태

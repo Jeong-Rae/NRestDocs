@@ -17,18 +17,11 @@
         "postinstall": "husky",
         "prepare": "husky install"
     },
-    "keywords": [
-        "api",
-        "documentation",
-        "asciidoc",
-        "rest"
-    ],
+    "keywords": ["api", "documentation", "asciidoc", "rest"],
     "author": "Jeong-Rae",
     "license": "MIT",
     "lint-staged": {
-        "*.ts": [
-            "pnpm biome check --write"
-        ]
+        "*.ts": ["pnpm biome check --write"]
     },
     "dependencies": {
         "supertest": "^6.3.4"
