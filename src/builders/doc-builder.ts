@@ -1,7 +1,4 @@
-import { getNRestDocsConfig } from "../config/config";
-import { AsciiDocRenderer } from "../renderers/ascii-doc-renderer";
 import { normalizeDescriptors } from "../utils/normalize-descriptors";
-import { LocalDocWriter } from "../writers/local-doc-writer";
 
 import type { Response } from "supertest";
 import type {
@@ -13,15 +10,24 @@ import type {
     PartDescriptor,
     ResponseDescriptor,
 } from "../types";
+import type { OpenAPI_V3_1 } from "../types/open-api-spec";
+import { extractHttpRequest } from "../utils/http-trace-extractor";
 import type { PartialWithName } from "../utils/normalize-descriptors";
 import type { DescriptorBuilder } from "./descriptor-builder";
+import { applyPathParameters, applyQueryParameters, renderParameters } from "./withParameters";
+import {
+    applyRequestFields,
+    applyRequestHeaders,
+    applyRequestParts,
+    renderRequestBody,
+} from "./withRequest";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
 
     private requestHeaders?: HeaderDescriptor[];
     private pathParameters?: ParameterDescriptor[];
-    private requestParameters?: ParameterDescriptor[];
+    private queryParameters?: ParameterDescriptor[];
     private requestParts?: PartDescriptor[];
     private requestFields?: FieldDescriptor[];
 
@@ -32,39 +38,39 @@ export class DocRequestBuilder {
 
     private httpMethod?: HttpMethod;
     private httpPath?: string;
-    private servers: string[] = [];
+
+    private tags: string[] = [];
+    private summary: string = "";
     private description: string = "";
+    private externalDocs?: OpenAPI_V3_1.ExternalDocumentation;
+    private operationId: string = "";
+    private servers: string[] = [];
 
     constructor(supertestPromise: Promise<Response>) {
         this.supertestPromise = supertestPromise;
     }
 
-    /** HTTP 메서드 & 경로 */
-    withOperation(method: HttpMethod, path: string): this {
-        this.httpMethod = method;
-        this.httpPath = path;
+    /** OpenAPI tags 설정 */
+    withTags(tags: string[]): this {
+        this.tags = tags;
         return this;
     }
 
-    /** 다중 서버 설정 (OpenAPI servers) */
-    withServers(servers: string[]): this {
-        this.servers = servers;
+    /** OpenAPI summary 설정 */
+    withSummary(summary: string): this {
+        this.summary = summary;
         return this;
     }
 
-    /** API 설명 추가 */
+    /** OpenAPI description 설정 */
     withDescription(description: string): this {
         this.description = description;
         return this;
     }
 
-    /**
-     * request-headers 정의
-     */
-    withRequestHeaders(
-        headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
-    ): this {
-        this.requestHeaders = normalizeDescriptors(headers);
+    /** OpenAPI externalDocs 설정 */
+    withExternalDocs(externalDocs: OpenAPI_V3_1.ExternalDocumentation): this {
+        this.externalDocs = externalDocs;
         return this;
     }
 
@@ -74,39 +80,52 @@ export class DocRequestBuilder {
     withPathParameters(
         params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
     ): this {
-        this.pathParameters = normalizeDescriptors(params);
+        this.pathParameters = applyPathParameters(params);
         return this;
     }
 
     /**
-     * query/form request-parameters 정의
+     * query request-parameters 정의
      */
-    withRequestParameters(
+    withQueryParameters(
         params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
     ): this {
-        this.requestParameters = normalizeDescriptors(params);
+        this.queryParameters = applyQueryParameters(params);
         return this;
     }
 
-    /**
-     * multipart request-parts 정의
-     */
+    // TODO: Body 쪽 content 로 정의해야함
+    // /**
+    //  * form request-parameters 정의
+    //  */
+    // withFormParameters(
+    //     params: (DescriptorBuilder<ParameterDescriptor> | ParameterDescriptor)[]
+    // ): this {
+    //     this.requestParameters = applyRequestParameters(params);
+    //     return this;
+    // }
+
+    /** request-headers 정의  */
+    withRequestHeaders(
+        headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
+    ): this {
+        this.requestHeaders = applyRequestHeaders(headers);
+        return this;
+    }
+
+    /** multipart request-parts 정의  */
     withRequestParts(parts: (DescriptorBuilder<PartDescriptor> | PartDescriptor)[]): this {
-        this.requestParts = normalizeDescriptors(parts);
+        this.requestParts = applyRequestParts(parts);
         return this;
     }
 
-    /**
-     * request-fields 정의
-     */
+    /** request-fields 정의  */
     withRequestFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
-        this.requestFields = normalizeDescriptors(fields);
+        this.requestFields = applyRequestFields(fields);
         return this;
     }
 
-    /**
-     * responses 정의
-     */
+    /** responses 정의  */
     withResponse(
         statusCode: HttpStatusCode,
         response: {
@@ -126,56 +145,42 @@ export class DocRequestBuilder {
         return this;
     }
 
-    /**
-     * response-headers 정의
-     */
+    /** response-headers 정의  */
     withResponseHeaders(headers: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[]): this {
         this.responseHeaders = normalizeDescriptors(headers);
         return this;
     }
 
-    /**
-     * response-fields 정의
-     */
+    /** response-fields 정의  */
     withResponseFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
         this.responseFields = normalizeDescriptors(fields);
         return this;
     }
 
-    /**
-     * supertest 요청을 실행하고, 설정된 옵션과 응답 정보를 콘솔에 출력
-     */
+    /** OpenAPI servers 설정 */
+    withServers(servers: string[]): this {
+        this.servers = servers;
+        return this;
+    }
+
+    /** supertest 요청을 실행하고, 설정된 옵션과 응답 정보를 콘솔에 출력 */
     async doc(identifier: string): Promise<Response> {
-        const response = await this.supertestPromise;
-        const config = getNRestDocsConfig();
+        const supertestResponse = await this.supertestPromise;
 
-        const renderer = new AsciiDocRenderer();
-        const snippetMap = renderer.renderDocumentSnippets(response, {
-            requestHeaders: this.requestHeaders,
-            pathParameters: this.pathParameters,
-            requestParameters: this.requestParameters,
-            requestParts: this.requestParts,
-            requestFields: this.requestFields,
-            responseHeaders: this.responseHeaders,
-            responseFields: this.responseFields,
-            responses: this.responses,
-            operation: {
-                method: this.httpMethod,
-                path: this.httpPath,
-                description: this.description,
-                servers: this.servers,
-            },
-        });
+        const { body, headers, method, url } = extractHttpRequest(supertestResponse);
+        const mediaType = headers["content-type"] || headers["Content-Type"];
+        console.log(mediaType);
 
-        const writer = new LocalDocWriter({
-            outputDir: config.output ?? "./docs",
-            extension: "adoc",
-            directoryStructure: "nested",
-        });
+        this.operationId = identifier;
 
-        await writer.writeDocumentSnippets(identifier, snippetMap);
+        console.log(identifier);
 
-        return response;
+        const pathParameters = renderParameters(this.pathParameters, "path");
+        const queryParameters = renderParameters(this.queryParameters, "query");
+
+        const requestBody = renderRequestBody(mediaType, this.requestFields, this.requestParts);
+
+        return supertestResponse;
     }
 }
 
