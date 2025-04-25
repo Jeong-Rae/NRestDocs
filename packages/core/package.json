@@ -9,7 +9,7 @@
     "scripts": {
         "typecheck": "tsc --noEmit",
         "build": "pnpm lint:fix && pnpm typecheck && tsup",
-        "test": "vitest run --coverage --exclude sample",
+        "test": "vitest run --coverage",
         "test:watch": "vitest watch",
         "test:cov": "vitest run --coverage",
         "test:ui": "vitest ui",
