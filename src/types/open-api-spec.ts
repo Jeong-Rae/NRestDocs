@@ -113,16 +113,16 @@ export namespace OpenAPI_V3_1 {
         schema: Schema;
         example?: unknown;
         examples?: Record<string, Example | Reference>;
-        content?: never;
+        content: never;
     }
 
     export interface ParameterWithContent extends ParameterBase {
         content: Record<string, MediaType>;
-        style?: never;
-        explode?: never;
-        schema?: never;
-        example?: never;
-        examples?: never;
+        style: never;
+        explode: never;
+        schema: never;
+        example: never;
+        examples: never;
     }
 
     export interface RequestBody {
@@ -228,16 +228,16 @@ export namespace OpenAPI_V3_1 {
         schema: Schema | Reference;
         example?: unknown;
         examples?: Record<string, Example | Reference>;
-        content?: never;
+        content: never;
     }
 
     export interface HeaderWithContent extends HeaderBase {
         content: Record<string, MediaType>;
-        style?: never;
-        explode?: never;
-        schema?: never;
-        example?: never;
-        examples?: never;
+        style: never;
+        explode: never;
+        schema: never;
+        example: never;
+        examples: never;
     }
 
     export interface Tag {
