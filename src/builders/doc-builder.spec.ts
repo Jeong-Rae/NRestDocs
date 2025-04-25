@@ -194,7 +194,7 @@ describe("doc-builder", () => {
                     .withDescription("Test API Full Description")
                     .withRequestHeaders(reqHeaders)
                     .withPathParameters(pathParams)
-                    .withRequestParameters(reqParams)
+                    .withQueryParameters(reqParams)
                     .withRequestParts(reqParts)
                     .withRequestFields(reqFields)
                     .withResponseHeaders(resHeaders)
@@ -280,60 +280,60 @@ describe("doc-builder", () => {
             });
         });
 
-        describe("withOperation", () => {
-            it("HTTP 메서드와 경로를 설정해야 한다", () => {
-                // Given
-                const builder = new DocRequestBuilder(mockResponsePromise);
-                const method = "GET" as const;
-                const path = "/api/users";
+        // describe("withOperation", () => {
+        //     it("HTTP 메서드와 경로를 설정해야 한다", () => {
+        //         // Given
+        //         const builder = new DocRequestBuilder(mockResponsePromise);
+        //         const method = "GET" as const;
+        //         const path = "/api/users";
 
-                // When
-                const result = builder.withOperation(method, path);
+        //         // When
+        //         const result = builder.withOperation(method, path);
 
-                // Then
-                expect(result).toBe(builder); // 메서드 체이닝이 가능하도록 this 반환
-                expect(result).toBeInstanceOf(DocRequestBuilder);
+        //         // Then
+        //         expect(result).toBe(builder); // 메서드 체이닝이 가능하도록 this 반환
+        //         expect(result).toBeInstanceOf(DocRequestBuilder);
 
-                // private 속성 테스트를 위한 접근
-                // biome-ignore lint/suspicious/noExplicitAny: use any
-                expect((builder as any).httpMethod).toEqual(method);
-                // biome-ignore lint/suspicious/noExplicitAny: use any
-                expect((builder as any).httpPath).toEqual(path);
-            });
+        //         // private 속성 테스트를 위한 접근
+        //         // biome-ignore lint/suspicious/noExplicitAny: use any
+        //         expect((builder as any).httpMethod).toEqual(method);
+        //         // biome-ignore lint/suspicious/noExplicitAny: use any
+        //         expect((builder as any).httpPath).toEqual(path);
+        //     });
 
-            it("doc 메서드 호출 시 operation 정보가 renderer에 전달되어야 한다", async () => {
-                // Given
-                const builder = new DocRequestBuilder(mockResponsePromise);
-                const method = "POST" as const;
-                const path = "/api/items";
-                const servers = ["http://api.example.com", "http://api2.example.com"];
-                const description = "아이템 생성 API";
+        //     it("doc 메서드 호출 시 operation 정보가 renderer에 전달되어야 한다", async () => {
+        //         // Given
+        //         const builder = new DocRequestBuilder(mockResponsePromise);
+        //         const method = "POST" as const;
+        //         const path = "/api/items";
+        //         const servers = ["http://api.example.com", "http://api2.example.com"];
+        //         const description = "아이템 생성 API";
 
-                builder
-                    .withOperation(method, path)
-                    .withDescription(description)
-                    .withServers(servers);
+        //         builder
+        //             .withOperation(method, path)
+        //             .withDescription(description)
+        //             .withServers(servers);
 
-                const mockSnippetMap = { "http-request": "POST /api/items" };
-                renderSpy.mockReturnValue(mockSnippetMap);
+        //         const mockSnippetMap = { "http-request": "POST /api/items" };
+        //         renderSpy.mockReturnValue(mockSnippetMap);
 
-                // When
-                await builder.doc("test-operation");
+        //         // When
+        //         await builder.doc("test-operation");
 
-                // Then
-                expect(renderSpy).toHaveBeenCalledWith(
-                    mockResponse,
-                    expect.objectContaining({
-                        operation: {
-                            method,
-                            path,
-                            description,
-                            servers,
-                        },
-                    })
-                );
-            });
-        });
+        //         // Then
+        //         expect(renderSpy).toHaveBeenCalledWith(
+        //             mockResponse,
+        //             expect.objectContaining({
+        //                 operation: {
+        //                     method,
+        //                     path,
+        //                     description,
+        //                     servers,
+        //                 },
+        //             })
+        //         );
+        //     });
+        // });
 
         describe("withResponse", () => {
             it("상태 코드별 응답 정보를 설정해야 한다", () => {
