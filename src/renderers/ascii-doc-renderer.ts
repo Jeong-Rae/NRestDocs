@@ -11,10 +11,10 @@ import {
     generateRequestPartsSnippet,
     generateResponseFieldsSnippet,
     generateResponseHeadersSnippet,
-} from "../snippets";
-import { extractHttpRequest, extractHttpResponse } from "../utils/http-trace-extractor";
+} from "@/snippets";
+import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 
-import type { Request, Response, SnippetMap, SupertestResponse } from "../types";
+import type { Request, Response, SnippetMap, SupertestResponse } from "@/types";
 import type { DocRenderer, RenderDocumentSnippetsOptions } from "./doc-renderer.interface";
 
 export class AsciiDocRenderer implements DocRenderer {

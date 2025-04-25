@@ -1,9 +1,9 @@
 import {
     DEFAULT_REQUEST_HEADER_WHITELIST,
     DEFAULT_RESPONSE_HEADER_WHITELIST,
-} from "../constants/http";
+} from "@/constants/http";
 
-import type { HttpHeaders } from "../types";
+import type { HttpHeaders } from "@/types";
 
 /**
  * 주어진 헤더를, 허용된 헤더 목록만 필터링한다.

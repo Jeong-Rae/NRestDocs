@@ -1,8 +1,8 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import { format } from "../utils/format";
+import { format } from "@/utils/format";
 
-import type { FieldDescriptor } from "../types";
+import type { FieldDescriptor } from "@/types";
 
 /**
  * response-fields

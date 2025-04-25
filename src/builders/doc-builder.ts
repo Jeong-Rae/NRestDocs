@@ -1,15 +1,14 @@
-import { getNRestDocsConfig } from "../config/config";
-import { AsciiDocRenderer } from "../renderers/ascii-doc-renderer";
-import { normalizeDescriptors } from "../utils/normalize-descriptors";
-import { LocalDocWriter } from "../writers/local-doc-writer";
+import { getNRestDocsConfig } from "@/config/config";
+import { AsciiDocRenderer } from "@/renderers/ascii-doc-renderer";
+import { normalizeDescriptors } from "@/utils/normalize-descriptors";
+import { LocalDocWriter } from "@/writers/local-doc-writer";
 
-import type { Response } from "supertest";
 import {
     type PathParamsInput,
     type QueryParamsInput,
     applyPathParameters,
     applyQueryParameters,
-} from "../inputs";
+} from "@/inputs";
 import type {
     FieldDescriptor,
     HeaderDescriptor,
@@ -18,8 +17,9 @@ import type {
     ParameterDescriptor,
     PartDescriptor,
     ResponseDescriptor,
-} from "../types";
-import type { PartialWithName } from "../utils/normalize-descriptors";
+} from "@/types";
+import type { PartialWithName } from "@/utils/normalize-descriptors";
+import type { Response } from "supertest";
 import type { DescriptorBuilder } from "./descriptor-builder";
 
 export class DocRequestBuilder {
@@ -28,6 +28,7 @@ export class DocRequestBuilder {
     private requestHeaders?: HeaderDescriptor[];
 
     private pathParameters?: ParameterDescriptor[];
+    // @ts-ignore
     private queryParameters?: ParameterDescriptor[];
 
     private requestParameters?: ParameterDescriptor[];

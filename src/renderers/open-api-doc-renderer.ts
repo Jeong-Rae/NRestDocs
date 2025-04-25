@@ -1,6 +1,6 @@
 import { isEmpty } from "es-toolkit/compat";
 
-import type { OpenAPI_V3_1 } from "../types/open-api-spec";
+import type { OpenAPI_V3_1 } from "@/types/open-api-spec";
 
 type OpenAPIDocumentRendererOptions = {
     info?: OpenAPI_V3_1.Info;

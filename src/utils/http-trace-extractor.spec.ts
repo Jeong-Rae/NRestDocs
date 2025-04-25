@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { extractHttpRequest, extractHttpResponse } from "./http-trace-extractor";
 
-import type { SupertestResponse } from "../types";
+import type { SupertestResponse } from "@/types";
 
 describe("http-trace-extractor", () => {
     describe("extractHttpRequest", () => {
