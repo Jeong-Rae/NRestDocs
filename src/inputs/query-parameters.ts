@@ -1,4 +1,4 @@
-import { ParamKinds, type QueryParamDescriptor } from "../descriptors";
+import { ParamKinds, type QueryParamDescriptor } from "@/descriptors";
 import { type ArrayOrRecord, applyParameters } from "../utils/parameter-normalizer";
 
 type QueryInput = ArrayOrRecord<typeof ParamKinds.Query, QueryParamDescriptor>;

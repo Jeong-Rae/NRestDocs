@@ -1,5 +1,5 @@
+import { ParamKinds, pathParam, queryParam } from "@/descriptors";
 import { describe, expect, it } from "vitest";
-import { ParamKinds, pathParam, queryParam } from "../descriptors";
 import { applyParameters } from "./parameter-normalizer";
 import { given } from "./test";
 
@@ -25,17 +25,18 @@ describe("parameter-normalizer", () => {
                         const desc = result[0];
                         expect(desc.name).toBe("orderId");
                         expect(desc.optional).toBe(true);
+                        expect(desc.type).toBe("string");
                     });
             });
 
             it("calls build() on Builder instances", async () => {
-                await given([pathParam("commentId").type("integer")])
+                await given([pathParam("commentId").type("string")])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
                     .when((input) => applyParameters(ParamKinds.Path, input as any))
                     .then((result) => {
                         const desc = result[0];
                         expect(desc.name).toBe("commentId");
-                        expect(desc.type).toBe("integer");
+                        expect(desc.type).toBe("string");
                     });
             });
 
@@ -66,22 +67,19 @@ describe("parameter-normalizer", () => {
             });
 
             it("applies optional flag correctly", async () => {
-                await given([{ name: "page", type: "integer", optional: true }])
+                await given([{ name: "page", optional: true }])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
                     .when((input) => applyParameters(ParamKinds.Query, input as any))
                     .then((result) => {
                         const desc = result[0];
                         expect(desc.name).toBe("page");
                         expect(desc.optional).toBe(true);
-                        expect(desc.type).toBe("integer");
+                        expect(desc.type).toBe("string"); // 기본 string
                     });
             });
 
             it("calls build() on Builder instances", async () => {
-                await given([
-                    queryParam("q").description("검색어"),
-                    queryParam("sort").type("string").optional(),
-                ])
+                await given([queryParam("q").description("검색어"), queryParam("sort").optional()])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
                     .when((input) => applyParameters(ParamKinds.Query, input as any))
                     .then((result) => {
@@ -92,8 +90,8 @@ describe("parameter-normalizer", () => {
 
             it("maps record keys to names", async () => {
                 await given({
-                    limit: { type: "integer" },
-                    offset: { type: "integer", optional: true },
+                    limit: {},
+                    offset: { optional: true },
                 })
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
                     .when((input) => applyParameters(ParamKinds.Query, input as any))
