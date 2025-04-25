@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ParamKinds, pathParam, queryParam } from "../descriptors";
-import { applyParameters } from "./parameter-normalizer";
+import { applyParameters, makeApply } from "./parameter-normalizer";
 import { given } from "./test";
 
 describe("parameter-normalizer", () => {
@@ -102,6 +102,46 @@ describe("parameter-normalizer", () => {
                         expect(result.find((r) => r.name === "offset")?.optional).toBe(true);
                     });
             });
+        });
+    });
+
+    describe("makeApply", () => {
+        function assertSameResult<K extends (typeof ParamKinds)[keyof typeof ParamKinds]>(
+            kind: K,
+            input: unknown
+        ) {
+            // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
+            const applyKind = makeApply<typeof kind>()<any>(kind);
+
+            // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
+            const expected = applyParameters(kind, input as any);
+
+            // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
+            const actual = applyKind(input as any);
+            expect(actual).toEqual(expected);
+        }
+
+        it("should return a function that correctly applies Path parameters like array", () => {
+            const input = [pathParam("orderId").type("string"), { name: "userId" }];
+            assertSameResult(ParamKinds.Path, input);
+        });
+
+        it("should return a function that correctly applies Path parameters record like", () => {
+            const input = { postId: {}, commentId: { type: "integer" } };
+            assertSameResult(ParamKinds.Path, input);
+        });
+
+        it("should return a function that corrctly applies query aprameters like array", () => {
+            const input = [
+                queryParam("q").type("string"),
+                { name: "page", type: "integer", optional: true },
+            ];
+            assertSameResult(ParamKinds.Query, input);
+        });
+
+        it("should return a function that corrctly applies query aprameters like record", () => {
+            const input = { limit: { type: "integer" }, offset: {} };
+            assertSameResult(ParamKinds.Query, input);
         });
     });
 });

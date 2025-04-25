@@ -1,4 +1,4 @@
-import type { BaseDescriptor, FieldType, ParamKind } from "./types";
+import type { AllowedType, BaseDescriptor, ParamKind } from "./types";
 
 /** 빌더 상태 태그 타입 */
 export const BuilderState = {
@@ -10,27 +10,31 @@ export type TypeUnset = { __state: typeof BuilderState.Unset };
 export type TypeSet = { __state: typeof BuilderState.Set };
 
 /** 공통 Builder 인터페이스 */
-export interface Builder<D extends Partial<BaseDescriptor<K>>, S, K extends ParamKind> {
-    // type 호출을 required 하므로, Omit으로 안전한 정의가 필요
-    type<T extends FieldType>(type: T): Builder<Omit<D, "type"> & { type: T }, TypeSet, K>;
+export interface Builder<
+    D extends Partial<BaseDescriptor<K, AllowedType<K>>>,
+    S,
+    K extends ParamKind,
+> {
+    type<T extends AllowedType<K>>(type: T): Builder<Omit<D, "type"> & { type: T }, TypeSet, K>;
 
     description(description: string): Builder<D & { description: string }, S, K>;
 
-    // optinal일때 값이 true만 가능하므로, 타입적으로 보장
     optional(): Builder<D & { optional: true }, S, K>;
 
-    build(this: Builder<D & BaseDescriptor<K>, TypeSet, K>): Readonly<D & BaseDescriptor<K>>;
+    build(
+        this: Builder<D & BaseDescriptor<K, AllowedType<K>>, TypeSet, K>
+    ): Readonly<D & BaseDescriptor<K, AllowedType<K>>>;
 }
 
 /** 빌더 생성 함수 */
 export function createBuilder<K extends ParamKind, N extends string>(
     kind: K,
     name: N,
-    draft: Partial<BaseDescriptor<K>> & { kind: K; name: N } = { kind, name }
+    draft: Partial<BaseDescriptor<K, AllowedType<K>>> & { kind: K; name: N } = { kind, name }
 ): Builder<typeof draft, TypeUnset, K> {
-    const arg: unknown = {
-        type(t: FieldType) {
-            return createBuilder(kind, name, { ...draft, type: t });
+    const api: unknown = {
+        type(type: AllowedType<K>) {
+            return createBuilder(kind, name, { ...draft, type });
         },
         description(description: string) {
             return createBuilder(kind, name, { ...draft, description });
@@ -39,10 +43,10 @@ export function createBuilder<K extends ParamKind, N extends string>(
             return createBuilder(kind, name, { ...draft, optional: true });
         },
         build(
-            this: Builder<typeof draft & BaseDescriptor<K>, TypeSet, K>
-        ): Readonly<typeof draft & BaseDescriptor<K>> {
-            return draft as Readonly<typeof draft & BaseDescriptor<K>>;
+            this: Builder<typeof draft & BaseDescriptor<K, AllowedType<K>>, TypeSet, K>
+        ): Readonly<typeof draft & BaseDescriptor<K, AllowedType<K>>> {
+            return draft as Readonly<typeof draft & BaseDescriptor<K, AllowedType<K>>>;
         },
     };
-    return arg as Builder<typeof draft, TypeUnset, K>;
+    return api as Builder<typeof draft, TypeUnset, K>;
 }
