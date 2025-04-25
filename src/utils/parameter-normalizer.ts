@@ -5,7 +5,7 @@ type PartialDescriptor<K extends ParamKind, D extends BaseDescriptor<K, AllowedT
     Omit<D, "kind">
 > & { name: string };
 
-type ArrayOrRecord<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> =
+export type ArrayOrRecord<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> =
     | (Builder<Partial<D>, TypeSet, K> | PartialDescriptor<K, D>)[]
     | Record<string, Omit<PartialDescriptor<K, D>, "name">>;
 
@@ -18,14 +18,13 @@ function normalizeOne<K extends ParamKind, D extends BaseDescriptor<K, AllowedTy
         return (raw as Builder<D, TypeSet, K>).build();
     }
 
-    // Partial 객체 경우 기본값 채우기
-    const d = raw as PartialDescriptor<K, D>;
+    const { name, type = "string", description = "", optional } = raw as PartialDescriptor<K, D>;
     return {
         kind,
-        name: d.name,
-        type: (d.type ?? "string") as AllowedType<K>,
-        description: d.description ?? "",
-        ...(d.optional && { optional: true }),
+        name,
+        type,
+        description,
+        ...(optional && { optional: true }),
     } as D;
 }
 
@@ -40,9 +39,3 @@ export function applyParameters<K extends ParamKind, D extends BaseDescriptor<K,
         ([name, rest]) => normalizeOne(kind, { name, ...rest } as PartialDescriptor<K, D>) as D
     );
 }
-
-export const makeApply =
-    <K extends ParamKind>() =>
-    <D extends BaseDescriptor<K, AllowedType<K>>>(kind: K) =>
-    (input: ArrayOrRecord<K, D>) =>
-        applyParameters<K, D>(kind, input);
