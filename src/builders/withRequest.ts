@@ -104,6 +104,17 @@ export function renderRequestBody(
         };
     }
 
+    if (mediaType === "application/x-www-form-urlencoded") {
+        return {
+            content: {
+                "application/x-www-form-urlencoded": {
+                    schema: renderRequestFieldSchema(fields || []),
+                },
+            },
+            required: true,
+        };
+    }
+
     // application/json or default
     const schema = renderRequestFieldSchema(fields || []);
 
