@@ -1,10 +1,10 @@
 {
     "name": "nrestdocs",
-    "version": "0.1.0",
-    "description": "NRest API 문서 생성기",
-    "type": "module",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "version": "0.0.1",
+    "description": "For generating Rest Docs with NodeJs",
+    "type": "commonjs",
+    "main": "dist/src/index.js",
+    "types": "dist/src/index.d.ts",
     "scripts": {
         "build": "pnpm lint:fix && tsc",
         "test": "vitest run --coverage --exclude sample",
@@ -17,7 +17,7 @@
         "postinstall": "husky",
         "prepare": "husky install"
     },
-    "keywords": ["api", "documentation", "asciidoc", "rest"],
+    "keywords": ["api", "documentation", "asciidoc", "openapi", "swagger", "rest", "nodejs"],
     "author": "Jeong-Rae",
     "license": "MIT",
     "lint-staged": {
@@ -34,7 +34,6 @@
         "es-toolkit": "^1.34.1",
         "husky": "^9.0.11",
         "lint-staged": "^15.2.2",
-        "prettier": "^3.2.5",
         "typescript": "^5.3.3",
         "vitest": "^3.1.1"
     },
