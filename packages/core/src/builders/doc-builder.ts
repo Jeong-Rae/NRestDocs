@@ -7,10 +7,12 @@ import {
     type FormParamsInput,
     type PathParamsInput,
     type QueryParamsInput,
+    type RequestPartInput,
     applyPathParameters,
     applyQueryParameters,
 } from "@/inputs";
 import { applyFormParameters } from "@/inputs/form-parameters";
+import { applyRequestPart } from "@/inputs/request-part";
 import type {
     FieldDescriptor,
     HeaderDescriptor,
@@ -57,9 +59,9 @@ export class DocRequestBuilder {
      * Query Parameters를 등록할 수 있다.
      * @param params {QueryParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ queryParam("name").type("string") ]
-     * / [ { name: "name", "type": "string" } ]
-     * / { name: { type: "string" } }
+     * / [ queryParam("page").type("number") ]
+     * / [ { name: "page", "type": "number" } ]
+     * / { page: { type: "number" } }
      * @returns
      */
     withQueryParameters(params: QueryParamsInput): this {
@@ -71,9 +73,9 @@ export class DocRequestBuilder {
      * Form Parameters를 등록할 수 있다.
      * @param params {FormParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ formParam("name").type("string") ]
-     * / [ { name: "name", "type": "string" } ]
-     * / { name: { type: "string" } }
+     * / [ formParam("username").type("string") ]
+     * / [ { name: "username", "type": "string" } ]
+     * / { username: { type: "string" } }
      * @returns
      */
     withFormParameters(params: FormParamsInput): this {
@@ -85,13 +87,27 @@ export class DocRequestBuilder {
      * Path Parameters를 등록할 수 있다.
      * @param params {PathParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ pathParam("name").type("string") ]
-     * / [ { name: "name", "type": "string" } ]
-     * / { name: { type: "string" } }
+     * / [ pathParam("userId").type("string") ]
+     * / [ { name: "userId", "type": "string" } ]
+     * / { userId: { type: "string" } }
      * @returns
      */
     withPathParameters(params: PathParamsInput): this {
         this.pathParameters = applyPathParameters(params);
+        return this;
+    }
+
+    /**
+     * Request Part를 등록할 수 있다.
+     * @param params {RequestPartInput} 등록 가능한 Parameter 입력 배열 또는 레코드
+     * @example
+     * / [ part("file").type("binary") ]
+     * / [ { name: "file", "type": "binary" } ]
+     * / { file: { type: "binary" } }
+     * @returns
+     */
+    withRequestPart(params: RequestPartInput): this {
+        this.requestParts = applyRequestPart(params);
         return this;
     }
 
