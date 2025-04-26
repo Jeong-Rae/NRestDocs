@@ -1,23 +1,22 @@
 import { getNRestDocsConfig } from "@/config/config";
 import { AsciiDocRenderer } from "@/renderers/ascii-doc-renderer";
-import { normalizeDescriptors } from "@/utils/normalize-descriptors";
 import { LocalDocWriter } from "@/writers/local-doc-writer";
 
 import type { CookieDescriptor } from "@/descriptors";
 import {
+    type CookieInput,
     type FieldInput,
     type FormParamsInput,
+    type HeaderInput,
     type PathParamsInput,
     type QueryParamsInput,
-    type RequestCookieInput,
-    type RequestHeaderInput,
     type RequestPartInput,
+    applyCookie,
     applyFields,
     applyFormParameters,
+    applyHeader,
     applyPathParameters,
     applyQueryParameters,
-    applyRequestCookie,
-    applyRequestHeader,
     applyRequestPart,
 } from "@/inputs";
 import type {
@@ -30,7 +29,6 @@ import type {
     ResponseDescriptor,
 } from "@/types";
 import type { Response } from "supertest";
-import type { DescriptorBuilder } from "./descriptor-builder";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
@@ -43,14 +41,17 @@ export class DocRequestBuilder {
 
     private requestParts?: PartDescriptor[];
 
+    private responseHeaders?: HeaderDescriptor[];
     private requestHeaders?: HeaderDescriptor[];
+
+    // @ts-ignore
+    private responseCookies?: CookieDescriptor[];
     // @ts-ignore
     private requestCookies?: CookieDescriptor[];
 
     private requestParameters?: ParameterDescriptor[];
     private requestFields?: FieldDescriptor[];
 
-    private responseHeaders?: HeaderDescriptor[];
     private responseFields?: FieldDescriptor[];
 
     private responses: Record<HttpStatusCode, ResponseDescriptor> = {};
@@ -172,30 +173,58 @@ export class DocRequestBuilder {
     }
 
     /**
+     * Response Header를 등록할 수 있다.
+     * @param headers {HeaderInput} 등록 가능한 Header 입력 배열 또는 레코드
+     * @returns
+     * @example
+     * / withResponseHeaders([ defineHeader("Authorization"), defineHeader("Server") ])
+     * / withResponseHeaders([ { name: "Authorization" }, { name: "Server" } ])
+     * / withResponseHeaders({ Authorization: {}, Server: {} })
+     */
+    withResponseHeaders(headers: HeaderInput): this {
+        this.responseHeaders = applyHeader(headers);
+        return this;
+    }
+
+    /**
      * Request Header를 등록할 수 있다.
-     * @param headers {RequestHeaderInput} 등록 가능한 Header 입력 배열 또는 레코드
+     * @param headers {HeaderInput} 등록 가능한 Header 입력 배열 또는 레코드
      * @returns
      * @example
      * / withRequestHeaders([ defineHeader("Authorization"), defineHeader("X-Forwarded-For") ])
      * / withRequestHeaders([ { name: "Authorization" }, { name: "X-Forwarded-For" } ])
      * / withRequestHeaders({ Authorization: {}, "X-Forwarded-For": {} })
      */
-    withRequestHeaders(headers: RequestHeaderInput): this {
-        this.requestHeaders = applyRequestHeader(headers);
+    withRequestHeaders(headers: HeaderInput): this {
+        this.requestHeaders = applyHeader(headers);
         return this;
     }
 
     /**
-     * Cookie를 등록할 수 있다.
-     * @param cookies {RequestCookieInput} 등록 가능한 Cookie 입력 배열 또는 레코드
+     * Response Cookie를 등록할 수 있다.
+     * @param cookies {CookieInput} 등록 가능한 Cookie 입력 배열 또는 레코드
      * @returns
      * @example
      * / withRequestCookies([ defineCookie("connect.sid").type("string").format("base64") ])
      * / withRequestCookies([ { name: "connect.sid", "type": "string", "format": "base64" } ])
      * / withRequestCookies({ connect.sid: { type: "string", "format": "base64" } })
      */
-    withRequestCookies(cookies: RequestCookieInput): this {
-        this.requestCookies = applyRequestCookie(cookies);
+    withResponseCookies(cookies: CookieInput): this {
+        this.responseCookies = applyCookie(cookies);
+        return this;
+    }
+
+    /**
+     * Request Cookie를 등록할 수 있다.
+     * @param cookies {CookieInput} 등록 가능한 Cookie 입력 배열 또는 레코드
+     * @returns
+     * @example
+     * / withRequestCookies([ defineCookie("connect.sid").type("string").format("base64") ])
+     * / withRequestCookies([ { name: "connect.sid", "type": "string", "format": "base64" } ])
+     * / withRequestCookies({ connect.sid: { type: "string", "format": "base64" } })
+     */
+    withRequestCookies(cookies: CookieInput): this {
+        this.requestCookies = applyCookie(cookies);
         return this;
     }
 
@@ -215,14 +244,6 @@ export class DocRequestBuilder {
     /** API 설명 추가 */
     withDescription(description: string): this {
         this.description = description;
-        return this;
-    }
-
-    /**
-     * response-headers 정의
-     */
-    withResponseHeaders(headers: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[]): this {
-        this.responseHeaders = normalizeDescriptors(headers);
         return this;
     }
 

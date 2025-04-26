@@ -36,5 +36,5 @@ export type QueryParamsInput = ArrayOrRecord<typeof ParamKinds.Query, QueryParam
 export type FormParamsInput = ArrayOrRecord<typeof ParamKinds.Form, FormParamDescriptor>;
 export type PathParamsInput = ArrayOrRecord<typeof ParamKinds.Path, PathParamDescriptor>;
 export type RequestPartInput = ArrayOrRecord<typeof ParamKinds.Part, PartDescriptor>;
-export type RequestHeaderInput = ArrayOrRecord<typeof ParamKinds.Header, HeaderDescriptor>;
-export type RequestCookieInput = ArrayOrRecord<typeof ParamKinds.Cookie, CookieDescriptor>;
+export type HeaderInput = ArrayOrRecord<typeof ParamKinds.Header, HeaderDescriptor>;
+export type CookieInput = ArrayOrRecord<typeof ParamKinds.Cookie, CookieDescriptor>;
