@@ -1,10 +1,12 @@
-import type { FieldDescriptor, HeaderDescriptor, PartDescriptor } from "@/types";
 import { type Builder, type TypeUnset, createBuilder } from "./builder";
 import {
     type CookieDescriptor,
+    type FieldDescriptor,
     type FormParamDescriptor,
+    type HeaderDescriptor,
     type ParamKind,
     ParamKinds,
+    type PartDescriptor,
     type PathParamDescriptor,
     type QueryParamDescriptor,
 } from "./types";

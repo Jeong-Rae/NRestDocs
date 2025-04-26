@@ -1,8 +1,12 @@
-import { getNRestDocsConfig } from "@/config/config";
-import { AsciiDocRenderer } from "@/renderers/ascii-doc-renderer";
-import { LocalDocWriter } from "@/writers/local-doc-writer";
-
-import type { CookieDescriptor } from "@/descriptors";
+import type {
+    CookieDescriptor,
+    FieldDescriptor,
+    FormParamDescriptor,
+    HeaderDescriptor,
+    PartDescriptor,
+    PathParamDescriptor,
+    QueryParamDescriptor,
+} from "@/descriptors";
 import {
     type CookieInput,
     type FieldInput,
@@ -19,14 +23,7 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
-import type {
-    FieldDescriptor,
-    HeaderDescriptor,
-    HttpMethod,
-    HttpStatusCode,
-    ParameterDescriptor,
-    PartDescriptor,
-} from "@/types";
+import type { HttpMethod, HttpStatusCode } from "@/types";
 import type { Response } from "supertest";
 
 export class DocRequestBuilder {
@@ -37,9 +34,9 @@ export class DocRequestBuilder {
     private statusCode?: HttpStatusCode;
 
     // 요청 파라미터
-    private pathParameters?: ParameterDescriptor[];
-    private queryParameters?: ParameterDescriptor[];
-    private formParameters?: ParameterDescriptor[];
+    private pathParameters?: PathParamDescriptor[];
+    private queryParameters?: QueryParamDescriptor[];
+    private formParameters?: FormParamDescriptor[];
 
     // 요청 멀티파트
     private requestParts?: PartDescriptor[];

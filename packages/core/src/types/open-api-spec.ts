@@ -65,7 +65,15 @@ export namespace OpenAPI_V3_1 {
         [key: `/${string}`]: PathItem;
     }
 
-    type HttpMethod = "get" | "post" | "put" | "delete" | "options" | "head" | "patch" | "trace";
+    export type HttpMethod =
+        | "get"
+        | "post"
+        | "put"
+        | "delete"
+        | "options"
+        | "head"
+        | "patch"
+        | "trace";
 
     export interface PathItem extends Partial<Record<HttpMethod, Operation>> {
         $ref?: string;

@@ -1,11 +1,17 @@
-import type { Request, Response, SupertestRequest, SupertestResponse } from "@/types";
+import type {
+    HttpRequest,
+    HttpResponse,
+    HttpStatusCode,
+    SupertestRequest,
+    SupertestResponse,
+} from "@/types";
 
 /**
  * Supertest 응답 객체에서 요청 정보를 추출합니다.
  * @param response Supertest 응답 객체
  * @returns 추출된 요청 정보
  */
-export function extractHttpRequest(response: SupertestResponse): Request {
+export function extractHttpRequest(response: SupertestResponse): HttpRequest {
     const request = response.request as SupertestRequest;
     return {
         body: request?._data ?? {},
@@ -20,10 +26,10 @@ export function extractHttpRequest(response: SupertestResponse): Request {
  * @param response Supertest 응답 객체
  * @returns 추출된 응답 정보
  */
-export function extractHttpResponse(response: SupertestResponse): Response {
+export function extractHttpResponse(response: SupertestResponse): HttpResponse {
     return {
         body: response.body ?? {},
         headers: response.headers ?? {},
-        statusCode: response.status,
+        statusCode: response.status as HttpStatusCode,
     };
 }

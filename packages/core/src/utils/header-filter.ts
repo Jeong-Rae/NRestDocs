@@ -1,9 +1,23 @@
-import {
-    DEFAULT_REQUEST_HEADER_WHITELIST,
-    DEFAULT_RESPONSE_HEADER_WHITELIST,
-} from "@/constants/http";
-
 import type { HttpHeaders } from "@/types";
+
+/**
+ * 문서화에 허용할 요청 헤더 목록
+ */
+export const DEFAULT_REQUEST_HEADER_WHITELIST: string[] = [
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+];
+
+/**
+ * 문서화 허용할 응답 헤더 목록
+ */
+export const DEFAULT_RESPONSE_HEADER_WHITELIST: string[] = [
+    "content-type",
+    "content-length",
+    "cache-control",
+];
 
 /**
  * 주어진 헤더를, 허용된 헤더 목록만 필터링한다.
