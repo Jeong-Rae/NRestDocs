@@ -26,40 +26,39 @@ import type {
     HttpStatusCode,
     ParameterDescriptor,
     PartDescriptor,
-    ResponseDescriptor,
 } from "@/types";
 import type { Response } from "supertest";
 
 export class DocRequestBuilder {
+    // HTTP 실행 및 기본 정보
     private readonly supertestPromise: Promise<Response>;
-
-    private pathParameters?: ParameterDescriptor[];
-    // @ts-ignore
-    private queryParameters?: ParameterDescriptor[];
-    // @ts-ignore
-    private formParameters?: ParameterDescriptor[];
-
-    private requestParts?: PartDescriptor[];
-
-    private responseHeaders?: HeaderDescriptor[];
-    private requestHeaders?: HeaderDescriptor[];
-
-    // @ts-ignore
-    private responseCookies?: CookieDescriptor[];
-    // @ts-ignore
-    private requestCookies?: CookieDescriptor[];
-
-    private requestParameters?: ParameterDescriptor[];
-    private requestFields?: FieldDescriptor[];
-
-    private responseFields?: FieldDescriptor[];
-
-    private responses: Record<HttpStatusCode, ResponseDescriptor> = {};
-
     private httpMethod?: HttpMethod;
     private httpPath?: string;
-    private servers: string[] = [];
-    private description: string = "";
+    private statusCode?: HttpStatusCode;
+
+    // 요청 파라미터
+    private pathParameters?: ParameterDescriptor[];
+    private queryParameters?: ParameterDescriptor[];
+    private formParameters?: ParameterDescriptor[];
+
+    // 요청 멀티파트
+    private requestParts?: PartDescriptor[];
+    private requestPartBodies?: Record<string, true>;
+    private requestPartFields?: Record<string, FieldDescriptor[]>;
+
+    // 요청 헤더/쿠키
+    private requestHeaders?: HeaderDescriptor[];
+    private requestCookies?: CookieDescriptor[];
+
+    // 요청 바디
+    private requestFields?: FieldDescriptor[];
+
+    // 응답 헤더/쿠키
+    private responseHeaders?: HeaderDescriptor[];
+    private responseCookies?: CookieDescriptor[];
+
+    // 응답 바디
+    private responseFields?: FieldDescriptor[];
 
     constructor(supertestPromise: Promise<Response>) {
         this.supertestPromise = supertestPromise;
@@ -157,18 +156,26 @@ export class DocRequestBuilder {
      * / ("metadata")
      */
     withRequestPartBody(partName: string): this {
+        if (!this.requestPartBodies) {
+            this.requestPartBodies = {};
+        }
+        this.requestPartBodies[partName] = true;
         return this;
     }
 
     /**
      * Request Part의 필드를 등록할 수 있다.
      * @param partName {string} 등록 가능한 Part 이름
-     * @param fields {FieldInput[]} 등록 가능한 Field 배열
+     * @param fields {FieldInput} 등록 가능한 Field 배열
      * @returns
      * @example
      * / withRequestPartFields("metadata", [ defineField("name").type("string"), defineField("size").type("number") ])
      */
-    withRequestPartFields(partName: string, fields: []): this {
+    withRequestPartFields(partName: string, fields: FieldInput): this {
+        if (!this.requestPartFields) {
+            this.requestPartFields = {};
+        }
+        this.requestPartFields[partName] = applyFields(fields);
         return this;
     }
 
@@ -228,63 +235,23 @@ export class DocRequestBuilder {
         return this;
     }
 
-    /** HTTP 메서드 & 경로 */
-    withOperation(method: HttpMethod, path: string): this {
-        this.httpMethod = method;
-        this.httpPath = path;
-        return this;
-    }
-
-    /** 다중 서버 설정 (OpenAPI servers) */
-    withServers(servers: string[]): this {
-        this.servers = servers;
-        return this;
-    }
-
-    /** API 설명 추가 */
-    withDescription(description: string): this {
-        this.description = description;
-        return this;
-    }
-
     /**
-     * supertest 요청을 실행하고, 설정된 옵션과 응답 정보를 콘솔에 출력
+     * 문서 생성
+     * @param identifier document identifier
+     * @returns supertest response
      */
     async doc(identifier: string): Promise<Response> {
         const response = await this.supertestPromise;
-        const config = getNRestDocsConfig();
-
-        const renderer = new AsciiDocRenderer();
-        const snippetMap = renderer.renderDocumentSnippets(response, {
-            requestHeaders: this.requestHeaders,
-            pathParameters: this.pathParameters,
-            requestParameters: this.requestParameters,
-            requestParts: this.requestParts,
-            requestFields: this.requestFields,
-            responseHeaders: this.responseHeaders,
-            responseFields: this.responseFields,
-            responses: this.responses,
-            operation: {
-                method: this.httpMethod,
-                path: this.httpPath,
-                description: this.description,
-                servers: this.servers,
-            },
-        });
-
-        const writer = new LocalDocWriter({
-            outputDir: config.output ?? "./docs",
-            extension: "adoc",
-            directoryStructure: "nested",
-        });
-
-        await writer.writeDocumentSnippets(identifier, snippetMap);
 
         return response;
     }
 }
 
-/** supertest Promise를 받아 DocRequestBuilder로 감싸기 */
+/**
+ * supertest Promise를 받아 DocRequestBuilder로 감싸기
+ * @param supertestPromise supertest Promise
+ * @returns DocRequestBuilder
+ */
 export function docRequest(supertestPromise: Promise<Response>): DocRequestBuilder {
     return new DocRequestBuilder(supertestPromise);
 }
