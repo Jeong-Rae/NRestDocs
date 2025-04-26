@@ -3,21 +3,23 @@ import { AsciiDocRenderer } from "@/renderers/ascii-doc-renderer";
 import { normalizeDescriptors } from "@/utils/normalize-descriptors";
 import { LocalDocWriter } from "@/writers/local-doc-writer";
 
-import { type CookieDescriptor, defineHeader } from "@/descriptors";
+import type { CookieDescriptor } from "@/descriptors";
 import {
+    type FieldInput,
     type FormParamsInput,
     type PathParamsInput,
     type QueryParamsInput,
     type RequestCookieInput,
     type RequestHeaderInput,
     type RequestPartInput,
+    applyFields,
+    applyFormParameters,
     applyPathParameters,
     applyQueryParameters,
+    applyRequestCookie,
+    applyRequestHeader,
+    applyRequestPart,
 } from "@/inputs";
-import { applyRequestCookie } from "@/inputs/cookie";
-import { applyFormParameters } from "@/inputs/form-parameters";
-import { applyRequestHeader } from "@/inputs/header";
-import { applyRequestPart } from "@/inputs/part";
 import type {
     FieldDescriptor,
     HeaderDescriptor,
@@ -63,12 +65,40 @@ export class DocRequestBuilder {
     }
 
     /**
+     * Response Fields를 등록할 수 있다.
+     * @param fields {FieldInput} 등록 가능한 Field 입력
+     * @example
+     * / withResponseFields([ defineField("user.name").type("string"), defineField("user.age").type("number") ])
+     * / withResponseFields([ { name: "user.name", "type": "string" }, { name: "user.age", "type": "number" } ])
+     * / withResponseFields({ user: { name: { type: "string" }, age: { type: "number" } } })
+     * @returns
+     */
+    withResponseFields(fields: FieldInput): this {
+        this.responseFields = applyFields(fields);
+        return this;
+    }
+
+    /**
+     * Request Fields를 등록할 수 있다.
+     * @param fields {FieldInput} 등록 가능한 Field 입력
+     * @returns
+     * @example
+     * / withRequestFields([ defineField("user.name").type("string"), defineField("user.age").type("number") ])
+     * / withRequestFields([ { name: "user.name", "type": "string" }, { name: "user.age", "type": "number" } ])
+     * / withRequestFields({ user: { name: { type: "string" }, age: { type: "number" } } })
+     */
+    withRequestFields(fields: FieldInput): this {
+        this.requestFields = applyFields(fields);
+        return this;
+    }
+
+    /**
      * Query Parameters를 등록할 수 있다.
      * @param params {QueryParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / withQueryParameters([ defineQuery("page").type("number").format("int32") ])
-     * / withQueryParameters([ { name: "page", "type": "number", "format": "int32" } ])
-     * / withQueryParameters({ page: { type: "number", "format": "int32" } })
+     * / withQueryParameters([ defineQuery("page").type("number").format("int32"), defineQuery("limit").type("number").format("int32") ])
+     * / withQueryParameters([ { name: "page", "type": "number", "format": "int32" }, { name: "limit", "type": "number", "format": "int32" } ])
+     * / withQueryParameters({ page: { type: "number", "format": "int32" }, limit: { type: "number", "format": "int32" } })
      * @returns
      */
     withQueryParameters(params: QueryParamsInput): this {
@@ -80,9 +110,9 @@ export class DocRequestBuilder {
      * Form Parameters를 등록할 수 있다.
      * @param params {FormParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / withFormParameters([ defineForm("username").type("string").format("email") ])
-     * / withFormParameters([ { name: "username", "type": "string", "format": "email" } ])
-     * / withFormParameters({ username: { type: "string", "format": "email" } })
+     * / withFormParameters([ defineForm("username").type("string").format("email"), defineForm("password").type("string").format("password") ])
+     * / withFormParameters([ { name: "username", "type": "string", "format": "email" }, { name: "password", "type": "string", "format": "password" } ])
+     * / withFormParameters({ username: { type: "string", "format": "email" }, password: { type: "string", "format": "password" } })
      * @returns
      */
     withFormParameters(params: FormParamsInput): this {
@@ -94,9 +124,9 @@ export class DocRequestBuilder {
      * Path Parameters를 등록할 수 있다.
      * @param params {PathParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / withPathParameters([ definePath("userId").type("string").format("uuid") ])
-     * / withPathParameters([ { name: "userId", "type": "string", "format": "uuid" } ])
-     * / withPathParameters({ userId: { type: "string", "format": "uuid" } })
+     * / withPathParameters([ definePath("userId").type("string").format("uuid"), definePath("postId").type("string").format("uuid") ])
+     * / withPathParameters([ { name: "userId", "type": "string", "format": "uuid" }, { name: "postId", "type": "string", "format": "uuid" } ])
+     * / withPathParameters({ userId: { type: "string", "format": "uuid" }, postId: { type: "string", "format": "uuid" } })
      * @returns
      */
     withPathParameters(params: PathParamsInput): this {
@@ -189,48 +219,10 @@ export class DocRequestBuilder {
     }
 
     /**
-     * request-fields 정의
-     */
-    withRequestFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
-        this.requestFields = normalizeDescriptors(fields);
-        return this;
-    }
-
-    /**
-     * responses 정의
-     */
-    withResponse(
-        statusCode: HttpStatusCode,
-        response: {
-            headers?: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[];
-            fields?: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[];
-            description?: string;
-        }
-    ): this {
-        const fields = response.fields ? normalizeDescriptors(response.fields) : [];
-        const headers = response.headers ? normalizeDescriptors(response.headers) : [];
-
-        this.responses[statusCode] = {
-            fields,
-            headers,
-            description: response.description ?? "",
-        };
-        return this;
-    }
-
-    /**
      * response-headers 정의
      */
     withResponseHeaders(headers: (DescriptorBuilder<HeaderDescriptor> | HeaderDescriptor)[]): this {
         this.responseHeaders = normalizeDescriptors(headers);
-        return this;
-    }
-
-    /**
-     * response-fields 정의
-     */
-    withResponseFields(fields: (DescriptorBuilder<FieldDescriptor> | FieldDescriptor)[]): this {
-        this.responseFields = normalizeDescriptors(fields);
         return this;
     }
 

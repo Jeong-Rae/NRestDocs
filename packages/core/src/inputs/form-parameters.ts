@@ -1,8 +1,7 @@
 import { type FormParamDescriptor, ParamKinds } from "@/descriptors";
-import { type ArrayOrRecord, applyNormalize } from "@/utils/normalizer";
+import { applyNormalize } from "@/utils/normalizer";
+import type { FormParamsInput } from "./input.type";
 
-type FormInput = ArrayOrRecord<typeof ParamKinds.Form, FormParamDescriptor>;
-
-export const applyFormParameters = (input: FormInput): FormParamDescriptor[] => {
+export const applyFormParameters = (input: FormParamsInput): FormParamDescriptor[] => {
     return applyNormalize<typeof ParamKinds.Form, FormParamDescriptor>(ParamKinds.Form, input);
 };
