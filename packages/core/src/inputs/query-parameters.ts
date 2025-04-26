@@ -1,9 +1,7 @@
 import { ParamKinds, type QueryParamDescriptor } from "@/descriptors";
-import { type ArrayOrRecord, applyNormalize } from "@/utils/normalizer";
+import { applyNormalize } from "@/utils/normalizer";
+import type { QueryParamsInput } from "./input.type";
 
-type QueryInput = ArrayOrRecord<typeof ParamKinds.Query, QueryParamDescriptor>;
-
-/** 배열,Record,Builder -> QueryParamDescriptor[] 로 정규화 */
-export const applyQueryParameters = (input: QueryInput): QueryParamDescriptor[] => {
+export const applyQueryParameters = (input: QueryParamsInput): QueryParamDescriptor[] => {
     return applyNormalize<typeof ParamKinds.Query, QueryParamDescriptor>(ParamKinds.Query, input);
 };

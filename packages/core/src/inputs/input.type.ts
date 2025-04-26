@@ -1,7 +1,11 @@
 import type {
+    AllowedType,
+    BaseDescriptor,
     Builder,
+    CookieDescriptor,
     FormParamDescriptor,
     HeaderDescriptor,
+    ParamKind,
     ParamKinds,
     PartDescriptor,
     PathParamDescriptor,
@@ -9,28 +13,30 @@ import type {
     TypeSet,
 } from "@/descriptors";
 
+export type PartialDescriptor<
+    K extends ParamKind,
+    D extends BaseDescriptor<K, AllowedType<K>>,
+> = Partial<Omit<D, "kind">> & { name: string };
+
+export type ArrayOrRecord<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> =
+    | (Builder<Partial<D>, TypeSet, K> | PartialDescriptor<K, D>)[]
+    | Record<string, Omit<PartialDescriptor<K, D>, "name">>;
+
 export type PartialQueryParam = Partial<Omit<QueryParamDescriptor, "kind">> & { name: string };
 export type PartialFormParam = Partial<Omit<FormParamDescriptor, "kind">> & { name: string };
 export type PartialPathParam = Partial<Omit<PathParamDescriptor, "kind">> & { name: string };
 export type PartialRequestPart = Partial<Omit<PartDescriptor, "kind">> & { name: string };
 export type PartialHeader = Partial<Omit<HeaderDescriptor, "kind">> & { name: string };
+export type PartialCookie = Partial<Omit<CookieDescriptor, "kind">> & { name: string };
 
-export type QueryParamsInput =
-    | (Builder<QueryParamDescriptor, TypeSet, typeof ParamKinds.Query> | PartialQueryParam)[]
-    | Record<string, Omit<PartialQueryParam, "name">>;
+export type QueryParamsInput = ArrayOrRecord<typeof ParamKinds.Query, QueryParamDescriptor>;
 
-export type FormParamsInput =
-    | (Builder<FormParamDescriptor, TypeSet, typeof ParamKinds.Form> | PartialFormParam)[]
-    | Record<string, Omit<PartialFormParam, "name">>;
+export type FormParamsInput = ArrayOrRecord<typeof ParamKinds.Form, FormParamDescriptor>;
 
-export type PathParamsInput =
-    | (Builder<PathParamDescriptor, TypeSet, typeof ParamKinds.Path> | PartialPathParam)[]
-    | Record<string, Omit<PartialPathParam, "name">>;
+export type PathParamsInput = ArrayOrRecord<typeof ParamKinds.Path, PathParamDescriptor>;
 
-export type RequestPartInput =
-    | (Builder<PartDescriptor, TypeSet, typeof ParamKinds.Part> | PartialRequestPart)[]
-    | Record<string, Omit<PartialRequestPart, "name">>;
+export type RequestPartInput = ArrayOrRecord<typeof ParamKinds.Part, PartDescriptor>;
 
-export type RequestHeaderInput =
-    | (Builder<HeaderDescriptor, TypeSet, typeof ParamKinds.Header> | PartialHeader)[]
-    | Record<string, Omit<PartialHeader, "name">>;
+export type RequestHeaderInput = ArrayOrRecord<typeof ParamKinds.Header, HeaderDescriptor>;
+
+export type RequestCookieInput = ArrayOrRecord<typeof ParamKinds.Cookie, CookieDescriptor>;

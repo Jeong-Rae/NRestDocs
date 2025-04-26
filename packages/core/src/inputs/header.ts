@@ -1,8 +1,7 @@
 import { type HeaderDescriptor, ParamKinds } from "@/descriptors";
-import { type ArrayOrRecord, applyNormalize } from "@/utils/normalizer";
+import { applyNormalize } from "@/utils/normalizer";
+import type { RequestHeaderInput } from "./input.type";
 
-type HeaderInput = ArrayOrRecord<typeof ParamKinds.Header, HeaderDescriptor>;
-
-export const applyRequestHeader = (input: HeaderInput): HeaderDescriptor[] => {
+export const applyRequestHeader = (input: RequestHeaderInput): HeaderDescriptor[] => {
     return applyNormalize<typeof ParamKinds.Header, HeaderDescriptor>(ParamKinds.Header, input);
 };

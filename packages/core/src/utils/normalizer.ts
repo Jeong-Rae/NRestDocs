@@ -1,13 +1,6 @@
 import type { AllowedType, BaseDescriptor, Builder, ParamKind, TypeSet } from "@/descriptors";
+import type { ArrayOrRecord, PartialDescriptor } from "@/inputs";
 import { isArray, isFunction } from "es-toolkit/compat";
-
-type PartialDescriptor<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> = Partial<
-    Omit<D, "kind">
-> & { name: string };
-
-export type ArrayOrRecord<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> =
-    | (Builder<Partial<D>, TypeSet, K> | PartialDescriptor<K, D>)[]
-    | Record<string, Omit<PartialDescriptor<K, D>, "name">>;
 
 function addDefaultType<K extends ParamKind>(
     kind: K,

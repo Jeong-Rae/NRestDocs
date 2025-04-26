@@ -1,8 +1,7 @@
 import { ParamKinds, type PathParamDescriptor } from "@/descriptors";
-import { type ArrayOrRecord, applyNormalize } from "@/utils/normalizer";
+import { applyNormalize } from "@/utils/normalizer";
+import type { PathParamsInput } from "./input.type";
 
-type PathInput = ArrayOrRecord<typeof ParamKinds.Path, PathParamDescriptor>;
-
-export const applyPathParameters = (input: PathInput): PathParamDescriptor[] => {
+export const applyPathParameters = (input: PathParamsInput): PathParamDescriptor[] => {
     return applyNormalize<typeof ParamKinds.Path, PathParamDescriptor>(ParamKinds.Path, input);
 };

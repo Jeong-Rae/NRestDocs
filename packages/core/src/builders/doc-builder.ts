@@ -3,15 +3,18 @@ import { AsciiDocRenderer } from "@/renderers/ascii-doc-renderer";
 import { normalizeDescriptors } from "@/utils/normalize-descriptors";
 import { LocalDocWriter } from "@/writers/local-doc-writer";
 
+import { type CookieDescriptor, defineHeader } from "@/descriptors";
 import {
     type FormParamsInput,
     type PathParamsInput,
     type QueryParamsInput,
+    type RequestCookieInput,
     type RequestHeaderInput,
     type RequestPartInput,
     applyPathParameters,
     applyQueryParameters,
 } from "@/inputs";
+import { applyRequestCookie } from "@/inputs/cookie";
 import { applyFormParameters } from "@/inputs/form-parameters";
 import { applyRequestHeader } from "@/inputs/header";
 import { applyRequestPart } from "@/inputs/part";
@@ -24,14 +27,11 @@ import type {
     PartDescriptor,
     ResponseDescriptor,
 } from "@/types";
-import type { PartialWithName } from "@/utils/normalize-descriptors";
 import type { Response } from "supertest";
 import type { DescriptorBuilder } from "./descriptor-builder";
 
 export class DocRequestBuilder {
     private readonly supertestPromise: Promise<Response>;
-
-    private requestHeaders?: HeaderDescriptor[];
 
     private pathParameters?: ParameterDescriptor[];
     // @ts-ignore
@@ -39,8 +39,13 @@ export class DocRequestBuilder {
     // @ts-ignore
     private formParameters?: ParameterDescriptor[];
 
-    private requestParameters?: ParameterDescriptor[];
     private requestParts?: PartDescriptor[];
+
+    private requestHeaders?: HeaderDescriptor[];
+    // @ts-ignore
+    private requestCookies?: CookieDescriptor[];
+
+    private requestParameters?: ParameterDescriptor[];
     private requestFields?: FieldDescriptor[];
 
     private responseHeaders?: HeaderDescriptor[];
@@ -147,6 +152,20 @@ export class DocRequestBuilder {
      */
     withRequestHeaders(headers: RequestHeaderInput): this {
         this.requestHeaders = applyRequestHeader(headers);
+        return this;
+    }
+
+    /**
+     * Cookie를 등록할 수 있다.
+     * @param cookies {RequestCookieInput} 등록 가능한 Cookie 입력 배열 또는 레코드
+     * @returns
+     * @example
+     * / withRequestCookies([ defineCookie("connect.sid").type("string").format("base64") ])
+     * / withRequestCookies([ { name: "connect.sid", "type": "string", "format": "base64" } ])
+     * / withRequestCookies({ connect.sid: { type: "string", "format": "base64" } })
+     */
+    withRequestCookies(cookies: RequestCookieInput): this {
+        this.requestCookies = applyRequestCookie(cookies);
         return this;
     }
 
