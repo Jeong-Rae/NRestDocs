@@ -2,6 +2,7 @@ import type { Builder, TypeSet } from "@/descriptors";
 import type {
     FormParamDescriptor,
     ParamKinds,
+    PartDescriptor,
     PathParamDescriptor,
     QueryParamDescriptor,
 } from "@/descriptors";
@@ -9,10 +10,7 @@ import type {
 export type PartialQueryParam = Partial<Omit<QueryParamDescriptor, "kind">> & { name: string };
 export type PartialFormParam = Partial<Omit<FormParamDescriptor, "kind">> & { name: string };
 export type PartialPathParam = Partial<Omit<PathParamDescriptor, "kind">> & { name: string };
-
-export type PathParamsInput =
-    | (Builder<PathParamDescriptor, TypeSet, typeof ParamKinds.Path> | PartialPathParam)[]
-    | Record<string, Omit<PartialPathParam, "name">>;
+export type PartialRequestPart = Partial<Omit<PartDescriptor, "kind">> & { name: string };
 
 export type QueryParamsInput =
     | (Builder<QueryParamDescriptor, TypeSet, typeof ParamKinds.Query> | PartialQueryParam)[]
@@ -21,3 +19,11 @@ export type QueryParamsInput =
 export type FormParamsInput =
     | (Builder<FormParamDescriptor, TypeSet, typeof ParamKinds.Form> | PartialFormParam)[]
     | Record<string, Omit<PartialFormParam, "name">>;
+
+export type PathParamsInput =
+    | (Builder<PathParamDescriptor, TypeSet, typeof ParamKinds.Path> | PartialPathParam)[]
+    | Record<string, Omit<PartialPathParam, "name">>;
+
+export type RequestPartInput =
+    | (Builder<PartDescriptor, TypeSet, typeof ParamKinds.Part> | PartialRequestPart)[]
+    | Record<string, Omit<PartialRequestPart, "name">>;

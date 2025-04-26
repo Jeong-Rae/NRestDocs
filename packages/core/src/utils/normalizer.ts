@@ -43,7 +43,7 @@ function normalizeOne<K extends ParamKind, D extends BaseDescriptor<K, AllowedTy
     } as D;
 }
 
-export function applyParameters<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>>(
+export function applyNormalize<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>>(
     kind: K,
     input: ArrayOrRecord<K, D>
 ): D[] {

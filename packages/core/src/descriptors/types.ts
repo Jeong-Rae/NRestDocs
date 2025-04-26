@@ -1,4 +1,3 @@
-/** 허용되는 타입  */
 export type FieldType = "string" | "number" | "boolean" | "integer" | "array" | "object";
 
 /** Kind별 허용 타입 */
@@ -33,9 +32,9 @@ export interface BaseDescriptor<K extends ParamKind, T extends string> {
 export type QueryParamDescriptor = BaseDescriptor<"query", "string">;
 export type FormParamDescriptor = BaseDescriptor<"form", "string">;
 export type PathParamDescriptor = BaseDescriptor<"path", "string">;
+export type PartDescriptor = BaseDescriptor<"part", "string" | "binary">;
 export type HeaderDescriptor = BaseDescriptor<"header", "string">;
 export type FieldDescriptor = BaseDescriptor<"field", FieldType>;
-export type PartDescriptor = BaseDescriptor<"part", "string" | "binary">;
 
 /** ResponseDescriptor */
 export type ResponseDescriptor = {

@@ -27,6 +27,10 @@ export const pathParam = <N extends string = string>(
     name: N
 ): FactoryReturn<PathParamDescriptor, "Path", N> => createBuilder(ParamKinds.Path, name);
 
+export const part = <N extends string = string>(
+    name: N
+): FactoryReturn<PartDescriptor, "Part", N> => createBuilder(ParamKinds.Part, name);
+
 export const header = <N extends string = string>(
     name: N
 ): FactoryReturn<HeaderDescriptor, "Header", N> => createBuilder(ParamKinds.Header, name);
@@ -34,7 +38,3 @@ export const header = <N extends string = string>(
 export const field = <N extends string = string>(
     name: N
 ): FactoryReturn<FieldDescriptor, "Field", N> => createBuilder(ParamKinds.Field, name);
-
-export const part = <N extends string = string>(
-    name: N
-): FactoryReturn<PartDescriptor, "Part", N> => createBuilder(ParamKinds.Part, name);
