@@ -1,0 +1,25 @@
+{
+    "name": "@nrestdocs/core",
+    "version": "0.0.1",
+    "description": "For generating Rest Docs with NodeJs",
+    "type": "commonjs",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "typecheck": "tsc --noEmit",
+        "build": "pnpm lint:fix && pnpm typecheck && tsup",
+        "test": "vitest run --coverage",
+        "test:watch": "vitest watch",
+        "test:cov": "vitest run --coverage",
+        "test:ui": "vitest ui",
+        "lint": "pnpm exec biome check",
+        "lint:fix": "pnpm exec biome check --write",
+        "format": "pnpm exec biome format --write"
+    },
+    "dependencies": {
+        "supertest": "^6.3.4"
+    },
+    "private": true,
+    "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"
+}

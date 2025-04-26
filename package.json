@@ -1,43 +1,53 @@
 {
     "name": "nrestdocs",
-    "version": "0.1.0",
-    "description": "NRest API 문서 생성기",
-    "type": "module",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "description": "For generating Rest Docs with NodeJs",
+    "private": true,
+    "version": "0.0.0",
+    "workspaces": [
+        "packages/*",
+        "examples/*"
+    ],
     "scripts": {
-        "build": "pnpm lint:fix && tsc",
-        "test": "vitest run --coverage --exclude sample",
-        "test:watch": "vitest watch",
-        "test:cov": "vitest run --coverage",
-        "test:ui": "vitest ui",
-        "lint": "pnpm biome check",
-        "lint:fix": "pnpm biome check --write",
-        "format": "pnpm biome format --write",
-        "postinstall": "husky",
-        "prepare": "husky install"
+        "build": "pnpm -r --parallel build",
+        "test": "pnpm -r --parallel test",
+        "lint": "pnpm -r --parallel lint",
+        "build:packages": "pnpm --filter ./packages... run build",
+        "test:packages": "pnpm --filter ./packages... run test",
+        "lint:packages": "pnpm --filter ./packages... run lint --write && pnpm --filter ./packages... run format --write",
+        "build:examples": "pnpm --filter ./examples... run build",
+        "test:examples": "pnpm --filter ./examples... run test",
+        "lint:examples": "pnpm --filter ./examples... run lint --write && pnpm --filter ./examples... run format --write",
+        "build:core": "pnpm --filter @nrestdocs/core build",
+        "build:examples:nest": "pnpm --filter examples-nest build",
+        "build:examples:express": "pnpm --filter examples-express build",
+        "prepare": "husky"
     },
-    "keywords": ["api", "documentation", "asciidoc", "rest"],
-    "author": "Jeong-Rae",
+    "keywords": [
+        "api",
+        "documentation",
+        "asciidoc",
+        "openapi",
+        "swagger",
+        "rest",
+        "nodejs"
+    ],
     "license": "MIT",
     "lint-staged": {
-        "*.ts": ["pnpm biome check --write"]
+        "*.ts": [
+            "pnpm exec biome check --write"
+        ]
     },
-    "dependencies": {
-        "supertest": "^6.3.4"
-    },
+    "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387",
     "devDependencies": {
         "@biomejs/biome": "1.9.4",
-        "@types/node": "^20.11.24",
+        "@types/node": "^22.15.2",
         "@types/supertest": "^6.0.2",
         "@vitest/coverage-v8": "3.1.1",
         "es-toolkit": "^1.34.1",
         "husky": "^9.0.11",
-        "lint-staged": "^15.2.2",
-        "prettier": "^3.2.5",
+        "lint-staged": "^15.5.1",
+        "tsup": "^8.4.0",
         "typescript": "^5.3.3",
         "vitest": "^3.1.1"
-    },
-    "private": true,
-    "packageManager": "pnpm@9.14.2+sha512.6e2baf77d06b9362294152c851c4f278ede37ab1eba3a55fda317a4a17b209f4dbb973fb250a77abc463a341fcb1f17f17cfa24091c4eb319cda0d9b84278387"
+    }
 }

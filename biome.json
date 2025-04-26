@@ -82,6 +82,9 @@
         "ignore": ["dist/**", "sample/**", "coverage/**", "node_modules/**", ".*/**"]
     },
     "javascript": {
+        "parser": {
+            "unsafeParameterDecoratorsEnabled": true
+        },
         "formatter": {
             "jsxQuoteStyle": "double",
             "quoteProperties": "asNeeded",
