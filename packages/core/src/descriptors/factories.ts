@@ -2,6 +2,7 @@ import { type Builder, type TypeUnset, createBuilder } from "./builder";
 import { ParamKinds } from "./types";
 import type {
     FieldDescriptor,
+    FormParamDescriptor,
     HeaderDescriptor,
     PartDescriptor,
     PathParamDescriptor,
@@ -14,13 +15,17 @@ type FactoryReturn<D, K extends keyof typeof ParamKinds, N extends string> = Bui
     (typeof ParamKinds)[K]
 >;
 
-export const pathParam = <N extends string = string>(
-    name: N
-): FactoryReturn<PathParamDescriptor, "Path", N> => createBuilder(ParamKinds.Path, name);
-
 export const queryParam = <N extends string = string>(
     name: N
 ): FactoryReturn<QueryParamDescriptor, "Query", N> => createBuilder(ParamKinds.Query, name);
+
+export const formParam = <N extends string = string>(
+    name: N
+): FactoryReturn<FormParamDescriptor, "Form", N> => createBuilder(ParamKinds.Form, name);
+
+export const pathParam = <N extends string = string>(
+    name: N
+): FactoryReturn<PathParamDescriptor, "Path", N> => createBuilder(ParamKinds.Path, name);
 
 export const header = <N extends string = string>(
     name: N

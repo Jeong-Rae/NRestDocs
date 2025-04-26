@@ -1,8 +1,14 @@
 import type { Builder, TypeSet } from "@/descriptors";
-import type { ParamKinds, PathParamDescriptor, QueryParamDescriptor } from "@/descriptors";
+import type {
+    FormParamDescriptor,
+    ParamKinds,
+    PathParamDescriptor,
+    QueryParamDescriptor,
+} from "@/descriptors";
 
-export type PartialPathParam = Partial<Omit<PathParamDescriptor, "kind">> & { name: string };
 export type PartialQueryParam = Partial<Omit<QueryParamDescriptor, "kind">> & { name: string };
+export type PartialFormParam = Partial<Omit<FormParamDescriptor, "kind">> & { name: string };
+export type PartialPathParam = Partial<Omit<PathParamDescriptor, "kind">> & { name: string };
 
 export type PathParamsInput =
     | (Builder<PathParamDescriptor, TypeSet, typeof ParamKinds.Path> | PartialPathParam)[]
@@ -11,3 +17,7 @@ export type PathParamsInput =
 export type QueryParamsInput =
     | (Builder<QueryParamDescriptor, TypeSet, typeof ParamKinds.Query> | PartialQueryParam)[]
     | Record<string, Omit<PartialQueryParam, "name">>;
+
+export type FormParamsInput =
+    | (Builder<FormParamDescriptor, TypeSet, typeof ParamKinds.Form> | PartialFormParam)[]
+    | Record<string, Omit<PartialFormParam, "name">>;

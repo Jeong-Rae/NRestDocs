@@ -10,8 +10,9 @@ export type AllowedType<K extends ParamKind> = K extends "part"
 
 /** 파라미터 Descriptor 종류 */
 export const ParamKinds = {
-    Path: "path",
     Query: "query",
+    Form: "form",
+    Path: "path",
     Header: "header",
     Field: "field",
     Part: "part",
@@ -29,8 +30,9 @@ export interface BaseDescriptor<K extends ParamKind, T extends string> {
 }
 
 /** Descriptors */
-export type PathParamDescriptor = BaseDescriptor<"path", "string">;
 export type QueryParamDescriptor = BaseDescriptor<"query", "string">;
+export type FormParamDescriptor = BaseDescriptor<"form", "string">;
+export type PathParamDescriptor = BaseDescriptor<"path", "string">;
 export type HeaderDescriptor = BaseDescriptor<"header", "string">;
 export type FieldDescriptor = BaseDescriptor<"field", FieldType>;
 export type PartDescriptor = BaseDescriptor<"part", "string" | "binary">;

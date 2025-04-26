@@ -4,11 +4,13 @@ import { normalizeDescriptors } from "@/utils/normalize-descriptors";
 import { LocalDocWriter } from "@/writers/local-doc-writer";
 
 import {
+    type FormParamsInput,
     type PathParamsInput,
     type QueryParamsInput,
     applyPathParameters,
     applyQueryParameters,
 } from "@/inputs";
+import { applyFormParameters } from "@/inputs/form-parameters";
 import type {
     FieldDescriptor,
     HeaderDescriptor,
@@ -30,6 +32,8 @@ export class DocRequestBuilder {
     private pathParameters?: ParameterDescriptor[];
     // @ts-ignore
     private queryParameters?: ParameterDescriptor[];
+    // @ts-ignore
+    private formParameters?: ParameterDescriptor[];
 
     private requestParameters?: ParameterDescriptor[];
     private requestParts?: PartDescriptor[];
@@ -47,6 +51,48 @@ export class DocRequestBuilder {
 
     constructor(supertestPromise: Promise<Response>) {
         this.supertestPromise = supertestPromise;
+    }
+
+    /**
+     * Query Parameters를 등록할 수 있다.
+     * @param params {QueryParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
+     * @example
+     * / [ queryParam("name").type("string") ]
+     * / [ { name: "name", "type": "string" } ]
+     * / { name: { type: "string" } }
+     * @returns
+     */
+    withQueryParameters(params: QueryParamsInput): this {
+        this.queryParameters = applyQueryParameters(params);
+        return this;
+    }
+
+    /**
+     * Form Parameters를 등록할 수 있다.
+     * @param params {FormParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
+     * @example
+     * / [ formParam("name").type("string") ]
+     * / [ { name: "name", "type": "string" } ]
+     * / { name: { type: "string" } }
+     * @returns
+     */
+    withFormParameters(params: FormParamsInput): this {
+        this.formParameters = applyFormParameters(params);
+        return this;
+    }
+
+    /**
+     * Path Parameters를 등록할 수 있다.
+     * @param params {PathParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
+     * @example
+     * / [ pathParam("name").type("string") ]
+     * / [ { name: "name", "type": "string" } ]
+     * / { name: { type: "string" } }
+     * @returns
+     */
+    withPathParameters(params: PathParamsInput): this {
+        this.pathParameters = applyPathParameters(params);
+        return this;
     }
 
     /** HTTP 메서드 & 경로 */
@@ -75,34 +121,6 @@ export class DocRequestBuilder {
         headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
     ): this {
         this.requestHeaders = normalizeDescriptors(headers);
-        return this;
-    }
-
-    /**
-     * Path Parameters를 등록할 수 있다.
-     * @param params {PathParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
-     * @example
-     * / [ definePathParam("name").type("string") ]
-     * / [ { name: "name", "type": "string" } ]
-     * / { name: { type: "string" } }
-     * @returns
-     */
-    withPathParameters(params: PathParamsInput): this {
-        this.pathParameters = applyPathParameters(params);
-        return this;
-    }
-
-    /**
-     * Query Parameters를 등록할 수 있다.
-     * @param params {QueryParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
-     * @example
-     * / [ defineQueryParam("name").type("string") ]
-     * / [ { name: "name", "type": "string" } ]
-     * / { name: { type: "string" } }
-     * @returns
-     */
-    withQueryParameters(params: QueryParamsInput): this {
-        this.queryParameters = applyQueryParameters(params);
         return this;
     }
 
