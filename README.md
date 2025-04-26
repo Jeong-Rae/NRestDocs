@@ -1,40 +1,38 @@
 # 📘 NRestDocs
 
-> A documentation tool that automatically generates API documentation from NestJS + Supertest-based E2E tests
+> Automatically generates API documentation from NodeJS + Supertest-based E2E tests.
 
 Document: [English](./docs/en/README.md), [한국어](./docs/ko/README.md)
-
 ---
 
 ## Overview
 
-API documentation for NestJS applications is typically managed via **Swagger (OpenAPI)**. While Swagger provides a convenient UI and intuitive syntax, it has the following drawbacks:
+API documentation for NestJS applications is typically managed via **Swagger (OpenAPI)**. While Swagger provides a convenient UI and intuitive syntax, it has notable limitations:
 
-- **Code intrusion**: To use Swagger you must add annotations to your production code, mixing documentation code with business logic.
-- **Outdated documentation**: If the API evolves and you forget to update your Swagger comments, the docs no longer match the implementation—leading to confusion and increased maintenance costs.
+- **Code intrusion**: Swagger annotations clutter your production code.
+- **Outdated documentation**: Documentation often drifts out of sync as APIs evolve, leading to inaccuracies.
 
-**NRestDocs** solves these issues with a **test‑based documentation** approach:
+**NRestDocs** solves these issues with a **test-driven documentation** approach:
 
-- Completely separates documentation from production code, minimizing complexity.
-- Automatically generates up‑to‑date docs from your existing E2E tests.
-- Fails tests immediately if docs and API responses drift out of sync, guaranteeing accuracy.
-- Eliminates the need to maintain Swagger annotations and tests separately, reducing overhead.
+- Completely separates documentation from production code.
+- Generates accurate, up-to-date documentation directly from existing E2E tests.
+- Immediately detects inconsistencies, causing tests to fail and ensuring accuracy.
+- Eliminates separate maintenance of annotations and tests.
 
 ---
 
 ## 📦 Existing Swagger Approach (As‑Is)
 
-Here’s an example showing Swagger annotations invading production code:
+Typical Swagger usage introduces annotations directly into production controllers:
 
 ```typescript
-// user.controller.ts
 @ApiTags("users")
 @Controller("users")
 export class UserController {
     @ApiOperation({ summary: "Create User" })
     @ApiResponse({
         status: 201,
-        description: "Returns the created user",
+        description: "User successfully created",
         type: User,
         headers: {
             "Set-Cookie": {
@@ -52,52 +50,38 @@ export class UserController {
 
 ### ⚠️ Issues
 
-- Business logic and documentation code are mixed.
-- Swagger comments can easily become outdated when the API changes.
-- No built‑in mechanism ensures docs stay current and accurate.
+- Mixing documentation annotations with business logic reduces readability and maintainability.
+- Manual updates to Swagger annotations frequently result in documentation drift.
+- No built-in mechanism to enforce documentation accuracy.
 
 ---
 
 ## 🚀 NRestDocs Approach (To‑Be)
 
-With NRestDocs, you write your E2E tests as usual, and the documentation is automatically generated—completely separated from production code:
+NRestDocs integrates seamlessly with Jest & Supertest-based E2E tests, using a clear declarative syntax and factory-defined descriptors:
 
 ```typescript
-// user.controller.e2e-spec.ts
-describe("UserController (e2e)", () => {
-    it("POST /users - Create User", async () => {
-        await docRequest(
-            request(app.getHttpServer())
-                .post("/users")
-                .set("Authorization", "Bearer <token>")
-                .send({ name: "John Doe", age: 30 })
-                .expect(201)
-        )
-            .withDescription("User creation API")
-            .withRequestHeaders([
-                defineHeader("Authorization")
-                    .type("string")
-                    .description("Bearer token authentication"),
-            ])
-            .withRequestFields([
-                defineField("name").type("string").description("User name"),
-                defineField("age").type("number").description("User age"),
-            ])
-            .withResponseHeaders([
-                defineHeader("Set-Cookie")
-                    .type("string")
-                    .description("Session cookie")
-                    .optional(),
-            ])
-            .withResponseFields([
-                defineField("id").type("number").description("Created user ID"),
-                defineField("name")
-                    .type("string")
-                    .description("Created user name"),
-            ])
-            .doc("create-user");
-    });
-});
+await docRequest(
+  request(app.getHttpServer())
+    .post("/users/:userId")
+    .set("Authorization", "Bearer <token>")
+    .send({ name: "Jane Doe", age: 25 })
+    .expect(201)
+)
+  .withPathParameters([definePath("userId")])
+  .withRequestHeaders([defineHeader("Authorization").format("Bearer")])
+  .withRequestFields([
+    defineField("name"),
+    defineField("age").type("number").description("Age of the user"),
+  ])
+  .withResponseCookie([
+    defineHeader("Set-Cookie").format("base64").description("Session cookie").optional(),
+  ])
+  .withResponseFields([
+    defineField("id").type("number")
+    defineField("name").type("string")
+  ])
+  .doc("create-user");
 ```
 
 ### 🗂 Generated Documentation Structure Example
@@ -115,352 +99,438 @@ docs/create-user/
 
 ### ✅ Advantages of NRestDocs
 
-- Keeps production code clean.
-- Guarantees up‑to‑date docs by tying them to E2E tests.
-- Strict mode fails tests on any mismatch between API and docs.
-- Eliminates dual maintenance of Swagger annotations and tests.
+- Keeps production code free of documentation annotations.
+- Automatically synchronizes documentation with E2E tests.
+- Fails immediately if documentation becomes inaccurate.
+- Reduces maintenance by using tests as the single source of truth.
 
 ---
 
 ## 🔁 Before and After Comparison
 
-| Comparison Item    | Swagger (Existing)                     | NRestDocs (Improved)                |
-| ------------------ | -------------------------------------- | ----------------------------------- |
-| Code Intrusion     | Swagger annotations in production code | No impact on production code        |
-| Doc Updates        | Manual, error‑prone                    | Auto‑synced with tests              |
-| Accuracy Guarantee | No enforcement                         | Strict mode ensures accuracy        |
-| Maintenance Cost   | High (docs + tests separately)         | Efficient single‑source maintenance |
+| Comparison Item    | Swagger (Existing)                     | NRestDocs (Improved)                   |
+| ------------------ | -------------------------------------- | -------------------------------------- |
+| Code Intrusion     | Swagger annotations invade production code | No impact on production code        |
+| Documentation Updates | Manual and error-prone              | Automatically synchronized via tests   |
+| Accuracy Guarantee | No enforcement                         | Enforced by strict-mode testing       |
+| Maintenance Cost   | High (docs and tests separately)       | Lower (tests serve as documentation)   |
 
 ---
 
 ## ✨ Key Features
 
-- Seamless Jest & Supertest E2E integration
-- Automatic doc of HTTP requests/responses, headers, parameters, fields
-- Includes cURL snippets
-- Strict mode for guaranteed accuracy
-- Outputs AsciiDoc by default (Markdown upcoming)
-- Declarative, chainable API
+- Seamless integration with Jest & Supertest
+- Automatic generation of documentation for requests, responses, headers, cookies, parameters, and multipart parts
+- Built-in cURL snippet generation
+- Strict mode to enforce documentation accuracy
+- Outputs documentation in AsciiDoc (Markdown & custom formats via OpenAPI compatibility layer planned)
+- Declarative and intuitive chaining API
 
 ---
 
 ## 📚 How to Use
 
-All methods can be chained. Basic structure:
+Chain methods on your Supertest request wrapped by `docRequest`:
 
 ```typescript
 await docRequest(
   request(app.getHttpServer())
-    .get('/path')
+    .get("/path")
     .expect(200)
 )
-  .withDescription('API description')
-  .withRequestHeaders([...])
-  .withRequestFields([...])
-  .withRequestParameters([...])
-  .withPathParameters([...])
-  .withRequestParts([...])
-  .withResponseHeaders([...])
-  .withResponseFields([...])
-  .doc('api-identifier');
-```
-
----
-
-## 📖 Detailed Method Definitions
-
-### 1️⃣ `withDescription`
-
-| Parameter | Required | Description         |
-| --------- | -------- | ------------------- |
-| desc      | ✅       | The API description |
-
-**Example**
-
-```typescript
-.withDescription('User creation API')
-```
-
----
-
-### 2️⃣ `withRequestHeaders`
-
-| Field         | Required                 | Type    | Description           |
-| ------------- | ------------------------ | ------- | --------------------- |
-| `name`        | ✅                       | string  | Header name           |
-| `type`        | ❌ (default: `"string"`) | string  | Header type           |
-| `description` | ❌                       | string  | Header description    |
-| `optional`    | ❌ (default: `false`)    | boolean | Whether it’s optional |
-
-**Example**
-
-```typescript
-.withRequestHeaders([
-  defineHeader('Authorization')
-    .description('Bearer auth token'),
-  { name: 'X-Request-ID', description: 'Request trace ID', optional: true },
-])
-```
-
----
-
-### 3️⃣ `withResponseHeaders`
-
-Same signature as `withRequestHeaders`.
-
-```typescript
-.withResponseHeaders([
-  defineHeader('Set-Cookie').description('Session cookie'),
-])
-```
-
----
-
-### 4️⃣ `withRequestFields` / `withResponseFields`
-
-| Field         | Required              | Type    | Description       |
-| ------------- | --------------------- | ------- | ----------------- |
-| `name`        | ✅                    | string  | Field name        |
-| `type`        | ✅                    | string  | Field type        |
-| `description` | ❌                    | string  | Field description |
-| `optional`    | ❌ (default: `false`) | boolean | Optional flag     |
-
-**Example**
-
-```typescript
-.withRequestFields([
-  defineField('name')
-    .type('string')
-    .description('User name'),
-  defineField('age')
-    .type('number')
-    .description('User age')
-    .optional(),
-])
-```
-
----
-
-### 5️⃣ `withRequestParameters`
-
-For URL query parameters, same structure as headers/fields.
-
-```typescript
-.withRequestParameters([
-  defineQueryParam('search').description('Search keyword'),
-  { name: 'page', description: 'Page number', optional: true },
-])
-```
-
----
-
-### 6️⃣ `withPathParameters`
-
-For dynamic URL segments, same structure:
-
-```typescript
-.withPathParameters([
-  definePathParam('userId').description('User ID'),
-])
-```
-
----
-
-### 7️⃣ `withRequestParts`
-
-For multipart requests (file uploads):
-
-| Field         | Required               | Type    | Description      |
-| ------------- | ---------------------- | ------- | ---------------- |
-| `name`        | ✅                     | string  | Part name        |
-| `type`        | ❌ (default: `"file"`) | string  | Part type        |
-| `description` | ❌                     | string  | Part description |
-| `optional`    | ❌ (default: `false`)  | boolean | Optional flag    |
-
-**Example**
-
-```typescript
-.withRequestParts([
-  { name: 'avatar', description: 'User avatar image' },
-  definePart('metadata')
-    .type('json')
-    .description('Additional data')
-    .optional(),
-])
-```
-
----
-
-### 8️⃣ `doc`
-
-Writes the snippet files.  
-| Argument | Required | Description |
-| ----------- | -------- | ---------------------------------------- |
-| identifier | ✅ | Unique API identifier (e.g., `'create-user'`) |
-
-```typescript
-.doc('create-user')
-```
-
----
-
-### 9️⃣ `withServers`
-
-Sets OpenAPI server URLs.
-
-| Argument  | Required | Description          |
-| --------- | -------- | -------------------- |
-| `servers` | ✅       | Array of server URLs |
-
-```typescript
-.withServers([
-  'http://api.example.com',
-  'http://api2.example.com'
-])
-```
-
----
-
-### 🔟 `withOperation`
-
-Specifies HTTP method and path.
-
-| Argument | Required | Description  |
-| -------- | -------- | ------------ |
-| method   | ✅       | HTTP method  |
-| path     | ✅       | API endpoint |
-
-```typescript
-.withOperation('POST', '/api/users')
-```
-
----
-
-### 1️⃣1️⃣ `withResponse`
-
-Defines response details per status code.
-
-| Argument   | Required | Description          |
-| ---------- | -------- | -------------------- |
-| statusCode | ✅       | HTTP status code     |
-| response   | ✅       | Response info object |
-
-Response object structure:
-
-| Field         | Required | Type   | Description      |
-| ------------- | -------- | ------ | ---------------- |
-| `headers`     | ❌       | array  | Response headers |
-| `fields`      | ❌       | array  | Response fields  |
-| `description` | ❌       | string | Description      |
-
-**Examples**
-
-With fields:
-
-```typescript
-.withResponse(201, {
-  description: 'Resource created successfully',
-  headers: [
-    defineHeader('Location').description('Location of the new resource')
-  ],
-  fields: [
-    defineField('id').type('number').description('New resource ID'),
-    defineField('createdAt').type('string').description('Creation timestamp')
-  ]
-})
-```
-
-Without fields:
-
-```typescript
-.withResponse(204, {
-  description: 'Resource deleted successfully'
-})
-```
-
-Multiple status codes:
-
-```typescript
-.withResponse(200, {
-  description: 'Success',
-  fields: [defineField('result').type('object').description('Result data')]
-})
-.withResponse(400, {
-  description: 'Bad request',
-  fields: [defineField('error').type('string').description('Error message')]
-})
-.withResponse(500, {
-  description: 'Server error',
-  fields: [defineField('message').type('string').description('Error details')]
-})
+  .withRequestHeaders({ /* headers definition */ })
+  .withRequestFields({ /* fields definition */ })
+  .withQueryParameters({ /* query params definition */ })
+  .withPathParameters({ /* path params definition */ })
+  .withRequestParts({ /* multipart parts definition */ })
+  .withResponseHeaders({ /* response headers definition */ })
+  .withResponseFields({ /* response fields definition */ })
+  .doc("api-identifier");
 ```
 
 ---
 
 ## 📝 Define Helpers
 
-Helper functions to declaratively build definitions:
+Use predefined helpers for clear descriptor definitions:
 
-| Function                 | Default Type | Description                      |
-| ------------------------ | ------------ | -------------------------------- |
-| `defineHeader(name)`     | `"string"`   | Defines a header                 |
-| `defineField(name)`      | _required_   | Defines a request/response field |
-| `defineQueryParam(name)` | `"string"`   | Defines a query parameter        |
-| `definePathParam(name)`  | `"string"`   | Defines a path parameter         |
-| `definePart(name)`       | `"file"`     | Defines a multipart part         |
+| Helper Factory | Default Type | Description                      |
+| -------------- | ------------ | -------------------------------- |
+| `definedHeaders()` | `"string"`   | Request/Response headers |
+| `definedFields()`  | _required_   | Request/Response body fields |
+| `definedQueryParams()` | `"string"` | URL query parameters      |
+| `definedPathParams()` | `"string"` | URL path parameters       |
+| `definedFormParams()` | `"string"` | Form parameters (application/x-www-form-urlencoded) |
+| `definedParts()`      | `"file"`   | Multipart form-data parts |
+| `definedCookies()`    | `"string"` | HTTP cookies              |
 
 **Examples**
 
-```typescript
-defineHeader("Authorization").description("Auth header");
+### definedHeaders
 
-defineField("age").type("number").description("User age");
+#### DSL
+```ts
+definedHeaders([
+  defineHeader("Authorization").description("Bearer auth token"),
+  defineHeader("X-Request-ID").description("Unique request identifier"),
+]);
 
-defineQueryParam("keyword").description("Search keyword").optional();
+```
 
-definePathParam("userId").description("User ID");
+### Record
+```ts
+definedHeaders({
+  Authorization: { description: "Bearer auth token" },
+  "X-Request-ID": { description: "Unique request identifier" },
+});
+```
 
-definePart("image").description("Profile image").optional();
+### Array
+```ts
+definedHeaders([
+  { name: "Authorization", description: "Bearer auth token" },
+  { name: "X-Request-ID", description: "Unique request identifier" },
+]);
+```
+
+### definedHeaders
+
+#### DSL
+```ts
+definedHeaders([
+  defineHeader("Authorization").description("Bearer auth token"),
+  defineHeader("X-Request-ID").description("Unique request identifier"),
+]);
+
+```
+
+### Record
+```ts
+definedHeaders({
+  Authorization: { description: "Bearer auth token" },
+  "X-Request-ID": { description: "Unique request identifier" },
+});
+```
+
+### Array
+```ts
+definedHeaders([
+  { name: "Authorization", description: "Bearer auth token" },
+  { name: "X-Request-ID", description: "Unique request identifier" },
+]);
+```
+
+### definedHeaders
+
+#### DSL
+```ts
+definedHeaders([
+  defineHeader("Authorization").description("Bearer auth token"),
+  defineHeader("X-Request-ID").description("Unique request identifier"),
+]);
+
+```
+
+### Record
+```ts
+definedHeaders({
+  Authorization: { description: "Bearer auth token" },
+  "X-Request-ID": { description: "Unique request identifier" },
+});
+```
+
+### Array
+```ts
+definedHeaders([
+  { name: "Authorization", description: "Bearer auth token" },
+  { name: "X-Request-ID", description: "Unique request identifier" },
+]);
+```
+
+### definedFields
+
+#### DSL
+```ts
+definedFields([
+  defineField("user.name").type("string").description("User's full name"),
+  defineField("user.age").type("number").description("User's age"),
+]);
+```
+
+### Record
+```ts
+definedFields({
+  "user.name": { type: "string", description: "User's full name" },
+  "user.age": { type: "number", description: "User's age" },
+});
+
+```
+
+### Array
+```ts
+definedFields([
+  { name: "user.name", type: "string", description: "User's full name" },
+  { name: "user.age", type: "number", description: "User's age" },
+]);
+
+```
+
+### definedQueryParams
+
+#### DSL
+```ts
+definedQueryParams([
+  defineQuery("page").type("number").description("Page number"),
+  defineQuery("limit").type("number").description("Items per page"),
+]);
+
+
+```
+
+### Record
+```ts
+definedQueryParams({
+  page: { type: "number", description: "Page number" },
+  limit: { type: "number", description: "Items per page" },
+});
+
+```
+
+### Array
+```ts
+definedQueryParams([
+  { name: "page", type: "number", description: "Page number" },
+  { name: "limit", type: "number", description: "Items per page" },
+]);
+
+```
+
+### definedPathParams
+
+#### DSL
+```ts
+definedPathParams([
+  definePath("userId").type("string").format("uuid").description("User UUID"),
+  definePath("postId").type("string").format("uuid").description("Post UUID"),
+]);
+
+
+```
+
+### Record
+```ts
+definedPathParams({
+  userId: { type: "string", format: "uuid", description: "User UUID" },
+  postId: { type: "string", format: "uuid", description: "Post UUID" },
+});
+
+```
+
+### Array
+```ts
+definedPathParams([
+  { name: "userId", type: "string", format: "uuid", description: "User UUID" },
+  { name: "postId", type: "string", format: "uuid", description: "Post UUID" },
+]);
+
+```
+
+### definedFormParams
+
+#### DSL
+```ts
+definedFormParams([
+  defineForm("username").type("string").description("User login name"),
+  defineForm("password").type("string").description("User password"),
+]);
+
+
+```
+
+### Record
+```ts
+definedFormParams({
+  username: { type: "string", description: "User login name" },
+  password: { type: "string", description: "User password" },
+});
+
+```
+
+### Array
+```ts
+definedFormParams([
+  { name: "username", type: "string", description: "User login name" },
+  { name: "password", type: "string", description: "User password" },
+]);
+
+```
+
+### definedParts
+
+#### DSL
+```ts
+definedParts([
+  definePart("file").type("string").format("binary").description("Uploaded file"),
+  definePart("metadata").type("object").description("Metadata for the file"),
+]);
+
+
+```
+
+### Record
+```ts
+definedParts({
+  file: { type: "string", format: "binary", description: "Uploaded file" },
+  metadata: { type: "object", description: "Metadata for the file" },
+});
+
+```
+
+### Array
+```ts
+definedParts([
+  { name: "file", type: "string", format: "binary", description: "Uploaded file" },
+  { name: "metadata", type: "object", description: "Metadata for the file" },
+]);
+
+```
+
+### definedCookies
+
+#### DSL
+```ts
+definedCookies([
+  defineCookie("sessionId").type("string").description("Session ID cookie"),
+  defineCookie("preferences").type("string").description("User preferences cookie"),
+]);
+
+
+```
+
+### Record
+```ts
+definedCookies({
+  sessionId: { type: "string", description: "Session ID cookie" },
+  preferences: { type: "string", description: "User preferences cookie" },
+});
+
+```
+
+### Array
+```ts
+definedCookies([
+  { name: "sessionId", type: "string", description: "Session ID cookie" },
+  { name: "preferences", type: "string", description: "User preferences cookie" },
+]);
+
 ```
 
 ---
 
 ## 📌 Comprehensive Example
 
+A realistic multipart E2E test example documenting a file upload endpoint:
+
 ```typescript
 await docRequest(
-    request(app.getHttpServer())
-        .post("/users/:userId/avatar?replace=true")
-        .set("Authorization", "Bearer token")
-        .field("description", "Profile image")
-        .attach("avatar", "./test/avatar.png")
-        .expect(200)
+  request(app.getHttpServer())
+    .post("/users/:userId/avatar?replace=true")
+    .set("Authorization", "Bearer <token>")
+    .field("description", "Profile picture")
+    .attach("avatar", "./test/avatar.png")
+    .expect(200)
 )
-    .withDescription("User avatar update")
-    .withRequestHeaders([
-        defineHeader("Authorization").description("Bearer auth token"),
-    ])
-    .withPathParameters([definePathParam("userId").description("User ID")])
-    .withRequestParameters([
-        defineQueryParam("replace")
-            .description("Replace existing image")
-            .optional(),
-    ])
-    .withRequestParts([
-        definePart("avatar").description("Avatar image file"),
-        definePart("description")
-            .type("string")
-            .description("Image description")
-            .optional(),
-    ])
-    .withResponseHeaders([
-        defineHeader("Set-Cookie").description("Session cookie").optional(),
-    ])
-    .withResponseFields([
-        defineField("success").type("boolean").description("Operation status"),
-        defineField("url").type("string").description("Uploaded image URL"),
-    ])
-    .doc("update-user-avatar");
+  .withRequestHeaders([
+    defineHeader("Authorization").description("Bearer authentication token"),
+  ])
+  .withPathParameters([
+    definePath("userId").format("uuid").description("User identifier"),
+  ])
+  .withQueryParameters([
+    defineQuery("replace").type("boolean").description("Replace existing avatar?").optional(),
+  ])
+  .withRequestParts([
+    definePart("avatar").format("binary").description("Avatar image file"),
+  ])
+  .withRequestPartFields(
+    "description", [ defineField("text").type("string").description("Image description") ]
+  )
+  .withResponseHeaders([
+    defineHeader("Set-Cookie").description("Session cookie").optional(),
+  ])
+  .withResponseFields([
+    defineField("success").type("boolean").description("Operation success status"),
+    defineField("url").format("uri").description("Uploaded avatar URL"),
+  ])
+  .doc("update-user-avatar");
+
+```
+
+### If use Nest-Swagger
+```ts
+class UploadAvatarResponseDto {
+  @ApiProperty({ type: 'boolean', description: 'Operation success status' })
+  success: boolean;
+
+  @ApiProperty({ type: 'string', format: 'uri', description: 'Uploaded avatar URL' })
+  url: string;
+}
+
+class UploadAvatarDescriptionDto {
+  @ApiProperty({ type: 'string', description: 'Image description' })
+  text: string;
+}
+
+@Controller('users')
+export class UsersController {
+  @Post(':userId/avatar')
+  @ApiBearerAuth()
+  @ApiConsumes('multipart/form-data')
+  @ApiParam({
+    name: 'userId',
+    type: 'string',
+    format: 'uuid',
+    description: 'User identifier',
+  })
+  @ApiQuery({
+    name: 'replace',
+    type: 'boolean',
+    required: false,
+    description: 'Replace existing avatar?',
+  })
+  @ApiHeader({
+    name: 'Authorization',
+    description: 'Bearer authentication token',
+    required: true,
+  })
+  @ApiHeader({
+    name: 'Set-Cookie',
+    description: 'Session cookie',
+    required: false,
+  })
+  @ApiBody({
+    description: 'Avatar upload payload',
+    type: UploadAvatarDescriptionDto,
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Avatar upload success response',
+    type: UploadAvatarResponseDto,
+  })
+  @UseInterceptors(FileInterceptor('avatar'))
+  async uploadAvatar(
+    @Param('userId') userId: string,
+    @Query('replace') replace: boolean,
+    @UploadedFile() avatar: Express.Multer.File,
+    @Body() description: UploadAvatarDescriptionDto,
+    @Headers('Authorization') authorization: string,
+  ): Promise<UploadAvatarResponseDto> {
+    return {
+      success: true,
+      url: 'https://example.com/avatar.png',
+    };
+  }
+}
 ```
 
 ---
