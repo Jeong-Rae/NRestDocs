@@ -24,6 +24,7 @@ import {
     applyRequestPart,
 } from "@/inputs";
 import type { HttpMethod, HttpStatusCode } from "@/types";
+import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import type { Response } from "supertest";
 
 export class DocRequestBuilder {
@@ -239,6 +240,24 @@ export class DocRequestBuilder {
      */
     async doc(identifier: string): Promise<Response> {
         const response = await this.supertestPromise;
+        const httpRequest = extractHttpRequest(response);
+        const {
+            body: requestBody,
+            headers: requestHeaders,
+            method,
+            url: { pathname },
+        } = httpRequest;
+        const httpResponse = extractHttpResponse(response);
+        const { body: responseBody, headers: responseHeaders, statusCode } = httpResponse;
+        console.log(
+            requestBody,
+            requestHeaders,
+            method,
+            pathname,
+            responseBody,
+            responseHeaders,
+            statusCode
+        );
 
         return response;
     }
