@@ -1,1 +1,1 @@
-export * from "./doc-builder";
+export * from "./document-builder";

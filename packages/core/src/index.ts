@@ -1,4 +1,4 @@
-export { docRequest } from "./builders/doc-builder";
+export { docRequest } from "./builders/document-builder";
 export { setNRestDocsConfig, getNRestDocsConfig } from "./config/config";
 
 export * from "./errors";

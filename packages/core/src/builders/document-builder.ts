@@ -1,14 +1,12 @@
-import {
-    type CookieDescriptor,
-    type FieldDescriptor,
-    type FormParamDescriptor,
-    type HeaderDescriptor,
-    type PartDescriptor,
-    type PathParamDescriptor,
-    type QueryParamDescriptor,
-    defineField,
+import type {
+    CookieDescriptor,
+    FieldDescriptor,
+    FormParamDescriptor,
+    HeaderDescriptor,
+    PartDescriptor,
+    PathParamDescriptor,
+    QueryParamDescriptor,
 } from "@/descriptors";
-import { defineType } from "@/descriptors/type-builder";
 import {
     type CookieInput,
     type FieldInput,
@@ -29,7 +27,7 @@ import type { HttpMethod, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import type { Response as SupertestResponse } from "supertest";
 
-export class DocRequestBuilder {
+export class DocumentBuilder {
     // HTTP 실행 및 기본 정보
     private readonly supertestPromise: Promise<SupertestResponse>;
     private httpMethod?: HttpMethod;
@@ -266,10 +264,10 @@ export class DocRequestBuilder {
 }
 
 /**
- * supertest Promise를 받아 DocRequestBuilder로 감싸기
+ * supertest Promise를 받아 DocumentBuilder 감싸기
  * @param supertestPromise supertest Promise
  * @returns DocRequestBuilder
  */
-export function docRequest(supertestPromise: Promise<SupertestResponse>): DocRequestBuilder {
-    return new DocRequestBuilder(supertestPromise);
+export function docRequest(supertestPromise: Promise<SupertestResponse>): DocumentBuilder {
+    return new DocumentBuilder(supertestPromise);
 }
