@@ -59,9 +59,9 @@ export class DocRequestBuilder {
      * Query Parameters를 등록할 수 있다.
      * @param params {QueryParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ queryParam("page").type("number") ]
-     * / [ { name: "page", "type": "number" } ]
-     * / { page: { type: "number" } }
+     * / [ queryParam("page").type("number").format("int32") ]
+     * / [ { name: "page", "type": "number", "format": "int32" } ]
+     * / { page: { type: "number", "format": "int32" } }
      * @returns
      */
     withQueryParameters(params: QueryParamsInput): this {
@@ -73,9 +73,9 @@ export class DocRequestBuilder {
      * Form Parameters를 등록할 수 있다.
      * @param params {FormParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ formParam("username").type("string") ]
-     * / [ { name: "username", "type": "string" } ]
-     * / { username: { type: "string" } }
+     * / [ formParam("username").type("string").format("email") ]
+     * / [ { name: "username", "type": "string", "format": "email" } ]
+     * / { username: { type: "string", "format": "email" } }
      * @returns
      */
     withFormParameters(params: FormParamsInput): this {
@@ -87,9 +87,9 @@ export class DocRequestBuilder {
      * Path Parameters를 등록할 수 있다.
      * @param params {PathParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ pathParam("userId").type("string") ]
-     * / [ { name: "userId", "type": "string" } ]
-     * / { userId: { type: "string" } }
+     * / [ pathParam("userId").type("string").format("uuid") ]
+     * / [ { name: "userId", "type": "string", "format": "uuid" } ]
+     * / { userId: { type: "string", "format": "uuid" } }
      * @returns
      */
     withPathParameters(params: PathParamsInput): this {
@@ -101,9 +101,9 @@ export class DocRequestBuilder {
      * Request Part를 등록할 수 있다.
      * @param params {RequestPartInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ part("file").type("binary") ]
-     * / [ { name: "file", "type": "binary" } ]
-     * / { file: { type: "binary" } }
+     * / [ part("file").type("string").format("binary") ]
+     * / [ { name: "file", "type": "string", "format": "binary" } ]
+     * / { file: { type: "string", "format": "binary" } }
      * @returns
      */
     withRequestPart(params: RequestPartInput): this {

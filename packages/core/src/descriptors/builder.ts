@@ -1,4 +1,4 @@
-import type { AllowedType, BaseDescriptor, ParamKind } from "./types";
+import type { AllowedType, BaseDescriptor, FormatFor, ParamKind } from "./types";
 
 /** 빌더 상태 태그 타입 */
 export const BuilderState = {
@@ -15,9 +15,18 @@ export interface Builder<
     S,
     K extends ParamKind,
 > {
-    type<T extends AllowedType<K>>(type: T): Builder<Omit<D, "type"> & { type: T }, TypeSet, K>;
+    // Kind 별 AllowedType 설정
+    type<T extends AllowedType<K>>(
+        type: T
+    ): Builder<Omit<D, "type" | "format"> & { type: T }, TypeSet, K>;
 
-    description(description: string): Builder<D & { description: string }, S, K>;
+    // type이 정의된 이후 호출가능
+    format<F extends FormatFor<NonNullable<D["type"] & AllowedType<K>>>>(
+        this: Builder<D, TypeSet, K>,
+        format: F
+    ): Builder<D & { format: F }, TypeSet, K>;
+
+    description(text: string): Builder<D & { description: string }, S, K>;
 
     optional(): Builder<D & { optional: true }, S, K>;
 
@@ -32,9 +41,12 @@ export function createBuilder<K extends ParamKind, N extends string>(
     name: N,
     draft: Partial<BaseDescriptor<K, AllowedType<K>>> & { kind: K; name: N } = { kind, name }
 ): Builder<typeof draft, TypeUnset, K> {
-    const api: unknown = {
+    const arg: unknown = {
         type(type: AllowedType<K>) {
             return createBuilder(kind, name, { ...draft, type });
+        },
+        format(format: FormatFor<AllowedType<K>>) {
+            return createBuilder(kind, name, { ...draft, format });
         },
         description(description: string) {
             return createBuilder(kind, name, { ...draft, description });
@@ -48,5 +60,5 @@ export function createBuilder<K extends ParamKind, N extends string>(
             return draft as Readonly<typeof draft & BaseDescriptor<K, AllowedType<K>>>;
         },
     };
-    return api as Builder<typeof draft, TypeUnset, K>;
+    return arg as Builder<typeof draft, TypeUnset, K>;
 }

@@ -1,6 +1,6 @@
 import { ParamKinds, pathParam, queryParam } from "@/descriptors";
 import { describe, expect, it } from "vitest";
-import { applyNormalize } from "./parameter-normalizer";
+import { applyNormalize } from "./normalizer";
 import { given } from "./test";
 
 describe("parameter-normalizer", () => {
