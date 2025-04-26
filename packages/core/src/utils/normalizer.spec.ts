@@ -1,4 +1,4 @@
-import { ParamKinds, pathParam, queryParam } from "@/descriptors";
+import { ParamKinds, definePath, defineQuery } from "@/descriptors";
 import { describe, expect, it } from "vitest";
 import { applyNormalize } from "./normalizer";
 import { given } from "./test";
@@ -30,7 +30,7 @@ describe("parameter-normalizer", () => {
             });
 
             it("calls build() on Builder instances", async () => {
-                await given([pathParam("commentId").type("string")])
+                await given([definePath("commentId").type("string")])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
                     .when((input) => applyNormalize(ParamKinds.Path, input as any))
                     .then((result) => {
@@ -79,7 +79,10 @@ describe("parameter-normalizer", () => {
             });
 
             it("calls build() on Builder instances", async () => {
-                await given([queryParam("q").description("검색어"), queryParam("sort").optional()])
+                await given([
+                    defineQuery("q").description("검색어"),
+                    defineQuery("sort").optional(),
+                ])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
                     .when((input) => applyNormalize(ParamKinds.Query, input as any))
                     .then((result) => {

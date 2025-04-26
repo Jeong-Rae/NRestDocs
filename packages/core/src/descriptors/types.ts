@@ -45,15 +45,9 @@ export type AllowedType<K extends ParamKind> = K extends "part"
     ? "string"
     : K extends "path"
       ? Exclude<FieldType, "object" | "array" | "null">
-      : K extends "query"
+      : K extends "cookie" | "query" | "form" | "header" | "field"
         ? FieldType
-        : K extends "form"
-          ? FieldType
-          : K extends "header"
-            ? FieldType
-            : K extends "field"
-              ? FieldType
-              : never;
+        : never;
 
 /** Descriptor의 종류 */
 export const ParamKinds = {
@@ -61,6 +55,7 @@ export const ParamKinds = {
     Form: "form",
     Path: "path",
     Header: "header",
+    Cookie: "cookie",
     Field: "field",
     Part: "part",
 } as const;
@@ -84,6 +79,7 @@ export type PathParamDescriptor = BaseDescriptor<
     Exclude<FieldType, "object" | "array" | "null">
 >;
 export type HeaderDescriptor = BaseDescriptor<"header", FieldType>;
+export type CookieDescriptor = BaseDescriptor<"cookie", FieldType>;
 export type PartDescriptor = BaseDescriptor<"part", "string">;
 export type FieldDescriptor = BaseDescriptor<"field", FieldType>;
 

@@ -21,9 +21,9 @@ export interface Builder<
     ): Builder<Omit<D, "type" | "format"> & { type: T }, TypeSet, K>;
 
     // type이 정의된 이후 호출가능
-    format<F extends FormatFor<NonNullable<D["type"] & AllowedType<K>>>>(
-        this: Builder<D, TypeSet, K>,
-        format: F
+    format<T extends NonNullable<D["type"]>, F extends FormatFor<T & AllowedType<K>>>(
+        this: Builder<D & { type: T }, TypeSet, K>,
+        fmt: F
     ): Builder<D & { format: F }, TypeSet, K>;
 
     description(text: string): Builder<D & { description: string }, S, K>;

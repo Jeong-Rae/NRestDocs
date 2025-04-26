@@ -59,7 +59,7 @@ export class DocRequestBuilder {
      * Query Parameters를 등록할 수 있다.
      * @param params {QueryParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ queryParam("page").type("number").format("int32") ]
+     * / [ defineQuery("page").type("number").format("int32") ]
      * / [ { name: "page", "type": "number", "format": "int32" } ]
      * / { page: { type: "number", "format": "int32" } }
      * @returns
@@ -73,7 +73,7 @@ export class DocRequestBuilder {
      * Form Parameters를 등록할 수 있다.
      * @param params {FormParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ formParam("username").type("string").format("email") ]
+     * / [ defineForm("username").type("string").format("email") ]
      * / [ { name: "username", "type": "string", "format": "email" } ]
      * / { username: { type: "string", "format": "email" } }
      * @returns
@@ -87,7 +87,7 @@ export class DocRequestBuilder {
      * Path Parameters를 등록할 수 있다.
      * @param params {PathParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ pathParam("userId").type("string").format("uuid") ]
+     * / [ definePath("userId").type("string").format("uuid") ]
      * / [ { name: "userId", "type": "string", "format": "uuid" } ]
      * / { userId: { type: "string", "format": "uuid" } }
      * @returns
@@ -101,13 +101,36 @@ export class DocRequestBuilder {
      * Request Part를 등록할 수 있다.
      * @param params {RequestPartInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ part("file").type("string").format("binary") ]
-     * / [ { name: "file", "type": "string", "format": "binary" } ]
-     * / { file: { type: "string", "format": "binary" } }
+     * / [ definePart("file").type("string").format("binary"), definePart("metadata").type("object") ]
+     * / [ { name: "file", "type": "string", "format": "binary" }, { name: "metadata", "type": "object" } ]
+     * / { file: { type: "string", "format": "binary" }, metadata: { type: "object" } }
      * @returns
      */
-    withRequestPart(params: RequestPartInput): this {
+    withRequestParts(params: RequestPartInput): this {
         this.requestParts = applyRequestPart(params);
+        return this;
+    }
+
+    /**
+     * Request Part의 바디를 등록할 수 있다.
+     * @param partName {string} 등록 가능한 Part 이름
+     * @returns
+     * @example
+     * / withRequestPartBody("metadata")
+     */
+    withRequestPartBody(partName: string): this {
+        return this;
+    }
+
+    /**
+     * Request Part의 필드를 등록할 수 있다.
+     * @param partName {string} 등록 가능한 Part 이름
+     * @param fields {FieldInput[]} 등록 가능한 Field 배열
+     * @returns
+     * @example
+     * / withRequestPartFields("metadata", [ defineField("name").type("string"), defineField("size").type("number") ])
+     */
+    withRequestPartFields(partName: string, fields: []): this {
         return this;
     }
 
@@ -137,14 +160,6 @@ export class DocRequestBuilder {
         headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
     ): this {
         this.requestHeaders = normalizeDescriptors(headers);
-        return this;
-    }
-
-    /**
-     * multipart request-parts 정의
-     */
-    withRequestParts(parts: (DescriptorBuilder<PartDescriptor> | PartDescriptor)[]): this {
-        this.requestParts = normalizeDescriptors(parts);
         return this;
     }
 
