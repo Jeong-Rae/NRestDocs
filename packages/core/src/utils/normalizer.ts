@@ -1,6 +1,7 @@
 import type { AllowedType, BaseDescriptor, Builder, ParamKind, TypeSet } from "@/descriptors";
 import type { ArrayOrRecord, PartialDescriptor } from "@/inputs";
-import { isArray, isFunction } from "es-toolkit/compat";
+import { isArray } from "es-toolkit/compat";
+import { isBuilder } from "./isBuilder";
 
 function addDefaultType<K extends ParamKind>(
     kind: K,
@@ -21,8 +22,8 @@ function normalizeOne<K extends ParamKind, D extends BaseDescriptor<K, AllowedTy
     raw: { build?: () => D } | PartialDescriptor<K, D>
 ): D {
     //  빌더일 경우 build() 호출
-    if (isFunction((raw as Record<string, unknown>)["build"])) {
-        const built = (raw as Builder<D, TypeSet, K>).build();
+    if (isBuilder<Builder<D, TypeSet, K>>(raw)) {
+        const built = raw.build();
         return addDefaultType(kind, built) as D;
     }
 

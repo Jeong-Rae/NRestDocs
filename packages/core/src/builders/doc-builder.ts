@@ -1,12 +1,14 @@
-import type {
-    CookieDescriptor,
-    FieldDescriptor,
-    FormParamDescriptor,
-    HeaderDescriptor,
-    PartDescriptor,
-    PathParamDescriptor,
-    QueryParamDescriptor,
+import {
+    type CookieDescriptor,
+    type FieldDescriptor,
+    type FormParamDescriptor,
+    type HeaderDescriptor,
+    type PartDescriptor,
+    type PathParamDescriptor,
+    type QueryParamDescriptor,
+    defineField,
 } from "@/descriptors";
+import { defineType } from "@/descriptors/type-builder";
 import {
     type CookieInput,
     type FieldInput,
@@ -25,11 +27,11 @@ import {
 } from "@/inputs";
 import type { HttpMethod, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
-import type { Response } from "supertest";
+import type { Response as SupertestResponse } from "supertest";
 
 export class DocRequestBuilder {
     // HTTP 실행 및 기본 정보
-    private readonly supertestPromise: Promise<Response>;
+    private readonly supertestPromise: Promise<SupertestResponse>;
     private httpMethod?: HttpMethod;
     private httpPath?: string;
     private statusCode?: HttpStatusCode;
@@ -58,7 +60,7 @@ export class DocRequestBuilder {
     // 응답 바디
     private responseFields?: FieldDescriptor[];
 
-    constructor(supertestPromise: Promise<Response>) {
+    constructor(supertestPromise: Promise<SupertestResponse>) {
         this.supertestPromise = supertestPromise;
     }
 
@@ -238,7 +240,7 @@ export class DocRequestBuilder {
      * @param identifier document identifier
      * @returns supertest response
      */
-    async doc(identifier: string): Promise<Response> {
+    async doc(identifier: string): Promise<SupertestResponse> {
         const response = await this.supertestPromise;
         const httpRequest = extractHttpRequest(response);
         const {
@@ -268,6 +270,6 @@ export class DocRequestBuilder {
  * @param supertestPromise supertest Promise
  * @returns DocRequestBuilder
  */
-export function docRequest(supertestPromise: Promise<Response>): DocRequestBuilder {
+export function docRequest(supertestPromise: Promise<SupertestResponse>): DocRequestBuilder {
     return new DocRequestBuilder(supertestPromise);
 }
