@@ -7,12 +7,14 @@ import {
     type FormParamsInput,
     type PathParamsInput,
     type QueryParamsInput,
+    type RequestHeaderInput,
     type RequestPartInput,
     applyPathParameters,
     applyQueryParameters,
 } from "@/inputs";
 import { applyFormParameters } from "@/inputs/form-parameters";
-import { applyRequestPart } from "@/inputs/request-part";
+import { applyRequestHeader } from "@/inputs/header";
+import { applyRequestPart } from "@/inputs/part";
 import type {
     FieldDescriptor,
     HeaderDescriptor,
@@ -59,9 +61,9 @@ export class DocRequestBuilder {
      * Query Parameters를 등록할 수 있다.
      * @param params {QueryParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ defineQuery("page").type("number").format("int32") ]
-     * / [ { name: "page", "type": "number", "format": "int32" } ]
-     * / { page: { type: "number", "format": "int32" } }
+     * / withQueryParameters([ defineQuery("page").type("number").format("int32") ])
+     * / withQueryParameters([ { name: "page", "type": "number", "format": "int32" } ])
+     * / withQueryParameters({ page: { type: "number", "format": "int32" } })
      * @returns
      */
     withQueryParameters(params: QueryParamsInput): this {
@@ -73,9 +75,9 @@ export class DocRequestBuilder {
      * Form Parameters를 등록할 수 있다.
      * @param params {FormParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ defineForm("username").type("string").format("email") ]
-     * / [ { name: "username", "type": "string", "format": "email" } ]
-     * / { username: { type: "string", "format": "email" } }
+     * / withFormParameters([ defineForm("username").type("string").format("email") ])
+     * / withFormParameters([ { name: "username", "type": "string", "format": "email" } ])
+     * / withFormParameters({ username: { type: "string", "format": "email" } })
      * @returns
      */
     withFormParameters(params: FormParamsInput): this {
@@ -87,9 +89,9 @@ export class DocRequestBuilder {
      * Path Parameters를 등록할 수 있다.
      * @param params {PathParamsInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ definePath("userId").type("string").format("uuid") ]
-     * / [ { name: "userId", "type": "string", "format": "uuid" } ]
-     * / { userId: { type: "string", "format": "uuid" } }
+     * / withPathParameters([ definePath("userId").type("string").format("uuid") ])
+     * / withPathParameters([ { name: "userId", "type": "string", "format": "uuid" } ])
+     * / withPathParameters({ userId: { type: "string", "format": "uuid" } })
      * @returns
      */
     withPathParameters(params: PathParamsInput): this {
@@ -101,9 +103,9 @@ export class DocRequestBuilder {
      * Request Part를 등록할 수 있다.
      * @param params {RequestPartInput} 등록 가능한 Parameter 입력 배열 또는 레코드
      * @example
-     * / [ definePart("file").type("string").format("binary"), definePart("metadata").type("object") ]
-     * / [ { name: "file", "type": "string", "format": "binary" }, { name: "metadata", "type": "object" } ]
-     * / { file: { type: "string", "format": "binary" }, metadata: { type: "object" } }
+     * / withRequestParts([ definePart("file").type("string").format("binary"), definePart("metadata").type("object") ])
+     * / withRequestParts([ { name: "file", "type": "string", "format": "binary" }, { name: "metadata", "type": "object" } ])
+     * / withRequestParts({ file: { type: "string", "format": "binary" }, metadata: { type: "object" } })
      * @returns
      */
     withRequestParts(params: RequestPartInput): this {
@@ -116,7 +118,7 @@ export class DocRequestBuilder {
      * @param partName {string} 등록 가능한 Part 이름
      * @returns
      * @example
-     * / withRequestPartBody("metadata")
+     * / ("metadata")
      */
     withRequestPartBody(partName: string): this {
         return this;
@@ -131,6 +133,20 @@ export class DocRequestBuilder {
      * / withRequestPartFields("metadata", [ defineField("name").type("string"), defineField("size").type("number") ])
      */
     withRequestPartFields(partName: string, fields: []): this {
+        return this;
+    }
+
+    /**
+     * Request Header를 등록할 수 있다.
+     * @param headers {RequestHeaderInput} 등록 가능한 Header 입력 배열 또는 레코드
+     * @returns
+     * @example
+     * / withRequestHeaders([ defineHeader("Authorization"), defineHeader("X-Forwarded-For") ])
+     * / withRequestHeaders([ { name: "Authorization" }, { name: "X-Forwarded-For" } ])
+     * / withRequestHeaders({ Authorization: {}, "X-Forwarded-For": {} })
+     */
+    withRequestHeaders(headers: RequestHeaderInput): this {
+        this.requestHeaders = applyRequestHeader(headers);
         return this;
     }
 
@@ -150,16 +166,6 @@ export class DocRequestBuilder {
     /** API 설명 추가 */
     withDescription(description: string): this {
         this.description = description;
-        return this;
-    }
-
-    /**
-     * request-headers 정의
-     */
-    withRequestHeaders(
-        headers: (DescriptorBuilder<HeaderDescriptor> | PartialWithName<HeaderDescriptor>)[]
-    ): this {
-        this.requestHeaders = normalizeDescriptors(headers);
         return this;
     }
 
