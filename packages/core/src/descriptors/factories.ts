@@ -1,35 +1,48 @@
 import { type Builder, type TypeUnset, createBuilder } from "./builder";
-import { ParamKinds } from "./types";
-import type {
-    FieldDescriptor,
-    HeaderDescriptor,
-    PartDescriptor,
-    PathParamDescriptor,
-    QueryParamDescriptor,
+import {
+    type CookieDescriptor,
+    type FieldDescriptor,
+    type FormParamDescriptor,
+    type HeaderDescriptor,
+    type ParamKind,
+    ParamKinds,
+    type PartDescriptor,
+    type PathParamDescriptor,
+    type QueryParamDescriptor,
 } from "./types";
 
-type FactoryReturn<D, K extends keyof typeof ParamKinds, N extends string> = Builder<
-    Partial<D> & { kind: (typeof ParamKinds)[K]; name: N },
+type Factory<N extends string, K extends ParamKind, D> = Builder<
+    Partial<D> & { kind: K; name: N },
     TypeUnset,
-    (typeof ParamKinds)[K]
+    K
 >;
 
-export const pathParam = <N extends string = string>(
-    name: N
-): FactoryReturn<PathParamDescriptor, "Path", N> => createBuilder(ParamKinds.Path, name);
+const factory =
+    <K extends ParamKind>(k: K) =>
+    <N extends string>(name: N) =>
+        createBuilder(k, name) as Factory<
+            N,
+            K,
+            K extends "query"
+                ? QueryParamDescriptor
+                : K extends "form"
+                  ? FormParamDescriptor
+                  : K extends "path"
+                    ? PathParamDescriptor
+                    : K extends "header"
+                      ? HeaderDescriptor
+                      : K extends "cookie"
+                        ? CookieDescriptor
+                        : K extends "part"
+                          ? PartDescriptor
+                          : FieldDescriptor
+        >;
 
-export const queryParam = <N extends string = string>(
-    name: N
-): FactoryReturn<QueryParamDescriptor, "Query", N> => createBuilder(ParamKinds.Query, name);
-
-export const header = <N extends string = string>(
-    name: N
-): FactoryReturn<HeaderDescriptor, "Header", N> => createBuilder(ParamKinds.Header, name);
-
-export const field = <N extends string = string>(
-    name: N
-): FactoryReturn<FieldDescriptor, "Field", N> => createBuilder(ParamKinds.Field, name);
-
-export const part = <N extends string = string>(
-    name: N
-): FactoryReturn<PartDescriptor, "Part", N> => createBuilder(ParamKinds.Part, name);
+/** 정의 DSL */
+export const defineQuery = factory(ParamKinds.Query);
+export const defineForm = factory(ParamKinds.Form);
+export const definePath = factory(ParamKinds.Path);
+export const defineHeader = factory(ParamKinds.Header);
+export const defineCookie = factory(ParamKinds.Cookie);
+export const definePart = factory(ParamKinds.Part);
+export const defineField = factory(ParamKinds.Field);

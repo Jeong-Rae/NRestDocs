@@ -19,6 +19,5 @@
             "@/*": ["src/*"]
         }
     },
-    "include": ["src/**/*.ts", "vitest.config.ts"], // 컴파일에 포함할 파일
-    "exclude": ["**/*.e2e-spec.ts", "**/*.spec.ts"]
+    "include": ["src/**/*.ts", "vitest.config.ts"] // 컴파일에 포함할 파일
 }

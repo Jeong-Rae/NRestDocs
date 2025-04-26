@@ -1,13 +1,7 @@
 import type { AllowedType, BaseDescriptor, Builder, ParamKind, TypeSet } from "@/descriptors";
-import { isArray, isFunction } from "es-toolkit/compat";
-
-type PartialDescriptor<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> = Partial<
-    Omit<D, "kind">
-> & { name: string };
-
-export type ArrayOrRecord<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> =
-    | (Builder<Partial<D>, TypeSet, K> | PartialDescriptor<K, D>)[]
-    | Record<string, Omit<PartialDescriptor<K, D>, "name">>;
+import type { ArrayOrRecord, PartialDescriptor } from "@/inputs";
+import { isArray } from "es-toolkit/compat";
+import { isBuilder } from "./isBuilder";
 
 function addDefaultType<K extends ParamKind>(
     kind: K,
@@ -28,8 +22,8 @@ function normalizeOne<K extends ParamKind, D extends BaseDescriptor<K, AllowedTy
     raw: { build?: () => D } | PartialDescriptor<K, D>
 ): D {
     //  빌더일 경우 build() 호출
-    if (isFunction((raw as Record<string, unknown>)["build"])) {
-        const built = (raw as Builder<D, TypeSet, K>).build();
+    if (isBuilder<Builder<D, TypeSet, K>>(raw)) {
+        const built = raw.build();
         return addDefaultType(kind, built) as D;
     }
 
@@ -43,7 +37,7 @@ function normalizeOne<K extends ParamKind, D extends BaseDescriptor<K, AllowedTy
     } as D;
 }
 
-export function applyParameters<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>>(
+export function applyNormalize<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>>(
     kind: K,
     input: ArrayOrRecord<K, D>
 ): D[] {
