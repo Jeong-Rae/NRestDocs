@@ -1,0 +1,10 @@
+|===
+|Name<% if (it.hasFormat) { %>|Format<% } %><% if (it.hasOptional) { %>|Optional<% } %>|Description
+
+<% for (let header of it.headers) { %>
+|`+<%= header.name %>+`
+<% if (it.hasFormat) { %>|`+<%= header.format %>+`<% } %>
+<% if (it.hasOptional) { %>|<%= header.optional ? "true" : "false" %><% } %>
+|<%= header.description %>
+<% } %>
+|===

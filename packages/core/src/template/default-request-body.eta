@@ -1,0 +1,4 @@
+[source<% if (it.language) { %>,<%= it.language %><% } %>,options="nowrap"]
+----
+<%= it.body %>
+----

@@ -1,0 +1,11 @@
+|===
+|Parameter<% if (it.hasType) { %>|Type<% } %><% if (it.hasFormat) { %>|Format<% } %><% if (it.hasOptional) { %>|Optional<% } %>|Description
+
+<% for (let param of it.parameters) { %>
+|`+<%= param.name %>+`
+<% if (it.hasType) { %>|`+<%= param.type %>+`<% } %>
+<% if (it.hasFormat) { %>|`+<%= param.format %>+`<% } %>
+<% if (it.hasOptional) { %>|<%= param.optional ? "true" : "false" %><% } %>
+|<%= param.description %>
+<% } %>
+|===
