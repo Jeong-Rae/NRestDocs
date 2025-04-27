@@ -1,6 +1,6 @@
 import { isBuilder } from "@/utils/isBuilder";
-import type { CompositeDescriptor, CompositeMixin } from "./composite-builder";
-import type { TypeBuilder, TypeSchema } from "./type-builder";
+import type { CompositeDescriptor, CompositeMixin } from "./composite";
+import type { TypeBuilder, TypeSchema } from "./schema";
 import type { AllowedType, BaseDescriptor, FormatFor, ParamKind } from "./types";
 
 /** 빌더 상태 태그 타입 */

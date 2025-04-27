@@ -1,4 +1,4 @@
-import type { TypeBuilder, TypeSchema } from "./type-builder";
+import type { TypeBuilder, TypeSchema } from "./schema";
 import type { AllowedType, BaseDescriptor, ParamKind } from "./types";
 
 /** 복합 타입 Descriptor */
