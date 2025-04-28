@@ -1,11 +1,12 @@
-import type {
-    CookieDescriptor,
-    FieldDescriptor,
-    FormParamDescriptor,
-    HeaderDescriptor,
-    PartDescriptor,
-    PathParamDescriptor,
-    QueryParamDescriptor,
+import {
+    type CookieDescriptor,
+    type FieldDescriptor,
+    type FormParamDescriptor,
+    type HeaderDescriptor,
+    type PartDescriptor,
+    type PathParamDescriptor,
+    type QueryParamDescriptor,
+    definePath,
 } from "@/descriptors";
 import {
     type CookieInput,
@@ -26,6 +27,36 @@ import {
 import type { HttpMethod, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import type { Response as SupertestResponse } from "supertest";
+
+export type DocumentSnapshot = {
+    http: Partial<{
+        method: HttpMethod;
+        path: string;
+        statusCode: HttpStatusCode;
+    }>;
+    parameters: Partial<{
+        path: PathParamDescriptor[];
+        query: QueryParamDescriptor[];
+        form: FormParamDescriptor[];
+    }>;
+    fields: Partial<{
+        request: FieldDescriptor[];
+        response: FieldDescriptor[];
+    }>;
+    parts: Partial<{
+        part: PartDescriptor[];
+        body: Record<string, true>;
+        fields: Record<string, FieldDescriptor[]>;
+    }>;
+    headers: Partial<{
+        request: HeaderDescriptor[];
+        response: HeaderDescriptor[];
+    }>;
+    cookies: Partial<{
+        request: CookieDescriptor[];
+        response: CookieDescriptor[];
+    }>;
+};
 
 export class DocumentBuilder {
     // HTTP 실행 및 기본 정보
@@ -60,6 +91,40 @@ export class DocumentBuilder {
 
     constructor(supertestPromise: Promise<SupertestResponse>) {
         this.supertestPromise = supertestPromise;
+    }
+
+    snapshot(): DocumentSnapshot {
+        const snapshot: DocumentSnapshot = {
+            http: {
+                method: this.httpMethod,
+                path: this.httpPath,
+                statusCode: this.statusCode,
+            },
+            parameters: {
+                path: this.pathParameters,
+                query: this.queryParameters,
+                form: this.formParameters,
+            },
+            fields: {
+                request: this.requestFields,
+                response: this.responseFields,
+            },
+            parts: {
+                part: this.requestParts,
+                body: this.requestPartBodies,
+                fields: this.requestPartFields,
+            },
+            headers: {
+                request: this.requestHeaders,
+                response: this.responseHeaders,
+            },
+            cookies: {
+                request: this.requestCookies,
+                response: this.responseCookies,
+            },
+        };
+
+        return snapshot;
     }
 
     /**
