@@ -1,12 +1,11 @@
-import {
-    type CookieDescriptor,
-    type FieldDescriptor,
-    type FormParamDescriptor,
-    type HeaderDescriptor,
-    type PartDescriptor,
-    type PathParamDescriptor,
-    type QueryParamDescriptor,
-    definePath,
+import type {
+    CookieDescriptor,
+    FieldDescriptor,
+    FormParamDescriptor,
+    HeaderDescriptor,
+    PartDescriptor,
+    PathParamDescriptor,
+    QueryParamDescriptor,
 } from "@/descriptors";
 import {
     type CookieInput,
@@ -24,8 +23,9 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
-import type { HttpBody, HttpCookies, HttpHeaders, HttpMethod, HttpStatusCode } from "@/types";
+import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
+import Logger from "@/utils/logger";
 import type { Response as SupertestResponse } from "supertest";
 import type { DocumentSnapshot } from "./model";
 
@@ -33,11 +33,15 @@ export class DocumentBuilder {
     // HTTP 실행 및 기본 정보
     private readonly supertestPromise: Promise<SupertestResponse>;
     private httpMethod?: HttpMethod;
-    private httpPath?: string;
-    private statusCode?: HttpStatusCode;
-    private httpHeaders?: HttpHeaders;
-    private httpBody?: HttpBody;
-    private httpCookies?: HttpCookies;
+    private httpUrl?: URL;
+    private httpStatusCode?: HttpStatusCode;
+    private httpRequestHeaders?: HttpHeaders;
+    private httpResponseHeaders?: HttpHeaders;
+    private httpRequestBody?: HttpBody;
+    private httpResponseBody?: HttpBody;
+    private httpRequestCookies?: string;
+    private httpResponseCookies?: string;
+    private httpRequestQuery?: HttpQuery;
 
     // 요청 파라미터
     private pathParameters?: PathParamDescriptor[];
@@ -71,11 +75,14 @@ export class DocumentBuilder {
         const snapshot: DocumentSnapshot = {
             http: {
                 method: this.httpMethod,
-                path: this.httpPath,
-                statusCode: this.statusCode,
-                headers: this.httpHeaders,
-                body: this.httpBody,
-                cookies: this.httpCookies,
+                url: this.httpUrl,
+                statusCode: this.httpStatusCode,
+                requestHeaders: this.httpRequestHeaders,
+                responseHeaders: this.httpResponseHeaders,
+                requestBody: this.httpRequestBody,
+                responseBody: this.httpResponseBody,
+                requestCookies: this.httpRequestCookies,
+                responseCookies: this.httpResponseCookies,
             },
             parameters: {
                 path: this.pathParameters,
@@ -282,24 +289,30 @@ export class DocumentBuilder {
      */
     async doc(identifier: string): Promise<SupertestResponse> {
         const response = await this.supertestPromise;
+
         const httpRequest = extractHttpRequest(response);
         const {
             body: requestBody,
             headers: requestHeaders,
             method,
-            url: { pathname },
+            url,
+            cookies,
+            query,
         } = httpRequest;
+        this.httpMethod = method;
+        this.httpUrl = url;
+        this.httpRequestCookies = cookies;
+        this.httpRequestHeaders = requestHeaders;
+        this.httpRequestBody = requestBody as HttpBody;
+        this.httpRequestQuery = query;
+
         const httpResponse = extractHttpResponse(response);
         const { body: responseBody, headers: responseHeaders, statusCode } = httpResponse;
-        console.log(
-            requestBody,
-            requestHeaders,
-            method,
-            pathname,
-            responseBody,
-            responseHeaders,
-            statusCode
-        );
+        this.httpStatusCode = statusCode;
+        this.httpResponseHeaders = responseHeaders;
+        this.httpResponseBody = responseBody as HttpBody;
+
+        Logger.info(this.snapshot().http);
 
         return response;
     }

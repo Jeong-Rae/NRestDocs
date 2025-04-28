@@ -7,16 +7,20 @@ import type {
     PathParamDescriptor,
     QueryParamDescriptor,
 } from "@/descriptors";
-import type { HttpBody, HttpCookies, HttpHeaders, HttpMethod, HttpStatusCode } from "@/types";
+import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
 
 export type DocumentSnapshot = {
     http: Partial<{
         method: HttpMethod;
-        path: string;
+        url: URL;
         statusCode: HttpStatusCode;
-        headers: HttpHeaders;
-        body: HttpBody;
-        cookies: HttpCookies;
+        requestHeaders: HttpHeaders;
+        responseHeaders: HttpHeaders;
+        requestBody: HttpBody;
+        responseBody: HttpBody;
+        requestCookies: string;
+        responseCookies: string;
+        requestQuery: HttpQuery;
     }>;
     parameters: Partial<{
         path: PathParamDescriptor[];

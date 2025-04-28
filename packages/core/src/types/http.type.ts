@@ -5,9 +5,12 @@ export type HttpMethod = Uppercase<OpenAPI_V3_1.HttpMethod>;
 
 export type HttpHeaders = Record<string, string>;
 
-export type HttpCookies = Record<string, string>;
+export type HttpCookies = string;
 
 export type HttpBody = Record<string, unknown>;
+
+export type HttpQuery = Record<string, unknown>;
+
 export type HttpStatusCode = OpenAPI_V3_1.HttpStatusCode;
 
 export type SupertestResponse = SupertestResponseType;
@@ -23,10 +26,11 @@ export type HttpRequest = {
     body: unknown;
     headers: Record<string, string>;
     method: HttpMethod;
+    cookies: string;
     url: URL;
+    query: HttpQuery;
 };
 
-// 추출된 응답 정보 타입
 export type HttpResponse = {
     body: unknown;
     headers: Record<string, string>;
