@@ -24,39 +24,10 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
-import type { HttpMethod, HttpStatusCode } from "@/types";
+import type { HttpBody, HttpCookies, HttpHeaders, HttpMethod, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import type { Response as SupertestResponse } from "supertest";
-
-export type DocumentSnapshot = {
-    http: Partial<{
-        method: HttpMethod;
-        path: string;
-        statusCode: HttpStatusCode;
-    }>;
-    parameters: Partial<{
-        path: PathParamDescriptor[];
-        query: QueryParamDescriptor[];
-        form: FormParamDescriptor[];
-    }>;
-    fields: Partial<{
-        request: FieldDescriptor[];
-        response: FieldDescriptor[];
-    }>;
-    parts: Partial<{
-        part: PartDescriptor[];
-        body: Record<string, true>;
-        fields: Record<string, FieldDescriptor[]>;
-    }>;
-    headers: Partial<{
-        request: HeaderDescriptor[];
-        response: HeaderDescriptor[];
-    }>;
-    cookies: Partial<{
-        request: CookieDescriptor[];
-        response: CookieDescriptor[];
-    }>;
-};
+import type { DocumentSnapshot } from "./model";
 
 export class DocumentBuilder {
     // HTTP 실행 및 기본 정보
@@ -64,6 +35,9 @@ export class DocumentBuilder {
     private httpMethod?: HttpMethod;
     private httpPath?: string;
     private statusCode?: HttpStatusCode;
+    private httpHeaders?: HttpHeaders;
+    private httpBody?: HttpBody;
+    private httpCookies?: HttpCookies;
 
     // 요청 파라미터
     private pathParameters?: PathParamDescriptor[];
@@ -99,6 +73,9 @@ export class DocumentBuilder {
                 method: this.httpMethod,
                 path: this.httpPath,
                 statusCode: this.statusCode,
+                headers: this.httpHeaders,
+                body: this.httpBody,
+                cookies: this.httpCookies,
             },
             parameters: {
                 path: this.pathParameters,

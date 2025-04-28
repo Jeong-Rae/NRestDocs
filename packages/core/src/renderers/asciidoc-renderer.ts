@@ -1,8 +1,10 @@
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
+import type { DocumentSnapshot } from "@/builders";
 import Logger from "@/utils/logger";
+import { createTemplateRenderer } from "./template-renderer-factory";
 
-export class AsciiDocumentRenderer {
+export class AsciiDocRenderer {
     private templates: Record<string, { content: string; extension: string }> = {};
 
     private readonly defaultTemplateNames = [
@@ -31,14 +33,14 @@ export class AsciiDocumentRenderer {
         await Promise.all(
             this.defaultTemplateNames.map(async (templateName) => {
                 let found = false;
-                for (const ext of this.allowedExtensions) {
-                    const fullPath = path.join(templatesDir, `${templateName}${ext}`);
+                for (const extension of this.allowedExtensions) {
+                    const fullPath = path.join(templatesDir, `${templateName}${extension}`);
                     const fileStat = await stat(fullPath);
                     if (fileStat.isFile()) {
                         const content = await readFile(fullPath, "utf-8");
                         this.templates[templateName] = {
                             content,
-                            extension: ext,
+                            extension,
                         };
                         found = true;
                         break;
@@ -57,5 +59,17 @@ export class AsciiDocumentRenderer {
 
     getTemplate(name: string): { content: string; extension: string } | undefined {
         return this.templates[name];
+    }
+
+    async render(snapshot: DocumentSnapshot, templateName: string): Promise<string> {
+        const templateEntry = this.getTemplate(templateName);
+        if (!templateEntry) {
+            throw new Error(`Template not found: ${templateName}`);
+        }
+
+        const renderer = createTemplateRenderer(templateEntry.extension);
+        const result = await renderer.render(templateEntry.content, { snapshot });
+
+        return result;
     }
 }
