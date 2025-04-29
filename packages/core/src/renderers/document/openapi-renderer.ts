@@ -2,7 +2,7 @@ import { isEmpty } from "es-toolkit/compat";
 
 import type { OpenAPI_V3_1 } from "@/types/open-api-spec";
 
-type OpenAPIDocumentRendererOptions = {
+type OpenApiRendererOptions = {
     info?: OpenAPI_V3_1.Info;
     servers?: OpenAPI_V3_1.Server[];
     webhooks?: Record<string, OpenAPI_V3_1.PathItem>;
@@ -12,7 +12,7 @@ type OpenAPIDocumentRendererOptions = {
     externalDocs?: OpenAPI_V3_1.ExternalDocumentation;
 };
 
-export class OpenAPIDocumentRenderer {
+export class OpenApiRenderer {
     render({
         info,
         servers,
@@ -21,7 +21,7 @@ export class OpenAPIDocumentRenderer {
         components,
         tags,
         externalDocs,
-    }: OpenAPIDocumentRendererOptions): OpenAPI_V3_1.OpenAPI {
+    }: OpenApiRendererOptions): OpenAPI_V3_1.OpenAPI {
         const doc: Partial<OpenAPI_V3_1.OpenAPI> = {
             openapi: "3.1.0",
             jsonSchemaDialect: "https://json-schema.org/draft-07/schema",

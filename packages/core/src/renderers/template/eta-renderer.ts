@@ -10,7 +10,7 @@ export class EtaTemplateRenderer implements TemplateRenderer {
         });
     }
 
-    async render(template: string, data: any): Promise<string> {
-        return this.eta.renderStringAsync(template, data);
+    async render(template: string, data: unknown): Promise<string> {
+        return this.eta.renderStringAsync(template, data as object);
     }
 }
