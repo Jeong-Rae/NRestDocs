@@ -32,7 +32,7 @@ export function buildCurlContext(snapshot: DocumentSnapshot): CurlSnippetContext
     return {
         method: method.toUpperCase(),
         url: finalUrl.toString(),
-        options: join(options, " "),
+        options: join(options, " ") + "\n",
     };
 }
 

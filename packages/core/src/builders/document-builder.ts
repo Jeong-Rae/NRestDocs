@@ -75,16 +75,16 @@ export class DocumentBuilder {
     snapshot(): DocumentSnapshot {
         const snapshot: DocumentSnapshot = {
             http: {
-                method: this.httpMethod,
-                url: this.httpUrl,
-                statusCode: this.httpStatusCode,
-                requestHeaders: this.httpRequestHeaders,
-                responseHeaders: this.httpResponseHeaders,
-                requestQuery: this.httpRequestQuery,
-                requestBody: this.httpRequestBody,
-                responseBody: this.httpResponseBody,
-                requestCookies: this.httpRequestCookies,
-                responseCookies: this.httpResponseCookies,
+                method: this.httpMethod as HttpMethod,
+                url: this.httpUrl as URL,
+                statusCode: this.httpStatusCode as HttpStatusCode,
+                requestHeaders: this.httpRequestHeaders as HttpHeaders,
+                responseHeaders: this.httpResponseHeaders as HttpHeaders,
+                requestQuery: this.httpRequestQuery as HttpQuery,
+                requestBody: this.httpRequestBody as HttpBody,
+                responseBody: this.httpResponseBody as HttpBody,
+                requestCookies: this.httpRequestCookies as string,
+                responseCookies: this.httpResponseCookies as string,
             },
             parameters: {
                 path: this.pathParameters,
@@ -313,8 +313,6 @@ export class DocumentBuilder {
         this.httpStatusCode = statusCode;
         this.httpResponseHeaders = responseHeaders;
         this.httpResponseBody = responseBody as HttpBody;
-
-        Logger.info(this.snapshot().http);
 
         const renderer = await createAsciiDocRenderer();
 
