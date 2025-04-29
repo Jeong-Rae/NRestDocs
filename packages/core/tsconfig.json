@@ -20,5 +20,5 @@
         }
     },
     "include": ["src/**/*.ts", "vitest.config.ts"], // 컴파일에 포함할 파일
-    "exclude": ["node_modules", "dist", "**/*.spec.ts"]
+    "exclude": ["node_modules", "dist"]
 }

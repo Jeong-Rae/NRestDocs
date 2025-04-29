@@ -1,7 +1,7 @@
 import type { DocumentSnapshot } from "@/builders";
-import { buildCurlContext } from "@/contexts/curl";
 import { MissingFieldError } from "@/errors";
 import { describe, expect, it } from "vitest";
+import { buildCurlContext } from "./curl";
 
 describe("buildCurlContext", () => {
     it("should throw MissingFieldError when method is missing", () => {
