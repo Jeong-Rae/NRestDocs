@@ -1,9 +1,16 @@
 import type { DocumentSnapshot } from "@/builders";
-import type { HeaderDescriptor } from "@/descriptors";
-import { isEmpty } from "es-toolkit/compat";
+import { isEmpty, merge, some, toPairs, values } from "es-toolkit/compat";
+
+type Header = {
+    name: string;
+    type: string;
+    description: string;
+    format?: string;
+    optional?: boolean;
+};
 
 export type HttpRequestHeadersSnippetContext = {
-    headers: HeaderDescriptor[];
+    headers: Header[];
     hasFormat: boolean;
     hasOptional: boolean;
 };
@@ -11,9 +18,10 @@ export type HttpRequestHeadersSnippetContext = {
 export function buildHttpRequestHeadersContext(
     snapshot: DocumentSnapshot
 ): HttpRequestHeadersSnippetContext {
+    const { requestHeaders } = snapshot.http;
     const { request } = snapshot.headers;
 
-    if (isEmpty(request)) {
+    if (isEmpty(requestHeaders) && isEmpty(request)) {
         return {
             headers: [],
             hasFormat: false,
@@ -21,23 +29,37 @@ export function buildHttpRequestHeadersContext(
         };
     }
 
-    // const bodyKeys = new Set(keys(requestBody));
-    // const filteredFields = request.filter((field) => bodyKeys.has(field.name));
+    const headerValueFields = toPairs(requestHeaders).reduce<Record<string, Header>>(
+        (acc, [key, value]) => {
+            acc[key] = {
+                name: key,
+                type: "string",
+                description: "",
+            };
+            return acc;
+        },
+        {}
+    );
 
-    let hasFormat = false;
-    let hasOptional = false;
+    const headerDescriptorFields = request.reduce<Record<string, Header>>((acc, field) => {
+        acc[field.name] = {
+            name: field.name,
+            type: field.type,
+            description: field.description ?? "",
+            format: field.format,
+            optional: field.optional,
+        };
+        return acc;
+    }, {});
 
-    for (const field of request) {
-        if (field.format) {
-            hasFormat = true;
-        }
-        if (field.optional) {
-            hasOptional = true;
-        }
-    }
+    const mergedFields = merge(headerValueFields, headerDescriptorFields);
+    const headers = values(mergedFields);
+
+    const hasFormat = some(headers, (field) => Boolean(field.format));
+    const hasOptional = some(headers, (field) => Boolean(field.optional));
 
     return {
-        headers: request,
+        headers,
         hasFormat,
         hasOptional,
     };

@@ -14,9 +14,8 @@ export function inferFieldType(value: unknown): FieldType {
         case "string":
             return "string";
         case "number":
-            return Number.isInteger(value as number) ? "integer" : "number";
         case "bigint":
-            return "integer";
+            return "number";
         case "object":
             return "object";
         default:

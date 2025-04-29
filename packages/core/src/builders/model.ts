@@ -22,26 +22,26 @@ export type DocumentSnapshot = {
         responseCookies: string;
         requestQuery: HttpQuery;
     };
-    parameters: Partial<{
+    parameters: {
         path: PathParamDescriptor[];
         query: QueryParamDescriptor[];
         form: FormParamDescriptor[];
-    }>;
-    fields: Partial<{
+    };
+    fields: {
         request: FieldDescriptor[];
         response: FieldDescriptor[];
-    }>;
-    parts: Partial<{
+    };
+    parts: {
         part: PartDescriptor[];
         body: Record<string, true>;
         fields: Record<string, FieldDescriptor[]>;
-    }>;
-    headers: Partial<{
+    };
+    headers: {
         request: HeaderDescriptor[];
         response: HeaderDescriptor[];
-    }>;
-    cookies: Partial<{
+    };
+    cookies: {
         request: CookieDescriptor[];
         response: CookieDescriptor[];
-    }>;
+    };
 };

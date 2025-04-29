@@ -1,5 +1,5 @@
 import type { DocumentSnapshot } from "@/builders";
-import { fromPairs, isEmpty, merge, some, split, trim, values } from "es-toolkit/compat";
+import { fromPairs, isEmpty, merge, some, split, toPairs, trim, values } from "es-toolkit/compat";
 
 type Cookie = {
     name: string;
@@ -37,19 +37,16 @@ export function buildHttpRequestCookiesContext(
 
     const cookieMap = fromPairs(cookiePairs);
 
-    const cookieValueFields = Object.entries(cookieMap).reduce<Record<string, Cookie>>(
-        (acc, [key]) => {
-            acc[key] = {
-                name: key,
-                type: "string",
-                description: "",
-            };
-            return acc;
-        },
-        {}
-    );
+    const cookieValueFields = toPairs(cookieMap).reduce<Record<string, Cookie>>((acc, [key]) => {
+        acc[key] = {
+            name: key,
+            type: "string",
+            description: "",
+        };
+        return acc;
+    }, {});
 
-    const requestFields = (request ?? []).reduce<Record<string, Cookie>>((acc, cookie) => {
+    const requestFields = request.reduce<Record<string, Cookie>>((acc, cookie) => {
         acc[cookie.name] = {
             ...cookie,
             description: cookie.description ?? "",

@@ -35,7 +35,7 @@ export function buildHttpRequestFieldContext(
         return acc;
     }, {});
 
-    const requestFields = (request ?? []).reduce<Record<string, Field>>((acc, field) => {
+    const requestFields = request.reduce<Record<string, Field>>((acc, field) => {
         acc[field.name] = { ...field, path: field.name, description: field.description ?? "" };
         return acc;
     }, {});

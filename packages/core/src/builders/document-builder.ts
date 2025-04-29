@@ -87,26 +87,26 @@ export class DocumentBuilder {
                 responseCookies: this.httpResponseCookies as string,
             },
             parameters: {
-                path: this.pathParameters,
-                query: this.queryParameters,
-                form: this.formParameters,
+                path: this.pathParameters ?? [],
+                query: this.queryParameters ?? [],
+                form: this.formParameters ?? [],
             },
             fields: {
-                request: this.requestFields,
-                response: this.responseFields,
+                request: this.requestFields ?? [],
+                response: this.responseFields ?? [],
             },
             parts: {
-                part: this.requestParts,
-                body: this.requestPartBodies,
-                fields: this.requestPartFields,
+                part: this.requestParts ?? [],
+                body: this.requestPartBodies ?? {},
+                fields: this.requestPartFields ?? {},
             },
             headers: {
-                request: this.requestHeaders,
-                response: this.responseHeaders,
+                request: this.requestHeaders ?? [],
+                response: this.responseHeaders ?? [],
             },
             cookies: {
-                request: this.requestCookies,
-                response: this.responseCookies,
+                request: this.requestCookies ?? [],
+                response: this.responseCookies ?? [],
             },
         };
 
