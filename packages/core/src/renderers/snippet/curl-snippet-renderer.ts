@@ -1,5 +1,5 @@
 import type { DocumentSnapshot } from "@/builders";
-import { buildCurlContext } from "@/contexts/curl";
+import { buildCurlContext } from "@/renderers/contexts/curl";
 import type { TemplateStore } from "../template";
 import { createTemplateRenderer } from "../template/template-factory";
 import type { SnippetRenderer } from "./snippet-renderer.type";

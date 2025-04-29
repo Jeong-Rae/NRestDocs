@@ -1,4 +1,5 @@
 import type { DocumentSnapshot } from "@/builders";
+import Logger from "@/utils/logger";
 import { compact, join } from "es-toolkit/compat";
 import { CurlSnippetRenderer } from "../snippet/curl-snippet-renderer";
 import type { SnippetRenderer } from "../snippet/snippet-renderer.type";
@@ -8,7 +9,9 @@ export class AsciiDocRenderer {
     constructor(private snippets: SnippetRenderer[] = []) {}
 
     async render(snapshot: DocumentSnapshot): Promise<string> {
-        const parts = await Promise.all(this.snippets.map((s) => s.render(snapshot)));
+        const parts = await Promise.all(
+            this.snippets.map((s) => s.render(snapshot).then(Logger.info))
+        );
         return join(compact(parts), "\n\n");
     }
 }
