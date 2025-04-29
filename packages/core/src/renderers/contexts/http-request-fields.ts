@@ -1,6 +1,6 @@
 import type { DocumentSnapshot } from "@/builders";
 import { inferFieldType } from "@/utils/inferFieldType";
-import { isEmpty, keys, merge, some } from "es-toolkit/compat";
+import { isEmpty, keys, merge, some, values } from "es-toolkit/compat";
 
 type Field = {
     path: string;
@@ -42,7 +42,7 @@ export function buildHttpRequestFieldContext(
 
     const mergedFields = merge(bodyFields, requestFields);
 
-    const fields = Object.values(mergedFields);
+    const fields = values(mergedFields);
 
     const hasFormat = some(fields, (field) => Boolean(field.format));
     const hasOptional = some(fields, (field) => Boolean(field.optional));
