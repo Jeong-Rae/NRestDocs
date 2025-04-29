@@ -5,5 +5,5 @@
 <%= header.name %>: <%= header.value %>
 <% } %>
 
-<%= it.requestBody %>
+<%= it.body %>
 ----

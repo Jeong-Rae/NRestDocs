@@ -10,7 +10,7 @@ import type {
 import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
 
 export type DocumentSnapshot = {
-    http: Partial<{
+    http: {
         method: HttpMethod;
         url: URL;
         statusCode: HttpStatusCode;
@@ -21,7 +21,7 @@ export type DocumentSnapshot = {
         requestCookies: string;
         responseCookies: string;
         requestQuery: HttpQuery;
-    }>;
+    };
     parameters: Partial<{
         path: PathParamDescriptor[];
         query: QueryParamDescriptor[];
