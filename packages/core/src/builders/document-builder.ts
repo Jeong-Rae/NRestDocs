@@ -23,6 +23,7 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
+import { AsciiDocRenderer, TemplateStore } from "@/renderers";
 import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import Logger from "@/utils/logger";
@@ -79,6 +80,7 @@ export class DocumentBuilder {
                 statusCode: this.httpStatusCode,
                 requestHeaders: this.httpRequestHeaders,
                 responseHeaders: this.httpResponseHeaders,
+                requestQuery: this.httpRequestQuery,
                 requestBody: this.httpRequestBody,
                 responseBody: this.httpResponseBody,
                 requestCookies: this.httpRequestCookies,
@@ -313,6 +315,13 @@ export class DocumentBuilder {
         this.httpResponseBody = responseBody as HttpBody;
 
         Logger.info(this.snapshot().http);
+
+        const templateStore = new TemplateStore();
+        const renderer = new AsciiDocRenderer(templateStore);
+        await renderer.load();
+
+        const document = renderer.render(this.snapshot());
+        Logger.info(document);
 
         return response;
     }

@@ -2,12 +2,12 @@ import { isEmpty } from "es-toolkit/compat";
 
 import { format } from "@/utils/format";
 
-import type { ParameterDescriptor } from "@/types";
+import type { PathParamDescriptor } from "@/descriptors";
 
 /**
  * path-parameters
  */
-export function generatePathParametersSnippet(params: ParameterDescriptor[]): string {
+export function generatePathParametersSnippet(params: PathParamDescriptor[]): string {
     if (isEmpty(params)) {
         return "";
     }

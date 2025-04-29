@@ -2,7 +2,7 @@ import { isEmpty } from "es-toolkit/compat";
 
 import { format } from "@/utils/format";
 
-import type { HeaderDescriptor } from "@/types";
+import type { HeaderDescriptor } from "@/descriptors";
 
 /**
  * response-headers
