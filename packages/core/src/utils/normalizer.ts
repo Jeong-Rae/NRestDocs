@@ -1,7 +1,7 @@
 import type { AllowedType, BaseDescriptor, Builder, ParamKind, TypeSet } from "@/descriptors";
 import type { ArrayOrRecord, PartialDescriptor } from "@/inputs";
 import { isArray } from "es-toolkit/compat";
-import { isBuilder } from "./isBuilder";
+import { isBuilder } from "./is-builder";
 
 function addDefaultType<K extends ParamKind>(
     kind: K,
