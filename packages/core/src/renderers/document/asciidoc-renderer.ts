@@ -15,7 +15,7 @@ export class AsciiDocRenderer {
 
 export async function createAsciiDocRenderer(): Promise<AsciiDocRenderer> {
     const store = new TemplateStore();
-    await store.load({ useDefault: false });
+    await store.load({ useDefault: true });
 
     const snippets = [new CurlSnippetRenderer(store)];
     return new AsciiDocRenderer(snippets);

@@ -35,14 +35,12 @@ export class TemplateStore {
 
     async load({ useDefault = true }: { useDefault?: boolean } = {}): Promise<void> {
         const missing: string[] = [];
-
         await Promise.all(
             TEMPLATE_NAMES.map(async (name) => {
                 const effectiveName = useDefault ? `default-${name}` : name;
 
                 for (const extension of this.extensions) {
                     const filePath = path.join(this.rootDir, `${effectiveName}${extension}`);
-                    Logger.info(`load template: ${filePath}`);
                     try {
                         const content = await fs.readFile(filePath, "utf-8");
                         this.add(name, { content, extension });
