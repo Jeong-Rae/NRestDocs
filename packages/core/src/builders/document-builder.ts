@@ -23,7 +23,7 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
-import { AsciiDocRenderer, TemplateStore } from "@/renderers";
+import { createAsciiDocRenderer } from "@/renderers";
 import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import Logger from "@/utils/logger";
@@ -316,9 +316,7 @@ export class DocumentBuilder {
 
         Logger.info(this.snapshot().http);
 
-        const templateStore = new TemplateStore();
-        const renderer = new AsciiDocRenderer(templateStore);
-        await renderer.load();
+        const renderer = await createAsciiDocRenderer();
 
         const document = renderer.render(this.snapshot());
         Logger.info(document);

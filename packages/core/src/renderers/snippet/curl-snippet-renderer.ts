@@ -12,7 +12,6 @@ export class CurlSnippetRenderer implements SnippetRenderer {
     async render(snapshot: DocumentSnapshot): Promise<string> {
         const { extension, content } = this.store.get(this.templateName);
         const renderer = createTemplateRenderer(extension);
-
         const context = buildCurlContext(snapshot);
 
         return renderer.render(content, context);

@@ -8,57 +8,55 @@ export type TemplateEntry = {
 };
 
 export const ALLOWED_EXTENSIONS = [".eta"] as const;
-export const DEFAULT_TEMPLATE_NAMES = [
-    "default-curl-request",
-    "default-form-request",
-    "default-http-request",
-    "default-http-response",
-    "default-path-parameters",
-    "default-query-parameters",
-    "default-request-body",
-    "default-request-cookie",
-    "default-request-fields",
-    "default-request-headers",
-    "default-response-body",
-    "default-response-cookie",
-    "default-response-fields",
-    "default-response-headers",
+export const TEMPLATE_NAMES = [
+    "curl-request",
+    "form-request",
+    "http-request",
+    "http-response",
+    "path-parameters",
+    "query-parameters",
+    "request-body",
+    "request-cookie",
+    "request-fields",
+    "request-headers",
+    "response-body",
+    "response-cookie",
+    "response-fields",
+    "response-headers",
 ] as const;
 
 export class TemplateStore {
     private readonly templates = new Map<string, TemplateEntry>();
 
     constructor(
-        private readonly rootDir = path.resolve(__dirname, "..", "templates"),
+        private readonly rootDir = path.resolve(__dirname, "..", "src", "templates"),
         private readonly extensions = ALLOWED_EXTENSIONS
     ) {}
 
-    async load(names: readonly string[]): Promise<void> {
+    async load({ useDefault = true }: { useDefault?: boolean } = {}): Promise<void> {
         const missing: string[] = [];
 
         await Promise.all(
-            names.map(async (name) => {
-                let found = false;
+            TEMPLATE_NAMES.map(async (name) => {
+                const effectiveName = useDefault ? `default-${name}` : name;
 
                 for (const extension of this.extensions) {
-                    const filePath = path.join(this.rootDir, `${name}${extension}`);
+                    const filePath = path.join(this.rootDir, `${effectiveName}${extension}`);
+                    Logger.info(`load template: ${filePath}`);
                     try {
-                        await fs.access(filePath);
-                        found = true;
-                        break;
+                        const content = await fs.readFile(filePath, "utf-8");
+                        this.add(name, { content, extension });
+                        return;
                     } catch {
                         /* ignore */
                     }
                 }
-
-                if (!found) {
-                    missing.push(name);
-                }
+                missing.push(name);
             })
         );
 
         if (missing.length > 0) {
-            Logger.error(`[TemplateStore] missing: ${missing.join(", ")}`);
+            Logger.error(`missing templates: ${missing.join(", ")}`);
         }
     }
 
@@ -67,18 +65,11 @@ export class TemplateStore {
     }
 
     get(name: string): TemplateEntry {
+        Logger.info(`get template: ${name}`);
         const template = this.templates.get(name);
         if (!template) {
             throw new Error(`Template not found: ${name}`);
         }
         return template;
-    }
-
-    has(name: string): boolean {
-        return this.templates.has(name);
-    }
-
-    list(): string[] {
-        return Array.from(this.templates.keys());
     }
 }
