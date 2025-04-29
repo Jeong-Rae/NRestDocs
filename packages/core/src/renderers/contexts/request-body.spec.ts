@@ -1,11 +1,11 @@
 import type { DocumentSnapshot } from "@/builders";
 import { describe, expect, it } from "vitest";
-import { buildHttpRequestBodyContext } from "./http-request-body";
+import { buildRequestBodyContext } from "./request-body";
 
-describe("buildHttpRequestBodyContext", () => {
+describe("buildRequestBodyContext", () => {
     it("should return newline when requestBody is empty", () => {
         const snapshot = { http: {} } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestBodyContext(snapshot);
+        const ctx = buildRequestBodyContext(snapshot);
         expect(ctx.body).toBe("\n");
     });
 
@@ -16,7 +16,7 @@ describe("buildHttpRequestBodyContext", () => {
             },
         } as unknown as DocumentSnapshot;
 
-        const ctx = buildHttpRequestBodyContext(snapshot);
+        const ctx = buildRequestBodyContext(snapshot);
         expect(ctx.body).toBe(`{
   "foo": "bar",
   "num": 519

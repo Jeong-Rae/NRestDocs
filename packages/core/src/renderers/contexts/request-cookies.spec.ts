@@ -1,14 +1,14 @@
 import type { DocumentSnapshot } from "@/builders";
 import { describe, expect, it } from "vitest";
-import { buildHttpRequestCookiesContext } from "./http-request-cookies";
+import { buildRequestCookiesContext } from "./request-cookies";
 
-describe("buildHttpRequestCookiesContext", () => {
+describe("buildRequestCookiesContext", () => {
     it("should return no cookies when none present", () => {
         const snapshot = {
             http: { requestCookies: "" },
             cookies: { request: [] },
         } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestCookiesContext(snapshot);
+        const ctx = buildRequestCookiesContext(snapshot);
         expect(ctx.cookies).toHaveLength(0);
         expect(ctx.hasOptional).toBe(false);
     });
@@ -18,7 +18,7 @@ describe("buildHttpRequestCookiesContext", () => {
             http: { requestCookies: "a=1; b=2" },
             cookies: { request: [{ name: "b", description: "b is 2", optional: true }] },
         } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestCookiesContext(snapshot);
+        const ctx = buildRequestCookiesContext(snapshot);
         expect(ctx.cookies).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({ name: "a", description: "" }),
@@ -38,7 +38,7 @@ describe("buildHttpRequestCookiesContext", () => {
                 ],
             },
         } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestCookiesContext(snapshot);
+        const ctx = buildRequestCookiesContext(snapshot);
 
         expect(ctx.cookies).toEqual(
             expect.arrayContaining([
@@ -54,7 +54,7 @@ describe("buildHttpRequestCookiesContext", () => {
             cookies: { request: [] },
         } as unknown as DocumentSnapshot;
 
-        const { cookies } = buildHttpRequestCookiesContext(snapshot);
+        const { cookies } = buildRequestCookiesContext(snapshot);
         expect(cookies.map((c) => c.name)).toEqual(expect.arrayContaining(["good", "ok"]));
     });
 
@@ -63,7 +63,7 @@ describe("buildHttpRequestCookiesContext", () => {
             http: { requestCookies: "name=lyght;" },
             cookies: { request: [] },
         } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestCookiesContext(snapshot);
+        const ctx = buildRequestCookiesContext(snapshot);
         expect(ctx.cookies).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({ name: "name", type: "string", description: "" }),

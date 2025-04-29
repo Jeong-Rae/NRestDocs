@@ -10,15 +10,13 @@ type Field = {
     description: string;
 };
 
-export type HttpRequestFieldSnippetContext = {
+export type RequestFieldsSnippetContext = {
     fields: Field[];
     hasFormat: boolean;
     hasOptional: boolean;
 };
 
-export function buildHttpRequestFieldContext(
-    snapshot: DocumentSnapshot
-): HttpRequestFieldSnippetContext {
+export function buildRequestFieldsContext(snapshot: DocumentSnapshot): RequestFieldsSnippetContext {
     const { requestBody } = snapshot.http;
     const { request } = snapshot.fields;
 

@@ -9,15 +9,15 @@ type Header = {
     optional?: boolean;
 };
 
-export type HttpRequestHeadersSnippetContext = {
+export type RequestHeadersSnippetContext = {
     headers: Header[];
     hasFormat: boolean;
     hasOptional: boolean;
 };
 
-export function buildHttpRequestHeadersContext(
+export function buildRequestHeadersContext(
     snapshot: DocumentSnapshot
-): HttpRequestHeadersSnippetContext {
+): RequestHeadersSnippetContext {
     const { requestHeaders } = snapshot.http;
     const { request } = snapshot.headers;
 

@@ -1,18 +1,18 @@
 import type { DocumentSnapshot } from "@/builders";
-import { buildHttpRequestCookiesContext } from "@/renderers/contexts/http-request-cookies";
+import { buildRequestBodyContext } from "../contexts";
 import type { TemplateStore } from "../template";
 import { createTemplateRenderer } from "../template/template-factory";
 import type { SnippetRenderer } from "./snippet-renderer.type";
 
-export class HttpRequestCookiesSnippetRenderer implements SnippetRenderer {
-    readonly templateName = "request-cookies";
+export class RequestBodySnippetRenderer implements SnippetRenderer {
+    readonly templateName = "request-body";
 
     constructor(private readonly store: TemplateStore) {}
 
     async render(snapshot: DocumentSnapshot): Promise<string> {
         const { extension, content } = this.store.get(this.templateName);
         const renderer = createTemplateRenderer(extension);
-        const context = buildHttpRequestCookiesContext(snapshot);
+        const context = buildRequestBodyContext(snapshot);
 
         const result = await renderer.render(content, context);
         return result;

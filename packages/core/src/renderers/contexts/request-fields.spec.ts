@@ -1,14 +1,14 @@
 import type { DocumentSnapshot } from "@/builders";
 import { describe, expect, it } from "vitest";
-import { buildHttpRequestFieldContext } from "./http-request-fields";
+import { buildRequestFieldsContext } from "./request-fields";
 
-describe("buildHttpRequestFieldContext", () => {
+describe("buildRequestFieldsContext", () => {
     it("should return empty lists when no body and no descriptors", () => {
         const snapshot = {
             http: { requestBody: {} },
             fields: { request: [] },
         } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestFieldContext(snapshot);
+        const ctx = buildRequestFieldsContext(snapshot);
         expect(ctx.fields).toEqual([]);
     });
 
@@ -19,7 +19,7 @@ describe("buildHttpRequestFieldContext", () => {
                 request: [{ name: "x", type: "string" }],
             },
         } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestFieldContext(snapshot);
+        const ctx = buildRequestFieldsContext(snapshot);
         expect(ctx.fields).toEqual(
             expect.arrayContaining([
                 expect.objectContaining({ path: "x", type: "string" }),
@@ -35,7 +35,7 @@ describe("buildHttpRequestFieldContext", () => {
                 request: [{ name: "x", type: "string", optional: true, format: "uuid" }],
             },
         } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestFieldContext(snapshot);
+        const ctx = buildRequestFieldsContext(snapshot);
         expect(ctx.hasOptional).toBe(true);
         expect(ctx.hasFormat).toBe(true);
     });
@@ -47,7 +47,7 @@ describe("buildHttpRequestFieldContext", () => {
                 request: [{ name: "y", type: "string" }],
             },
         } as unknown as DocumentSnapshot;
-        const ctx = buildHttpRequestFieldContext(snapshot);
+        const ctx = buildRequestFieldsContext(snapshot);
 
         expect(ctx.fields).toEqual(
             expect.arrayContaining([

@@ -1,15 +1,15 @@
 import type { DocumentSnapshot } from "@/builders";
 import { describe, expect, it } from "vitest";
-import { buildHttpRequestHeadersContext } from "./http-request-headers";
+import { buildRequestHeadersContext } from "./request-headers";
 
-describe("buildHttpRequestHeadersContext", () => {
+describe("buildRequestHeadersContext", () => {
     it("should return empty headers when requestHeaders and descriptors are both empty", () => {
         const snapshot = {
             http: { requestHeaders: {} },
             headers: { request: [] },
         } as unknown as DocumentSnapshot;
 
-        const ctx = buildHttpRequestHeadersContext(snapshot);
+        const ctx = buildRequestHeadersContext(snapshot);
         expect(ctx.headers).toEqual([]);
         expect(ctx.hasFormat).toBe(false);
         expect(ctx.hasOptional).toBe(false);
@@ -21,7 +21,7 @@ describe("buildHttpRequestHeadersContext", () => {
             headers: { request: [] },
         } as unknown as DocumentSnapshot;
 
-        const ctx = buildHttpRequestHeadersContext(snapshot);
+        const ctx = buildRequestHeadersContext(snapshot);
         expect(ctx.headers).toEqual([
             {
                 name: "X-Request-ID",
@@ -46,7 +46,7 @@ describe("buildHttpRequestHeadersContext", () => {
             },
         } as unknown as DocumentSnapshot;
 
-        const ctx = buildHttpRequestHeadersContext(snapshot);
+        const ctx = buildRequestHeadersContext(snapshot);
         expect(ctx.headers).toEqual([
             {
                 name: "Authorization",
@@ -71,7 +71,7 @@ describe("buildHttpRequestHeadersContext", () => {
             },
         } as unknown as DocumentSnapshot;
 
-        const ctx = buildHttpRequestHeadersContext(snapshot);
+        const ctx = buildRequestHeadersContext(snapshot);
         expect(ctx.headers).toEqual([
             {
                 name: "Authorization",
@@ -95,7 +95,7 @@ describe("buildHttpRequestHeadersContext", () => {
             },
         } as unknown as DocumentSnapshot;
 
-        const ctx = buildHttpRequestHeadersContext(snapshot);
+        const ctx = buildRequestHeadersContext(snapshot);
         expect(ctx.hasFormat).toBe(true);
     });
 
@@ -113,7 +113,7 @@ describe("buildHttpRequestHeadersContext", () => {
             },
         } as unknown as DocumentSnapshot;
 
-        const ctx = buildHttpRequestHeadersContext(snapshot);
+        const ctx = buildRequestHeadersContext(snapshot);
         expect(ctx.hasOptional).toBe(true);
     });
 });

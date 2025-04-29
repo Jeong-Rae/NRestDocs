@@ -1,13 +1,11 @@
 import type { DocumentSnapshot } from "@/builders";
 import { isEmpty } from "es-toolkit/compat";
 
-export type HttpRequestBodySnippetContext = {
+export type RequestBodySnippetContext = {
     body: string;
 };
 
-export function buildHttpRequestBodyContext(
-    snapshot: DocumentSnapshot
-): HttpRequestBodySnippetContext {
+export function buildRequestBodyContext(snapshot: DocumentSnapshot): RequestBodySnippetContext {
     const { requestBody } = snapshot.http;
     if (isEmpty(requestBody)) {
         return {

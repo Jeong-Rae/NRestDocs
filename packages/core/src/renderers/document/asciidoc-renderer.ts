@@ -1,9 +1,13 @@
 import type { DocumentSnapshot } from "@/builders";
 import Logger from "@/utils/logger";
-import { CurlSnippetRenderer } from "../snippet/curl-snippet-renderer";
-import { HttpRequestBodySnippetRenderer } from "../snippet/http-request-body";
-import { HttpRequestFieldSnippetRenderer } from "../snippet/http-request-fields";
-import { HttpRequestHeadersSnippetRenderer } from "../snippet/http-request-headers";
+import {
+    CurlSnippetRenderer,
+    HttpRequestSnippetRenderer,
+    RequestBodySnippetRenderer,
+    RequestCookiesSnippetRenderer,
+    RequestFieldsSnippetRenderer,
+    RequestHeadersSnippetRenderer,
+} from "../snippet";
 import type { SnippetRenderer } from "../snippet/snippet-renderer.type";
 import { TemplateStore } from "../template";
 
@@ -25,9 +29,11 @@ export async function createAsciiDocRenderer(): Promise<AsciiDocRenderer> {
 
     const snippets = [
         new CurlSnippetRenderer(store),
-        new HttpRequestBodySnippetRenderer(store),
-        new HttpRequestHeadersSnippetRenderer(store),
-        new HttpRequestFieldSnippetRenderer(store),
+        new HttpRequestSnippetRenderer(store),
+        new RequestBodySnippetRenderer(store),
+        new RequestHeadersSnippetRenderer(store),
+        new RequestFieldsSnippetRenderer(store),
+        new RequestCookiesSnippetRenderer(store),
     ];
     return new AsciiDocRenderer(snippets);
 }

@@ -8,14 +8,14 @@ type Cookie = {
     optional?: boolean;
 };
 
-export type HttpRequestCookiesSnippetContext = {
+export type RequestCookiesSnippetContext = {
     cookies: Cookie[];
     hasOptional: boolean;
 };
 
-export function buildHttpRequestCookiesContext(
+export function buildRequestCookiesContext(
     snapshot: DocumentSnapshot
-): HttpRequestCookiesSnippetContext {
+): RequestCookiesSnippetContext {
     const { requestCookies } = snapshot.http;
     const { request } = snapshot.cookies;
 
