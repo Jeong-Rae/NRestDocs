@@ -1,4 +1,6 @@
 import type {
+    HttpMethod,
+    HttpQuery,
     HttpRequest,
     HttpResponse,
     HttpStatusCode,
@@ -12,12 +14,14 @@ import type {
  * @returns 추출된 요청 정보
  */
 export function extractHttpRequest(response: SupertestResponse): HttpRequest {
-    const request = response.request as SupertestRequest;
+    const request = response.request as SupertestRequest & { qs?: HttpQuery };
     return {
-        body: request?._data ?? {},
+        method: request.method as HttpMethod,
+        url: new URL(request?.url || "", "http://localhost"),
         headers: request?.header ?? {},
-        method: request?.method ?? "GET",
-        url: new URL(request?.url || "", "http://localhost"), // 기본 URL 추가
+        cookies: request?.header?.["Cookie"] ?? "",
+        query: request?.qs ?? {},
+        body: request?._data ?? {},
     };
 }
 

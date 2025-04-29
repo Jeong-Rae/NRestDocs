@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+<%= it.method %> <%= it.path %> HTTP/1.1
+<% for (let header of it.headers) { %>
+<%= header.name %>: <%= header.value %>
+<% } %>
+
+<%= it.body %>
+----

@@ -1,4 +1,4 @@
-import { isBuilder } from "@/utils/isBuilder";
+import { isBuilder } from "@/utils/is-builder";
 import type { CompositeDescriptor, CompositeMixin } from "./composite-builder";
 import type { TypeBuilder, TypeSchema } from "./type-builder";
 import type { AllowedType, BaseDescriptor, FormatFor, ParamKind } from "./types";

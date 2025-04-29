@@ -1,0 +1,9 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 <%= it.statusCode %> <%= it.statusReason %>
+<% for (let header of it.headers) { %>
+<%= header.name %>: <%= header.value %>
+<% } %>
+
+<%= it.responseBody %>
+----

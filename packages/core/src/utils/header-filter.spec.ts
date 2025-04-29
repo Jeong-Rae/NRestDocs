@@ -1,56 +1,61 @@
 import { describe, expect, it } from "vitest";
 
-import { filterHeaders, filterRequestHeaders, filterResponseHeaders } from "./header-filter";
-
-import type { HttpHeaders } from "@/types";
+import {
+    filterHeadersByBlacklist,
+    filterRequestHeaders,
+    filterResponseHeaders,
+} from "./header-filter";
 
 describe("header-filter", () => {
-    describe("filterHeaders", () => {
-        it("허용된 헤더만 필터링하여 반환한다", () => {
+    describe("filterHeadersByBlacklist", () => {
+        it("블랙리스트에 있는 헤더를 제거하여 반환한다", () => {
             // Given
-            const headers: HttpHeaders = {
+            const headers = {
                 "Content-Type": "application/json",
-                Authorization: "Bearer token123",
+                Authorization: "Bearer token519",
                 "X-Custom-Header": "custom-value",
+                ETag: 'W/"519"',
             };
-            const allowedList = ["Content-Type", "Authorization"];
+            const blacklist = ["ETag", "X-Custom-Header"];
 
             // When
-            const result = filterHeaders(headers, allowedList);
+            const result = filterHeadersByBlacklist(headers, blacklist);
 
             // Then
             expect(result).toEqual({
                 "Content-Type": "application/json",
-                Authorization: "Bearer token123",
+                Authorization: "Bearer token519",
             });
         });
 
-        it("헤더 이름이 대소문자를 구분하지 않고 필터링한다", () => {
+        it("헤더 이름이 대소문자를 구분하지 않고 블랙리스트로 제거한다", () => {
             // Given
-            const headers: HttpHeaders = {
+            const headers = {
                 "Content-Type": "application/json",
-                authorization: "Bearer token123",
+                authorization: "Bearer token519",
+                eTag: 'W/"519"',
             };
-            const allowedList = ["Content-Type", "Authorization"];
+            const blacklist = ["ETAG"];
 
             // When
-            const result = filterHeaders(headers, allowedList);
+            const result = filterHeadersByBlacklist(headers, blacklist);
 
             // Then
             expect(result).toEqual({
                 "Content-Type": "application/json",
-                authorization: "Bearer token123",
+                authorization: "Bearer token519",
             });
         });
     });
 
     describe("filterRequestHeaders", () => {
-        it("기본 요청 헤더 whitelist로 필터링한다", () => {
+        it("요청 헤더 블랙리스트에 있는 항목을 제거한다", () => {
             // Given
-            const headers: HttpHeaders = {
+            const headers = {
                 "Content-Type": "application/json",
-                Authorization: "Bearer token123",
-                "X-Custom-Header": "custom-value",
+                Authorization: "Bearer token519",
+                Cookie: "sessionid=abc123",
+                Host: "example.com",
             };
 
             // When
@@ -59,17 +64,20 @@ describe("header-filter", () => {
             // Then
             expect(result).toHaveProperty("Content-Type");
             expect(result).toHaveProperty("Authorization");
-            expect(result).not.toHaveProperty("X-Custom-Header");
+            expect(result).not.toHaveProperty("Cookie");
+            expect(result).not.toHaveProperty("Host");
         });
     });
 
     describe("filterResponseHeaders", () => {
-        it("기본 응답 헤더 whitelist로 필터링한다", () => {
+        it("응답 헤더 블랙리스트에 있는 항목을 제거한다", () => {
             // Given
-            const headers: HttpHeaders = {
+            const headers = {
                 "Content-Type": "application/json",
                 "Cache-Control": "no-cache",
-                "X-Custom-Header": "custom-value",
+                Connection: "keep-alive",
+                Date: "Mon, 19 May 2000 00:00:00 GMT",
+                ETag: 'W/"519"',
             };
 
             // When
@@ -78,7 +86,9 @@ describe("header-filter", () => {
             // Then
             expect(result).toHaveProperty("Content-Type");
             expect(result).toHaveProperty("Cache-Control");
-            expect(result).not.toHaveProperty("X-Custom-Header");
+            expect(result).not.toHaveProperty("Connection");
+            expect(result).not.toHaveProperty("Date");
+            expect(result).not.toHaveProperty("ETag");
         });
     });
 });
