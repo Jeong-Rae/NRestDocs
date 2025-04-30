@@ -1,16 +1,10 @@
+import { DescriptorKinds, type HeaderDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
-import { isEmpty, merge, some, toPairs, values } from "es-toolkit/compat";
-
-type Header = {
-    name: string;
-    type: string;
-    description: string;
-    format?: string;
-    optional?: boolean;
-};
+import { keyedArrayToRecord } from "@/types/collection";
+import { isEmpty, mapValues, merge, some, values } from "es-toolkit/compat";
 
 export type RequestHeadersSnippetContext = {
-    headers: Header[];
+    headers: HeaderDescriptor[];
     hasFormat: boolean;
     hasOptional: boolean;
 };
@@ -19,9 +13,9 @@ export function buildRequestHeadersContext(
     snapshot: DocumentSnapshot
 ): RequestHeadersSnippetContext {
     const { requestHeaders } = snapshot.http;
-    const { request } = snapshot.headers;
+    const { request: headerDescriptors } = snapshot.headers;
 
-    if (isEmpty(requestHeaders) && isEmpty(request)) {
+    if (isEmpty(requestHeaders) && isEmpty(headerDescriptors)) {
         return {
             headers: [],
             hasFormat: false,
@@ -29,31 +23,17 @@ export function buildRequestHeadersContext(
         };
     }
 
-    const headerValueFields = toPairs(requestHeaders).reduce<Record<string, Header>>(
-        (acc, [key, value]) => {
-            acc[key] = {
-                name: key,
-                type: "string",
-                description: "",
-            };
-            return acc;
-        },
-        {}
-    );
+    const rawHeaderFields = mapValues(requestHeaders, (_value, key) => ({
+        kind: DescriptorKinds.Header,
+        name: key,
+        type: "string",
+        description: "",
+    }));
 
-    const headerDescriptorFields = request.reduce<Record<string, Header>>((acc, field) => {
-        acc[field.name] = {
-            name: field.name,
-            type: field.type,
-            description: field.description ?? "",
-            format: field.format,
-            optional: field.optional,
-        };
-        return acc;
-    }, {});
+    const descriptorHeaderFields = keyedArrayToRecord("name", headerDescriptors);
 
-    const mergedFields = merge(headerValueFields, headerDescriptorFields);
-    const headers = values(mergedFields);
+    const mergedHeaderFields = merge(rawHeaderFields, descriptorHeaderFields);
+    const headers = values(mergedHeaderFields);
 
     const hasFormat = some(headers, (field) => Boolean(field.format));
     const hasOptional = some(headers, (field) => Boolean(field.optional));

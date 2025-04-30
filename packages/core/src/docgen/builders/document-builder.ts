@@ -1,16 +1,17 @@
-import type {
-    CookieDescriptor,
-    FieldDescriptor,
-    FormParamDescriptor,
-    HeaderDescriptor,
-    HttpBody,
-    HttpHeaders,
-    HttpMethod,
-    HttpQuery,
-    HttpStatusCode,
-    PartDescriptor,
-    PathParamDescriptor,
-    QueryParamDescriptor,
+import {
+    type CookieDescriptor,
+    DescriptorKinds,
+    type FieldDescriptor,
+    type FormParamDescriptor,
+    type HeaderDescriptor,
+    type HttpBody,
+    type HttpHeaders,
+    type HttpMethod,
+    type HttpQuery,
+    type HttpStatusCode,
+    type PartDescriptor,
+    type PathParamDescriptor,
+    type QueryParamDescriptor,
 } from "@/core";
 import { createAsciiDocRenderer } from "@/docgen/render";
 import {
@@ -31,6 +32,7 @@ import {
 } from "@/inputs";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import Logger from "@/utils/logger";
+import { parseCookieStringToRecord, toDescriptorsFromRecord } from "@/utils/to-descriptor";
 import type { Response as SupertestResponse } from "supertest";
 import type { DocumentSnapshot } from "./model";
 

@@ -3,11 +3,15 @@ import type {
     FieldDescriptor,
     FormParamDescriptor,
     HeaderDescriptor,
+    HttpBody,
+    HttpHeaders,
+    HttpMethod,
+    HttpQuery,
+    HttpStatusCode,
     PartDescriptor,
     PathParamDescriptor,
     QueryParamDescriptor,
-} from "@/descriptors";
-import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
+} from "@/core";
 
 export type DocumentSnapshot = {
     http: {
