@@ -1,4 +1,4 @@
-import type { DocumentSnapshot } from "@/builders";
+import type { DocumentSnapshot } from "@/docgen/builders";
 import { isEmpty } from "es-toolkit/compat";
 
 export type RequestBodySnippetContext = {

@@ -1,4 +1,4 @@
-import type { DocumentSnapshot } from "@/builders";
+import type { DocumentSnapshot } from "@/docgen/builders";
 import { isEmpty, merge, some, toPairs, values } from "es-toolkit/compat";
 
 type Header = {

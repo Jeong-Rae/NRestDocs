@@ -1,4 +1,4 @@
-import type { DocumentSnapshot } from "@/builders";
+import type { DocumentSnapshot } from "@/docgen/builders";
 import { fromPairs, isEmpty, merge, some, split, toPairs, trim, values } from "es-toolkit/compat";
 
 type Cookie = {

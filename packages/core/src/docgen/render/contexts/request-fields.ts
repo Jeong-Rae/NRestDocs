@@ -1,4 +1,4 @@
-import type { DocumentSnapshot } from "@/builders";
+import type { DocumentSnapshot } from "@/docgen/builders";
 import { inferFieldType } from "@/utils/infer-field-type";
 import { isEmpty, keys, merge, some, values } from "es-toolkit/compat";
 

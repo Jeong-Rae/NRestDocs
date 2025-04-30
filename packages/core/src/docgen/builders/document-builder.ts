@@ -7,6 +7,7 @@ import type {
     PathParamDescriptor,
     QueryParamDescriptor,
 } from "@/descriptors";
+import { createAsciiDocRenderer } from "@/docgen/render";
 import {
     type CookieInput,
     type FieldInput,
@@ -23,7 +24,6 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
-import { createAsciiDocRenderer } from "@/renderers";
 import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import Logger from "@/utils/logger";

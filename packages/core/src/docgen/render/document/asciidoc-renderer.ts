@@ -1,4 +1,4 @@
-import type { DocumentSnapshot } from "@/builders";
+import type { DocumentSnapshot } from "@/docgen/builders";
 import Logger from "@/utils/logger";
 import {
     CurlSnippetRenderer,
