@@ -1,7 +1,10 @@
-import { type HeaderDescriptor, ParamKinds } from "@/descriptors";
+import { DescriptorKinds, type HeaderDescriptor } from "@/core";
 import { applyNormalize } from "@/utils/normalizer";
 import type { HeaderInput } from "./input.type";
 
 export const applyHeader = (input: HeaderInput): HeaderDescriptor[] => {
-    return applyNormalize<typeof ParamKinds.Header, HeaderDescriptor>(ParamKinds.Header, input);
+    return applyNormalize<typeof DescriptorKinds.Header, HeaderDescriptor>(
+        DescriptorKinds.Header,
+        input
+    );
 };

@@ -1,40 +1,60 @@
 import type {
     AllowedType,
     BaseDescriptor,
-    Builder,
     CookieDescriptor,
+    DescriptorKind,
+    DescriptorKinds,
     FieldDescriptor,
     FormParamDescriptor,
     HeaderDescriptor,
-    ParamKind,
-    ParamKinds,
     PartDescriptor,
     PathParamDescriptor,
     QueryParamDescriptor,
-    TypeSet,
-} from "@/descriptors";
+} from "@/core";
+import type { DescriptorBuilder } from "@/descriptors";
+import type { TypeSet } from "@/descriptors/state";
+import type { KeyedCollection } from "@/types/collection";
 
+/**
+ * Partial Descriptor
+ * @param K DescriptorKind
+ * @param D Descriptor
+ */
 export type PartialDescriptor<
-    K extends ParamKind,
+    K extends DescriptorKind,
     D extends BaseDescriptor<K, AllowedType<K>>,
 > = Partial<Omit<D, "kind">> & { name: string };
 
-export type ArrayOrRecord<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> =
-    | (Builder<Partial<D>, TypeSet, K> | PartialDescriptor<K, D>)[]
-    | Record<string, Omit<PartialDescriptor<K, D>, "name">>;
+type DescriptorItem<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>> =
+    | PartialDescriptor<K, D>
+    | DescriptorBuilder<Partial<D>, TypeSet, K>;
 
-export type PartialField = Partial<Omit<FieldDescriptor, "kind">> & { name: string };
-export type PartialQueryParam = Partial<Omit<QueryParamDescriptor, "kind">> & { name: string };
-export type PartialFormParam = Partial<Omit<FormParamDescriptor, "kind">> & { name: string };
-export type PartialPathParam = Partial<Omit<PathParamDescriptor, "kind">> & { name: string };
-export type PartialRequestPart = Partial<Omit<PartDescriptor, "kind">> & { name: string };
-export type PartialHeader = Partial<Omit<HeaderDescriptor, "kind">> & { name: string };
-export type PartialCookie = Partial<Omit<CookieDescriptor, "kind">> & { name: string };
+/**
+ * Descriptor Input Type
+ * @param K DescriptorKind
+ * @param D Descriptor
+ * @example
+ * // single descriptor
+ * { name: "id", type: "number" }
+ * // array of descriptors
+ * [{ name: "id", type: "number" }, { name: "name", type: "string" }]
+ * // record of descriptors
+ * { id: { type: "number" }, name: { type: "string" } }
+ * // descriptor builder
+ * defineQuery("id").type("number")
+ * // array of descriptor builders
+ * [defineQuery("id").type("number"), defineQuery("name").type("string")]
+ */
+export type DescriptorInput<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>> =
+    | DescriptorItem<K, D>
+    | DescriptorItem<K, D>[]
+    | KeyedCollection<"name", PartialDescriptor<K, D>>;
 
-export type FieldInput = ArrayOrRecord<typeof ParamKinds.Field, FieldDescriptor>;
-export type QueryParamsInput = ArrayOrRecord<typeof ParamKinds.Query, QueryParamDescriptor>;
-export type FormParamsInput = ArrayOrRecord<typeof ParamKinds.Form, FormParamDescriptor>;
-export type PathParamsInput = ArrayOrRecord<typeof ParamKinds.Path, PathParamDescriptor>;
-export type RequestPartInput = ArrayOrRecord<typeof ParamKinds.Part, PartDescriptor>;
-export type HeaderInput = ArrayOrRecord<typeof ParamKinds.Header, HeaderDescriptor>;
-export type CookieInput = ArrayOrRecord<typeof ParamKinds.Cookie, CookieDescriptor>;
+/* Input Type Alias */
+export type FieldInput = DescriptorInput<typeof DescriptorKinds.Field, FieldDescriptor>;
+export type QueryParamsInput = DescriptorInput<typeof DescriptorKinds.Query, QueryParamDescriptor>;
+export type FormParamsInput = DescriptorInput<typeof DescriptorKinds.Form, FormParamDescriptor>;
+export type PathParamsInput = DescriptorInput<typeof DescriptorKinds.Path, PathParamDescriptor>;
+export type RequestPartInput = DescriptorInput<typeof DescriptorKinds.Part, PartDescriptor>;
+export type HeaderInput = DescriptorInput<typeof DescriptorKinds.Header, HeaderDescriptor>;
+export type CookieInput = DescriptorInput<typeof DescriptorKinds.Cookie, CookieDescriptor>;

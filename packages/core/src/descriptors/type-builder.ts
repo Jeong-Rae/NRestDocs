@@ -1,4 +1,4 @@
-import type { FieldType, FormatFor } from "./types";
+import type { FieldType, FormatFor } from "@/core";
 
 /* 결과 스키마 타입 */
 export interface TypeSchema {
@@ -21,7 +21,7 @@ export interface TypeBuilder<D extends Partial<TypeSchema>> {
     build(this: TypeBuilder<TypeSchema>): Readonly<TypeSchema>;
 }
 
-function createTypeBuilder<D extends Partial<TypeSchema>>(draft: D): TypeBuilder<D> {
+export function createTypeBuilder<D extends Partial<TypeSchema>>(draft: D): TypeBuilder<D> {
     return {
         format<T extends FieldType, F extends FormatFor<T>>(
             this: TypeBuilder<D>,
@@ -41,8 +41,4 @@ function createTypeBuilder<D extends Partial<TypeSchema>>(draft: D): TypeBuilder
             return draft as Readonly<TypeSchema>;
         },
     };
-}
-
-export function defineType(initial: FieldType): TypeBuilder<{ type: FieldType }> {
-    return createTypeBuilder({ type: initial });
 }
