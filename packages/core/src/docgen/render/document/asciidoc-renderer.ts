@@ -8,6 +8,8 @@ import {
     RequestFieldsSnippetRenderer,
     RequestHeadersSnippetRenderer,
 } from "../snippet";
+import { PathParametersSnippetRenderer } from "../snippet/path-parameters";
+import { QueryParametersSnippetRenderer } from "../snippet/query-parameters";
 import type { SnippetRenderer } from "../snippet/snippet-renderer.type";
 import { TemplateStore } from "../template";
 
@@ -34,6 +36,8 @@ export async function createAsciiDocRenderer(): Promise<AsciiDocRenderer> {
         new RequestHeadersSnippetRenderer(store),
         new RequestFieldsSnippetRenderer(store),
         new RequestCookiesSnippetRenderer(store),
+        new PathParametersSnippetRenderer(store),
+        new QueryParametersSnippetRenderer(store),
     ];
     return new AsciiDocRenderer(snippets);
 }
