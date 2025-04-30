@@ -3,10 +3,15 @@ import type {
     FieldDescriptor,
     FormParamDescriptor,
     HeaderDescriptor,
+    HttpBody,
+    HttpHeaders,
+    HttpMethod,
+    HttpQuery,
+    HttpStatusCode,
     PartDescriptor,
     PathParamDescriptor,
     QueryParamDescriptor,
-} from "@/descriptors";
+} from "@/core";
 import { createAsciiDocRenderer } from "@/docgen/render";
 import {
     type CookieInput,
@@ -24,7 +29,6 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
-import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import Logger from "@/utils/logger";
 import type { Response as SupertestResponse } from "supertest";
