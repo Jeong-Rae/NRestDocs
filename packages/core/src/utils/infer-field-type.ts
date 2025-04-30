@@ -1,4 +1,4 @@
-import type { FieldType } from "@/descriptors";
+import type { FieldType } from "@/core";
 
 export function inferFieldType(value: unknown): FieldType {
     if (value === null) {

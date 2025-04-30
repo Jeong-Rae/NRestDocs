@@ -1,50 +1,47 @@
-import type { AllowedType, BaseDescriptor, Builder, DescriptorKind, TypeSet } from "@/descriptors";
-import type { ArrayOrRecord, PartialDescriptor } from "@/inputs";
-import { isArray } from "es-toolkit/compat";
+import type { AllowedType, BaseDescriptor, DescriptorKind } from "@/core";
+import type { DescriptorBuilder } from "@/descriptors";
+import type { TypeSet } from "@/descriptors/state";
+import type { DescriptorInput, PartialDescriptor } from "@/inputs";
+import { isKeyedRecord, keyedRecordToArray } from "@/types/collection";
 import { isBuilder } from "./is-builder";
 
-function addDefaultType<K extends DescriptorKind>(
+function withDefaults<K extends DescriptorKind>(
     kind: K,
     descriptor: Partial<BaseDescriptor<K, AllowedType<K>>>
 ): BaseDescriptor<K, AllowedType<K>> {
-    const { name, type = "string", description = "", optional } = descriptor;
+    const { name, type = "string", description = "", optional, format } = descriptor;
+
     return {
         kind,
         name: name!,
         type: type as AllowedType<K>,
         description,
-        ...(optional && { optional: true }),
+        ...(format && { format }),
+        ...(optional && { optional }),
     };
 }
 
-function normalizeOne<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>>(
+function toDescriptor<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>>(
     kind: K,
-    raw: { build?: () => D } | PartialDescriptor<K, D>
+    raw: DescriptorBuilder<Partial<D>, TypeSet, K> | PartialDescriptor<K, D>
 ): D {
-    //  빌더일 경우 build() 호출
-    if (isBuilder<Builder<D, TypeSet, K>>(raw)) {
-        const built = raw.build();
-        return addDefaultType(kind, built) as D;
-    }
+    const partial = isBuilder(raw) ? raw.build() : raw;
+    return withDefaults(kind, partial) as D;
+}
 
-    const { name, type = "string", description = "", optional } = raw as PartialDescriptor<K, D>;
-    return {
-        kind,
-        name,
-        type,
-        description,
-        ...(optional && { optional: true }),
-    } as D;
+function normalizeToArray<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>>(
+    input: DescriptorInput<K, D>
+): Array<PartialDescriptor<K, D> | DescriptorBuilder<Partial<D>, TypeSet, K>> {
+    if (isKeyedRecord("name", input)) {
+        return keyedRecordToArray("name", input);
+    }
+    return Array.isArray(input) ? input : [input];
 }
 
 export function applyNormalize<
     K extends DescriptorKind,
     D extends BaseDescriptor<K, AllowedType<K>>,
->(kind: K, input: ArrayOrRecord<K, D>): D[] {
-    if (isArray(input)) {
-        return input.map((item) => normalizeOne(kind, item) as D);
-    }
-    return Object.entries(input).map(
-        ([name, rest]) => normalizeOne(kind, { name, ...rest } as PartialDescriptor<K, D>) as D
-    );
+>(kind: K, input: DescriptorInput<K, D>): D[] {
+    const arrayInput = normalizeToArray(input);
+    return arrayInput.map((item) => toDescriptor(kind, item));
 }

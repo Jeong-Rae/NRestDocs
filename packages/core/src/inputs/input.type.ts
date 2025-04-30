@@ -25,6 +25,10 @@ export type PartialDescriptor<
     D extends BaseDescriptor<K, AllowedType<K>>,
 > = Partial<Omit<D, "kind">> & { name: string };
 
+type DescriptorItem<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>> =
+    | PartialDescriptor<K, D>
+    | DescriptorBuilder<Partial<D>, TypeSet, K>;
+
 /**
  * Descriptor Input Type
  * @param K DescriptorKind
@@ -42,10 +46,9 @@ export type PartialDescriptor<
  * [defineQuery("id").type("number"), defineQuery("name").type("string")]
  */
 export type DescriptorInput<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>> =
-    | PartialDescriptor<K, D>
-    | KeyedCollection<"name", PartialDescriptor<K, D>>
-    | DescriptorBuilder<Partial<D>, TypeSet, K>
-    | Array<DescriptorBuilder<Partial<D>, TypeSet, K>>;
+    | DescriptorItem<K, D>
+    | DescriptorItem<K, D>[]
+    | KeyedCollection<"name", PartialDescriptor<K, D>>;
 
 /* Input Type Alias */
 export type FieldInput = DescriptorInput<typeof DescriptorKinds.Field, FieldDescriptor>;
