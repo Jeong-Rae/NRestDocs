@@ -1,6 +1,3 @@
-import { isBuilder } from "@/utils/is-builder";
-import type { CompositeDescriptor, CompositeMixin } from "./composite";
-import type { TypeBuilder, TypeSchema } from "./schema";
 import type { AllowedType, BaseDescriptor, FormatFor, ParamKind } from "./types";
 
 /** 빌더 상태 태그 타입 */
@@ -17,7 +14,7 @@ export interface Builder<
     D extends Partial<BaseDescriptor<K, AllowedType<K>>>,
     S,
     K extends ParamKind,
-> extends CompositeMixin<D, K> {
+> {
     // Kind 별 AllowedType 설정
     type<T extends AllowedType<K>>(
         type: T
@@ -38,8 +35,7 @@ export interface Builder<
     ): Readonly<D & BaseDescriptor<K, AllowedType<K>>>;
 }
 
-type Draft<K extends ParamKind, N extends string> = Partial<BaseDescriptor<K, AllowedType<K>>> &
-    Partial<CompositeDescriptor<K>> & { kind: K; name: N };
+type Draft<K extends ParamKind, N extends string> = Partial<BaseDescriptor<K, AllowedType<K>>>;
 
 /** 빌더 생성 함수 */
 export function createBuilder<K extends ParamKind, N extends string>(
@@ -59,18 +55,6 @@ export function createBuilder<K extends ParamKind, N extends string>(
         },
         optional() {
             return createBuilder(kind, name, { ...draft, optional: true });
-        },
-        oneOf(arr: (TypeBuilder<TypeSchema> | TypeSchema)[]) {
-            const variants = arr.map((builder) =>
-                isBuilder<TypeBuilder<TypeSchema>>(builder) ? builder.build() : builder
-            );
-            return createBuilder(kind, name, { ...draft, mode: "oneOf", variants });
-        },
-        anyOf(arr: (TypeBuilder<TypeSchema> | TypeSchema)[]) {
-            const variants = arr.map((builder) =>
-                isBuilder<TypeBuilder<TypeSchema>>(builder) ? builder.build() : builder
-            );
-            return createBuilder(kind, name, { ...draft, mode: "anyOf", variants });
         },
         build(
             this: Builder<typeof draft & BaseDescriptor<K, AllowedType<K>>, TypeSet, K>

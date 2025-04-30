@@ -82,10 +82,3 @@ export type HeaderDescriptor = BaseDescriptor<"header", FieldType>;
 export type CookieDescriptor = BaseDescriptor<"cookie", FieldType>;
 export type PartDescriptor = BaseDescriptor<"part", "string">;
 export type FieldDescriptor = BaseDescriptor<"field", FieldType>;
-
-/** ResponseDescriptor */
-export type ResponseDescriptor = {
-    headers: HeaderDescriptor[];
-    fields: FieldDescriptor[];
-    description: string;
-};

@@ -1,4 +1,4 @@
-import type { JSONSchema } from "./json";
+import type { JSONSchema } from "./json-schema.type";
 
 export namespace OpenAPI_V3_1 {
     export interface OpenAPI {

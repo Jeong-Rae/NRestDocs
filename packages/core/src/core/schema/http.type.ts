@@ -1,5 +1,5 @@
 import type { Response as SupertestResponseType } from "supertest";
-import type { OpenAPI_V3_1 } from "./open-api-spec";
+import type { OpenAPI_V3_1 } from "./openapi-spec.type";
 
 export type HttpMethod = Uppercase<OpenAPI_V3_1.HttpMethod>;
 
