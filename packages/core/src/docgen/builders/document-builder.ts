@@ -49,7 +49,7 @@ export class DocumentBuilder {
     private httpRequestCookies?: string;
     private httpResponseCookies?: string;
     private httpRequestQuery?: HttpQuery;
-
+    private httpRequestPath?: string;
     // 요청 파라미터
     private pathParameters?: PathParamDescriptor[];
     private queryParameters?: QueryParamDescriptor[];
@@ -83,6 +83,7 @@ export class DocumentBuilder {
             http: {
                 method: this.httpMethod as HttpMethod,
                 url: this.httpUrl as URL,
+                path: this.httpRequestPath as string,
                 statusCode: this.httpStatusCode as HttpStatusCode,
                 requestHeaders: this.httpRequestHeaders as HttpHeaders,
                 responseHeaders: this.httpResponseHeaders as HttpHeaders,
@@ -117,6 +118,19 @@ export class DocumentBuilder {
         };
 
         return snapshot;
+    }
+
+    /**
+     * Request Path를 등록할 수 있다.
+     * @param path {string} 등록 가능한 Path
+     * @returns
+     * @example
+     * / withRequestPath("/users/:userId/posts/:postId")
+     * / withRequestPath("/users/{userId}/posts/{postId}")
+     */
+    withRequestPath(path: string): this {
+        this.httpRequestPath = path;
+        return this;
     }
 
     /**

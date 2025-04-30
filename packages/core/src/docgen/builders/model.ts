@@ -17,6 +17,7 @@ export type DocumentSnapshot = {
     http: {
         method: HttpMethod;
         url: URL;
+        path: string;
         statusCode: HttpStatusCode;
         requestHeaders: HttpHeaders;
         responseHeaders: HttpHeaders;
