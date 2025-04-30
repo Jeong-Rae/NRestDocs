@@ -1,6 +1,6 @@
+import type { HttpBody, HttpCookies, HttpHeaders, HttpMethod, HttpQuery } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { MissingFieldError } from "@/errors";
-import type { HttpBody, HttpCookies, HttpHeaders, HttpMethod, HttpQuery } from "@/types";
 import { compact, isEmpty, join, toPairs } from "es-toolkit/compat";
 
 export type CurlSnippetContext = {

@@ -3,10 +3,15 @@ import Logger from "@/utils/logger";
 import {
     CurlSnippetRenderer,
     HttpRequestSnippetRenderer,
+    HttpResponseSnippetRenderer,
     RequestBodySnippetRenderer,
     RequestCookiesSnippetRenderer,
     RequestFieldsSnippetRenderer,
     RequestHeadersSnippetRenderer,
+    ResponseBodySnippetRenderer,
+    ResponseCookiesSnippetRenderer,
+    ResponseFieldsSnippetRenderer,
+    ResponseHeadersSnippetRenderer,
 } from "../snippet";
 import { PathParametersSnippetRenderer } from "../snippet/path-parameters";
 import { QueryParametersSnippetRenderer } from "../snippet/query-parameters";
@@ -32,12 +37,17 @@ export async function createAsciiDocRenderer(): Promise<AsciiDocRenderer> {
     const snippets = [
         new CurlSnippetRenderer(store),
         new HttpRequestSnippetRenderer(store),
-        new RequestBodySnippetRenderer(store),
-        new RequestHeadersSnippetRenderer(store),
-        new RequestFieldsSnippetRenderer(store),
-        new RequestCookiesSnippetRenderer(store),
+        new HttpResponseSnippetRenderer(store),
         new PathParametersSnippetRenderer(store),
         new QueryParametersSnippetRenderer(store),
+        new RequestHeadersSnippetRenderer(store),
+        new RequestCookiesSnippetRenderer(store),
+        new RequestBodySnippetRenderer(store),
+        new RequestFieldsSnippetRenderer(store),
+        new ResponseHeadersSnippetRenderer(store),
+        new ResponseCookiesSnippetRenderer(store),
+        new ResponseBodySnippetRenderer(store),
+        new ResponseFieldsSnippetRenderer(store),
     ];
     return new AsciiDocRenderer(snippets);
 }

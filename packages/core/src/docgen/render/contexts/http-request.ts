@@ -1,5 +1,5 @@
+import type { HttpBody, HttpHeaders } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
-import type { HttpBody, HttpHeaders } from "@/types";
 
 export type HttpRequestSnippetContext = {
     method: string;
