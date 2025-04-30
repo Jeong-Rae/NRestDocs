@@ -1,8 +1,8 @@
 import type { FieldType } from "../field/field.type";
-import type { ElementKind } from "./element-kind.type";
+import type { DescriptorKind } from "./descriptor-kind.type";
 
-/** Allowed FieldType for each ElementKind */
-export type AllowedType<K extends ElementKind> = K extends "part"
+/** Allowed FieldType for each DescriptorKind */
+export type AllowedType<K extends DescriptorKind> = K extends "part"
     ? "string"
     : K extends "path"
       ? Exclude<FieldType, "object" | "array" | "null">

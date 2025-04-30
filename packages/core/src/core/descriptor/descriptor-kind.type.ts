@@ -1,5 +1,5 @@
 /** Element kinds */
-export const ElementKinds = {
+export const DescriptorKinds = {
     Query: "query",
     Form: "form",
     Path: "path",
@@ -9,4 +9,4 @@ export const ElementKinds = {
     Part: "part",
 } as const;
 
-export type ElementKind = (typeof ElementKinds)[keyof typeof ElementKinds];
+export type DescriptorKind = (typeof DescriptorKinds)[keyof typeof DescriptorKinds];

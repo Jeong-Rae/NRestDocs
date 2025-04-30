@@ -1,4 +1,4 @@
-import { ParamKinds, definePath, defineQuery } from "@/descriptors";
+import { DescriptorKinds, definePath, defineQuery } from "@/descriptors";
 import { describe, expect, it } from "vitest";
 import { applyNormalize } from "./normalizer";
 import { given } from "./test";
@@ -9,7 +9,7 @@ describe("parameter-normalizer", () => {
             it("fills missing type with default 'string'", async () => {
                 await given([{ name: "userId" }])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
-                    .when((input) => applyNormalize(ParamKinds.Path, input as any))
+                    .when((input) => applyNormalize(DescriptorKinds.Path, input as any))
                     .then((result) => {
                         const desc = result[0];
                         expect(desc.name).toBe("userId");
@@ -20,7 +20,7 @@ describe("parameter-normalizer", () => {
             it("applies optional flag when set", async () => {
                 await given([{ name: "orderId", optional: true }])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
-                    .when((input) => applyNormalize(ParamKinds.Path, input as any))
+                    .when((input) => applyNormalize(DescriptorKinds.Path, input as any))
                     .then((result) => {
                         const desc = result[0];
                         expect(desc.name).toBe("orderId");
@@ -32,7 +32,7 @@ describe("parameter-normalizer", () => {
             it("calls build() on Builder instances", async () => {
                 await given([definePath("commentId").type("string")])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
-                    .when((input) => applyNormalize(ParamKinds.Path, input as any))
+                    .when((input) => applyNormalize(DescriptorKinds.Path, input as any))
                     .then((result) => {
                         const desc = result[0];
                         expect(desc.name).toBe("commentId");
@@ -46,7 +46,7 @@ describe("parameter-normalizer", () => {
                     replyId: { optional: true },
                 })
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
-                    .when((input) => applyNormalize(ParamKinds.Path, input as any))
+                    .when((input) => applyNormalize(DescriptorKinds.Path, input as any))
                     .then((result) => {
                         expect(result.map((r) => r.name).sort()).toEqual(["articleId", "replyId"]);
                         expect(result.find((r) => r.name === "replyId")?.optional).toBe(true);
@@ -58,7 +58,7 @@ describe("parameter-normalizer", () => {
             it("fills missing type with default 'string'", async () => {
                 await given([{ name: "searchTerm" }])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
-                    .when((input) => applyNormalize(ParamKinds.Query, input as any))
+                    .when((input) => applyNormalize(DescriptorKinds.Query, input as any))
                     .then((result) => {
                         const desc = result[0];
                         expect(desc.name).toBe("searchTerm");
@@ -69,7 +69,7 @@ describe("parameter-normalizer", () => {
             it("applies optional flag correctly", async () => {
                 await given([{ name: "page", optional: true }])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
-                    .when((input) => applyNormalize(ParamKinds.Query, input as any))
+                    .when((input) => applyNormalize(DescriptorKinds.Query, input as any))
                     .then((result) => {
                         const desc = result[0];
                         expect(desc.name).toBe("page");
@@ -84,7 +84,7 @@ describe("parameter-normalizer", () => {
                     defineQuery("sort").optional(),
                 ])
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
-                    .when((input) => applyNormalize(ParamKinds.Query, input as any))
+                    .when((input) => applyNormalize(DescriptorKinds.Query, input as any))
                     .then((result) => {
                         expect(result.map((r) => r.name).sort()).toEqual(["q", "sort"]);
                         expect(result.find((r) => r.name === "q")?.description).toBe("검색어");
@@ -97,7 +97,7 @@ describe("parameter-normalizer", () => {
                     offset: { optional: true },
                 })
                     // biome-ignore lint/suspicious/noExplicitAny: Test setup requires flexibility
-                    .when((input) => applyNormalize(ParamKinds.Query, input as any))
+                    .when((input) => applyNormalize(DescriptorKinds.Query, input as any))
                     .then((result) => {
                         expect(result.map((r) => r.name).sort()).toEqual(["limit", "offset"]);
                         expect(result.find((r) => r.name === "offset")?.optional).toBe(true);

@@ -1,9 +1,9 @@
-import type { AllowedType, BaseDescriptor, Builder, ParamKind, TypeSet } from "@/descriptors";
+import type { AllowedType, BaseDescriptor, Builder, DescriptorKind, TypeSet } from "@/descriptors";
 import type { ArrayOrRecord, PartialDescriptor } from "@/inputs";
 import { isArray } from "es-toolkit/compat";
 import { isBuilder } from "./is-builder";
 
-function addDefaultType<K extends ParamKind>(
+function addDefaultType<K extends DescriptorKind>(
     kind: K,
     descriptor: Partial<BaseDescriptor<K, AllowedType<K>>>
 ): BaseDescriptor<K, AllowedType<K>> {
@@ -17,7 +17,7 @@ function addDefaultType<K extends ParamKind>(
     };
 }
 
-function normalizeOne<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>>(
+function normalizeOne<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>>(
     kind: K,
     raw: { build?: () => D } | PartialDescriptor<K, D>
 ): D {
@@ -37,10 +37,10 @@ function normalizeOne<K extends ParamKind, D extends BaseDescriptor<K, AllowedTy
     } as D;
 }
 
-export function applyNormalize<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>>(
-    kind: K,
-    input: ArrayOrRecord<K, D>
-): D[] {
+export function applyNormalize<
+    K extends DescriptorKind,
+    D extends BaseDescriptor<K, AllowedType<K>>,
+>(kind: K, input: ArrayOrRecord<K, D>): D[] {
     if (isArray(input)) {
         return input.map((item) => normalizeOne(kind, item) as D);
     }

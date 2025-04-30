@@ -1,38 +1,57 @@
 import type {
     AllowedType,
     BaseDescriptor,
-    Builder,
     CookieDescriptor,
+    DescriptorKind,
+    DescriptorKinds,
     FieldDescriptor,
     FormParamDescriptor,
     HeaderDescriptor,
-    ParamKind,
-    ParamKinds,
     PartDescriptor,
     PathParamDescriptor,
     QueryParamDescriptor,
-    TypeSet,
-} from "@/descriptors";
+} from "@/core";
+import type { DescriptorBuilder } from "@/descriptors";
+import type { TypeSet } from "@/descriptors/state";
 import type { KeyedCollection } from "@/types/collection";
 
+/**
+ * Partial Descriptor
+ * @param K DescriptorKind
+ * @param D Descriptor
+ */
 export type PartialDescriptor<
-    K extends ParamKind,
+    K extends DescriptorKind,
     D extends BaseDescriptor<K, AllowedType<K>>,
 > = Partial<Omit<D, "kind">> & { name: string };
 
-export type DescriptorInput<K extends ParamKind, D extends BaseDescriptor<K, AllowedType<K>>> =
+/**
+ * Descriptor Input Type
+ * @param K DescriptorKind
+ * @param D Descriptor
+ * @example
+ * // single descriptor
+ * { name: "id", type: "number" }
+ * // array of descriptors
+ * [{ name: "id", type: "number" }, { name: "name", type: "string" }]
+ * // record of descriptors
+ * { id: { type: "number" }, name: { type: "string" } }
+ * // descriptor builder
+ * defineQuery("id").type("number")
+ * // array of descriptor builders
+ * [defineQuery("id").type("number"), defineQuery("name").type("string")]
+ */
+export type DescriptorInput<K extends DescriptorKind, D extends BaseDescriptor<K, AllowedType<K>>> =
     | PartialDescriptor<K, D>
     | KeyedCollection<"name", PartialDescriptor<K, D>>
-    | Builder<Partial<D>, TypeSet, K>
-    | Array<Builder<Partial<D>, TypeSet, K>>;
+    | DescriptorBuilder<Partial<D>, TypeSet, K>
+    | Array<DescriptorBuilder<Partial<D>, TypeSet, K>>;
 
-/**
- * 파라미터별 입력 타입 정의
- */
-export type FieldInput = DescriptorInput<typeof ParamKinds.Field, FieldDescriptor>;
-export type QueryParamsInput = DescriptorInput<typeof ParamKinds.Query, QueryParamDescriptor>;
-export type FormParamsInput = DescriptorInput<typeof ParamKinds.Form, FormParamDescriptor>;
-export type PathParamsInput = DescriptorInput<typeof ParamKinds.Path, PathParamDescriptor>;
-export type RequestPartInput = DescriptorInput<typeof ParamKinds.Part, PartDescriptor>;
-export type HeaderInput = DescriptorInput<typeof ParamKinds.Header, HeaderDescriptor>;
-export type CookieInput = DescriptorInput<typeof ParamKinds.Cookie, CookieDescriptor>;
+/* Input Type Alias */
+export type FieldInput = DescriptorInput<typeof DescriptorKinds.Field, FieldDescriptor>;
+export type QueryParamsInput = DescriptorInput<typeof DescriptorKinds.Query, QueryParamDescriptor>;
+export type FormParamsInput = DescriptorInput<typeof DescriptorKinds.Form, FormParamDescriptor>;
+export type PathParamsInput = DescriptorInput<typeof DescriptorKinds.Path, PathParamDescriptor>;
+export type RequestPartInput = DescriptorInput<typeof DescriptorKinds.Part, PartDescriptor>;
+export type HeaderInput = DescriptorInput<typeof DescriptorKinds.Header, HeaderDescriptor>;
+export type CookieInput = DescriptorInput<typeof DescriptorKinds.Cookie, CookieDescriptor>;
