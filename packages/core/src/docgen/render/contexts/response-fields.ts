@@ -4,17 +4,19 @@ import { keyedArrayToRecord } from "@/types/collection";
 import { inferFieldType } from "@/utils/infer-field-type";
 import { isEmpty, mapValues, merge, some, values } from "es-toolkit/compat";
 
-export type RequestFieldsSnippetContext = {
+export type ResponseFieldsSnippetContext = {
     fields: FieldDescriptor[];
     hasFormat: boolean;
     hasOptional: boolean;
 };
 
-export function buildRequestFieldsContext(snapshot: DocumentSnapshot): RequestFieldsSnippetContext {
-    const { requestBody } = snapshot.http;
-    const { request: fieldDescriptors } = snapshot.fields;
+export function buildResponseFieldsContext(
+    snapshot: DocumentSnapshot
+): ResponseFieldsSnippetContext {
+    const { responseBody } = snapshot.http;
+    const { response: fieldDescriptors } = snapshot.fields;
 
-    if (isEmpty(requestBody) && isEmpty(fieldDescriptors)) {
+    if (isEmpty(responseBody) && isEmpty(fieldDescriptors)) {
         return {
             fields: [],
             hasFormat: false,
@@ -22,7 +24,7 @@ export function buildRequestFieldsContext(snapshot: DocumentSnapshot): RequestFi
         };
     }
 
-    const rawFieldDescriptors = mapValues(requestBody, (value, key) => ({
+    const rawFieldDescriptors = mapValues(responseBody, (value, key) => ({
         kind: DescriptorKinds.Field,
         name: key,
         type: inferFieldType(value),
