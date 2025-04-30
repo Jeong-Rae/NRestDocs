@@ -21,8 +21,8 @@ importers:
         specifier: 3.1.1
         version: 3.1.1(vitest@3.1.1(@types/node@22.15.2)(terser@5.39.0)(yaml@2.7.1))
       es-toolkit:
-        specifier: ^1.34.1
-        version: 1.34.1
+        specifier: ^1.36.0
+        version: 1.36.0
       husky:
         specifier: ^9.0.11
         version: 9.1.7
@@ -39,7 +39,7 @@ importers:
         specifier: ^3.1.1
         version: 3.1.1(@types/node@22.15.2)(terser@5.39.0)(yaml@2.7.1)
 
-  examples/example-nest:
+  examples/nest:
     dependencies:
       '@nestjs/common':
         specifier: ^11.0.1
@@ -65,7 +65,7 @@ importers:
         version: 11.0.7(@swc/cli@0.6.0(@swc/core@1.11.22)(chokidar@4.0.3))(@swc/core@1.11.22)(@types/node@22.15.2)(esbuild@0.25.2)
       '@nestjs/schematics':
         specifier: ^11.0.0
-        version: 11.0.5(chokidar@4.0.3)(typescript@5.8.2)
+        version: 11.0.5(chokidar@4.0.3)(typescript@5.8.3)
       '@nestjs/testing':
         specifier: ^11.0.1
         version: 11.1.0(@nestjs/common@11.1.0(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.0)(@nestjs/platform-express@11.1.0)
@@ -101,28 +101,31 @@ importers:
         version: 7.1.0
       ts-loader:
         specifier: ^9.5.2
-        version: 9.5.2(typescript@5.8.2)(webpack@5.99.6(@swc/core@1.11.22)(esbuild@0.25.2))
+        version: 9.5.2(typescript@5.8.3)(webpack@5.99.6(@swc/core@1.11.22)(esbuild@0.25.2))
       ts-node:
         specifier: ^10.9.2
-        version: 10.9.2(@swc/core@1.11.22)(@types/node@22.15.2)(typescript@5.8.2)
+        version: 10.9.2(@swc/core@1.11.22)(@types/node@22.15.2)(typescript@5.8.3)
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
       typescript:
         specifier: ^5.7.3
-        version: 5.8.2
+        version: 5.8.3
       unplugin-swc:
         specifier: ^1.5.2
         version: 1.5.2(@swc/core@1.11.22)(rollup@4.39.0)
       vite-tsconfig-paths:
         specifier: ^5.1.4
-        version: 5.1.4(typescript@5.8.2)(vite@6.2.4(@types/node@22.15.2)(terser@5.39.0)(yaml@2.7.1))
+        version: 5.1.4(typescript@5.8.3)(vite@6.2.4(@types/node@22.15.2)(terser@5.39.0)(yaml@2.7.1))
       vitest:
         specifier: ^3.1.1
         version: 3.1.1(@types/node@22.15.2)(terser@5.39.0)(yaml@2.7.1)
 
   packages/core:
     dependencies:
+      eta:
+        specifier: ^3.5.0
+        version: 3.5.0
       supertest:
         specifier: ^6.3.4
         version: 6.3.4
@@ -1628,8 +1631,8 @@ packages:
     resolution: {integrity: sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==}
     engines: {node: '>= 0.4'}
 
-  es-toolkit@1.34.1:
-    resolution: {integrity: sha512-OA6cd94fJV9bm8dWhIySkWq4xV+rAQnBZUr2dnpXam0QJ8c+hurLbKA8/QooL9Mx4WCAxvIDsiEkid5KPQ5xgQ==}
+  es-toolkit@1.36.0:
+    resolution: {integrity: sha512-5lpkRpDELuTSeAL//Rcg5urg+K/yOD1BobJSiNeCc89snMqgrhckmj8jdljqraDbpREiXTNW311RN518eVHBng==}
 
   esbuild@0.25.2:
     resolution: {integrity: sha512-16854zccKPnC+toMywC+uKNeYSv+/eXkevRAfwRD/G9Cleq66m8XFIrigkbvauLLlCfDL45Q2cWegSg53gGBnQ==}
@@ -1669,6 +1672,10 @@ packages:
 
   estree-walker@3.0.3:
     resolution: {integrity: sha512-7RUKfXgSMMkzt6ZuXmqapOurLGPPfgj6l9uRZ7lRGolvk0y2yocc35LdcxKC5PQZdn2DMqioAQ2NoWcrTKmm6g==}
+
+  eta@3.5.0:
+    resolution: {integrity: sha512-e3x3FBvGzeCIHhF+zhK8FZA2vC5uFn6b4HJjegUbIWrDb4mJ7JjTGMJY9VGIbRVpmSwHopNiaJibhjIr+HfLug==}
+    engines: {node: '>=6.0.0'}
 
   etag@1.8.1:
     resolution: {integrity: sha512-aIL5Fx7mawVa300al2BnEE4iNvo1qETxLrPI/o05L7z6go7fCw1J6EQmbK4FmJ2AS7kgVF/KEZWufBfdClMcPg==}
@@ -3677,17 +3684,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@nestjs/schematics@11.0.5(chokidar@4.0.3)(typescript@5.8.2)':
-    dependencies:
-      '@angular-devkit/core': 19.2.6(chokidar@4.0.3)
-      '@angular-devkit/schematics': 19.2.6(chokidar@4.0.3)
-      comment-json: 4.2.5
-      jsonc-parser: 3.3.1
-      pluralize: 8.0.0
-      typescript: 5.8.2
-    transitivePeerDependencies:
-      - chokidar
-
   '@nestjs/schematics@11.0.5(chokidar@4.0.3)(typescript@5.8.3)':
     dependencies:
       '@angular-devkit/core': 19.2.6(chokidar@4.0.3)
@@ -4578,7 +4574,7 @@ snapshots:
       has-tostringtag: 1.0.2
       hasown: 2.0.2
 
-  es-toolkit@1.34.1: {}
+  es-toolkit@1.36.0: {}
 
   esbuild@0.25.2:
     optionalDependencies:
@@ -4632,6 +4628,8 @@ snapshots:
   estree-walker@3.0.3:
     dependencies:
       '@types/estree': 1.0.7
+
+  eta@3.5.0: {}
 
   etag@1.8.1: {}
 
@@ -4699,7 +4697,7 @@ snapshots:
 
   ext-list@2.2.2:
     dependencies:
-      mime-db: 1.52.0
+      mime-db: 1.54.0
 
   ext-name@5.0.0:
     dependencies:
@@ -5867,17 +5865,17 @@ snapshots:
 
   ts-interface-checker@0.1.13: {}
 
-  ts-loader@9.5.2(typescript@5.8.2)(webpack@5.99.6(@swc/core@1.11.22)(esbuild@0.25.2)):
+  ts-loader@9.5.2(typescript@5.8.3)(webpack@5.99.6(@swc/core@1.11.22)(esbuild@0.25.2)):
     dependencies:
       chalk: 4.1.2
       enhanced-resolve: 5.18.1
       micromatch: 4.0.8
       semver: 7.7.1
       source-map: 0.7.4
-      typescript: 5.8.2
+      typescript: 5.8.3
       webpack: 5.99.6(@swc/core@1.11.22)(esbuild@0.25.2)
 
-  ts-node@10.9.2(@swc/core@1.11.22)(@types/node@22.15.2)(typescript@5.8.2):
+  ts-node@10.9.2(@swc/core@1.11.22)(@types/node@22.15.2)(typescript@5.8.3):
     dependencies:
       '@cspotcode/source-map-support': 0.8.1
       '@tsconfig/node10': 1.0.11
@@ -5891,15 +5889,15 @@ snapshots:
       create-require: 1.1.1
       diff: 4.0.2
       make-error: 1.3.6
-      typescript: 5.8.2
+      typescript: 5.8.3
       v8-compile-cache-lib: 3.0.1
       yn: 3.1.1
     optionalDependencies:
       '@swc/core': 1.11.22
 
-  tsconfck@3.1.5(typescript@5.8.2):
+  tsconfck@3.1.5(typescript@5.8.3):
     optionalDependencies:
-      typescript: 5.8.2
+      typescript: 5.8.3
 
   tsconfig-paths-webpack-plugin@4.2.0:
     dependencies:
@@ -6031,11 +6029,11 @@ snapshots:
       - tsx
       - yaml
 
-  vite-tsconfig-paths@5.1.4(typescript@5.8.2)(vite@6.2.4(@types/node@22.15.2)(terser@5.39.0)(yaml@2.7.1)):
+  vite-tsconfig-paths@5.1.4(typescript@5.8.3)(vite@6.2.4(@types/node@22.15.2)(terser@5.39.0)(yaml@2.7.1)):
     dependencies:
       debug: 4.4.0
       globrex: 0.1.2
-      tsconfck: 3.1.5(typescript@5.8.2)
+      tsconfck: 3.1.5(typescript@5.8.3)
     optionalDependencies:
       vite: 6.2.4(@types/node@22.15.2)(terser@5.39.0)(yaml@2.7.1)
     transitivePeerDependencies:

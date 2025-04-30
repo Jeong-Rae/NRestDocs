@@ -1,37 +1,23 @@
 import type { HttpHeaders } from "@/types";
+import { toPairs } from "es-toolkit/compat";
+
+export const DEFAULT_REQUEST_HEADER_BLACKLIST: string[] = ["cookie", "host", "content-length"];
+
+export const DEFAULT_RESPONSE_HEADER_BLACKLIST: string[] = ["etag", "date", "connection"];
 
 /**
- * 문서화에 허용할 요청 헤더 목록
- */
-export const DEFAULT_REQUEST_HEADER_WHITELIST: string[] = [
-    "accept",
-    "authorization",
-    "content-type",
-    "user-agent",
-];
-
-/**
- * 문서화 허용할 응답 헤더 목록
- */
-export const DEFAULT_RESPONSE_HEADER_WHITELIST: string[] = [
-    "content-type",
-    "content-length",
-    "cache-control",
-];
-
-/**
- * 주어진 헤더를, 허용된 헤더 목록만 필터링한다.
+ * 주어진 헤더에서 블랙리스트 항목을 제거
  *
  * @param headers - 입력 헤더
- * @param allowedList - 허용할 헤더 이름 배열
- * @returns 허용된 헤더만 포함한 헤더
+ * @param blacklist - 제외할 헤더 이름 배열
+ * @returns 블랙리스트에 포함되지 않은 헤더
  */
-export function filterHeaders(headers: HttpHeaders, allowedList: string[]): HttpHeaders {
-    const allowedLower = allowedList.map((header) => header.toLowerCase());
+export function filterHeadersByBlacklist(headers: HttpHeaders, blacklist: string[]): HttpHeaders {
+    const blacklistLower = blacklist.map((header) => header.toLowerCase());
     const filtered: HttpHeaders = {};
 
-    for (const [key, value] of Object.entries(headers)) {
-        if (allowedLower.includes(key.toLowerCase())) {
+    for (const [key, value] of toPairs(headers)) {
+        if (!blacklistLower.includes(key.toLowerCase())) {
             filtered[key] = value;
         }
     }
@@ -39,19 +25,15 @@ export function filterHeaders(headers: HttpHeaders, allowedList: string[]): Http
 }
 
 /**
- * 요청 헤더를 기본 요청 헤더 whitelist로 필터링
- * @param headers - 입력 요청 헤더
- * @returns 필터링된 요청 헤더
+ * 요청 헤더에서 블랙리스트 항목 제거
  */
 export function filterRequestHeaders(headers: HttpHeaders): HttpHeaders {
-    return filterHeaders(headers, DEFAULT_REQUEST_HEADER_WHITELIST);
+    return filterHeadersByBlacklist(headers, DEFAULT_REQUEST_HEADER_BLACKLIST);
 }
 
 /**
- * 응답 헤더를 기본 응답 헤더 whitelist로 필터링
- * @param headers - 입력 응답 헤더
- * @returns 필터링된 응답 헤더
+ * 응답 헤더에서 블랙리스트 항목 제거
  */
 export function filterResponseHeaders(headers: HttpHeaders): HttpHeaders {
-    return filterHeaders(headers, DEFAULT_RESPONSE_HEADER_WHITELIST);
+    return filterHeadersByBlacklist(headers, DEFAULT_RESPONSE_HEADER_BLACKLIST);
 }

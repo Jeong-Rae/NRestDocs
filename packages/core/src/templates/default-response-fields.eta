@@ -1,0 +1,11 @@
+|===
+|Path|Type<% if (it.hasFormat) { %>|Format<% } %><% if (it.hasOptional) { %>|Optional<% } %>|Description
+
+<% for (let field of it.fields) { %>
+|`+<%= field.path %>+`
+|`+<%= field.type %>+`
+<% if (it.hasFormat) { %>|`+<%= field.format %>+`<% } %>
+<% if (it.hasOptional) { %>|<%= field.optional ? "true" : "false" %><% } %>
+|<%= field.description %>
+<% } %>
+|===

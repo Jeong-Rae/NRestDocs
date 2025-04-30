@@ -23,16 +23,26 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
-import type { HttpMethod, HttpStatusCode } from "@/types";
+import { createAsciiDocRenderer } from "@/renderers";
+import type { HttpBody, HttpHeaders, HttpMethod, HttpQuery, HttpStatusCode } from "@/types";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
+import Logger from "@/utils/logger";
 import type { Response as SupertestResponse } from "supertest";
+import type { DocumentSnapshot } from "./model";
 
 export class DocumentBuilder {
     // HTTP 실행 및 기본 정보
     private readonly supertestPromise: Promise<SupertestResponse>;
     private httpMethod?: HttpMethod;
-    private httpPath?: string;
-    private statusCode?: HttpStatusCode;
+    private httpUrl?: URL;
+    private httpStatusCode?: HttpStatusCode;
+    private httpRequestHeaders?: HttpHeaders;
+    private httpResponseHeaders?: HttpHeaders;
+    private httpRequestBody?: HttpBody;
+    private httpResponseBody?: HttpBody;
+    private httpRequestCookies?: string;
+    private httpResponseCookies?: string;
+    private httpRequestQuery?: HttpQuery;
 
     // 요청 파라미터
     private pathParameters?: PathParamDescriptor[];
@@ -60,6 +70,47 @@ export class DocumentBuilder {
 
     constructor(supertestPromise: Promise<SupertestResponse>) {
         this.supertestPromise = supertestPromise;
+    }
+
+    snapshot(): DocumentSnapshot {
+        const snapshot: DocumentSnapshot = {
+            http: {
+                method: this.httpMethod as HttpMethod,
+                url: this.httpUrl as URL,
+                statusCode: this.httpStatusCode as HttpStatusCode,
+                requestHeaders: this.httpRequestHeaders as HttpHeaders,
+                responseHeaders: this.httpResponseHeaders as HttpHeaders,
+                requestQuery: this.httpRequestQuery as HttpQuery,
+                requestBody: this.httpRequestBody as HttpBody,
+                responseBody: this.httpResponseBody as HttpBody,
+                requestCookies: this.httpRequestCookies as string,
+                responseCookies: this.httpResponseCookies as string,
+            },
+            parameters: {
+                path: this.pathParameters ?? [],
+                query: this.queryParameters ?? [],
+                form: this.formParameters ?? [],
+            },
+            fields: {
+                request: this.requestFields ?? [],
+                response: this.responseFields ?? [],
+            },
+            parts: {
+                part: this.requestParts ?? [],
+                body: this.requestPartBodies ?? {},
+                fields: this.requestPartFields ?? {},
+            },
+            headers: {
+                request: this.requestHeaders ?? [],
+                response: this.responseHeaders ?? [],
+            },
+            cookies: {
+                request: this.requestCookies ?? [],
+                response: this.responseCookies ?? [],
+            },
+        };
+
+        return snapshot;
     }
 
     /**
@@ -240,24 +291,33 @@ export class DocumentBuilder {
      */
     async doc(identifier: string): Promise<SupertestResponse> {
         const response = await this.supertestPromise;
+
         const httpRequest = extractHttpRequest(response);
         const {
             body: requestBody,
             headers: requestHeaders,
             method,
-            url: { pathname },
+            url,
+            cookies,
+            query,
         } = httpRequest;
+        this.httpMethod = method;
+        this.httpUrl = url;
+        this.httpRequestCookies = cookies;
+        this.httpRequestHeaders = requestHeaders;
+        this.httpRequestBody = requestBody as HttpBody;
+        this.httpRequestQuery = query;
+
         const httpResponse = extractHttpResponse(response);
         const { body: responseBody, headers: responseHeaders, statusCode } = httpResponse;
-        console.log(
-            requestBody,
-            requestHeaders,
-            method,
-            pathname,
-            responseBody,
-            responseHeaders,
-            statusCode
-        );
+        this.httpStatusCode = statusCode;
+        this.httpResponseHeaders = responseHeaders;
+        this.httpResponseBody = responseBody as HttpBody;
+
+        const renderer = await createAsciiDocRenderer();
+
+        const document = renderer.render(this.snapshot());
+        Logger.info(document);
 
         return response;
     }
