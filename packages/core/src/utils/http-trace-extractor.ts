@@ -6,7 +6,7 @@ import type {
     HttpStatusCode,
     SupertestRequest,
     SupertestResponse,
-} from "@/types";
+} from "@/core";
 
 /**
  * Supertest 응답 객체에서 요청 정보를 추출합니다.

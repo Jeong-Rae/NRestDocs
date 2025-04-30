@@ -1,4 +1,4 @@
-import type { HttpHeaders } from "@/types";
+import type { HttpHeaders } from "@/core";
 import { toPairs } from "es-toolkit/compat";
 
 export const DEFAULT_REQUEST_HEADER_BLACKLIST: string[] = ["cookie", "host", "content-length"];
