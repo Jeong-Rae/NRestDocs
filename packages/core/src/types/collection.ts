@@ -40,20 +40,17 @@ export function isKeyedArray<K extends string, V>(
  * @param value - Value to check
  * @returns true if the value is of type `Record<string, V>`
  * @example
- * isKeyedRecord( { u1: { id: 'u1', name: 'Alice' } }); // true
+ * isKeyedRecord('id', { u1: { id: 'u1', name: 'Alice' } }); // true
  */
 export function isKeyedRecord<K extends string, V>(
     key: K,
     value: unknown
 ): value is Record<string, V & { [P in K]: string }> {
-    if (value === null || typeof value !== "object" || Array.isArray(value)) {
-        return false;
-    }
-
-    return Object.values(value as Record<string, unknown>).every(
-        (item) =>
-            // biome-ignore lint/suspicious/noExplicitAny: use for type guard
-            typeof item === "object" && item !== null && typeof (item as any)[key] === "string"
+    return (
+        value !== null &&
+        typeof value === "object" &&
+        !Array.isArray(value) &&
+        Object.values(value).every((item) => typeof item === "object" && item !== null)
     );
 }
 
