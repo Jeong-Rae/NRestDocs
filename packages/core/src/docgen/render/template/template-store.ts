@@ -16,11 +16,11 @@ export const TEMPLATE_NAMES = [
     "path-parameters",
     "query-parameters",
     "request-body",
-    "request-cookie",
+    "request-cookies",
     "request-fields",
     "request-headers",
     "response-body",
-    "response-cookie",
+    "response-cookies",
     "response-fields",
     "response-headers",
 ] as const;

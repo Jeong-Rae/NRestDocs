@@ -1,18 +1,18 @@
-import type { HttpBody, HttpHeaders } from "@/core";
+import type { HeaderDescriptor, HttpBody } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 
 export type HttpResponseSnippetContext = {
     statusCode: number;
-    headers: HttpHeaders;
+    headers: HeaderDescriptor[];
     body: HttpBody;
 };
 
 export function buildHttpResponseContext(snapshot: DocumentSnapshot): HttpResponseSnippetContext {
-    const { statusCode, responseHeaders, responseBody } = snapshot.http;
+    const { statusCode, responseBody } = snapshot.http;
 
     return {
         statusCode,
-        headers: responseHeaders,
+        headers: [],
         body: responseBody,
     };
 }

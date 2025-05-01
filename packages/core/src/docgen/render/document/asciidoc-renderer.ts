@@ -1,5 +1,5 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
-import Logger from "@/utils/logger";
+import { compact, join } from "es-toolkit/compat";
 import {
     CurlSnippetRenderer,
     HttpRequestSnippetRenderer,
@@ -21,12 +21,13 @@ import { TemplateStore } from "../template";
 export class AsciiDocRenderer {
     constructor(private snippets: SnippetRenderer[] = []) {}
 
-    async render(snapshot: DocumentSnapshot): Promise<void> {
+    async render(snapshot: DocumentSnapshot): Promise<string> {
+        const parts: string[] = [];
         this.snippets.forEach(async (s) => {
             const part = await s.render(snapshot);
-            Logger.info(part);
+            console.log(part);
         });
-        // return join(compact(parts), "\n\n");
+        return join(compact(parts), "\n\n");
     }
 }
 

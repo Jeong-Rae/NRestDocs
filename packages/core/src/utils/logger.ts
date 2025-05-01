@@ -3,6 +3,7 @@ const COLORS = {
     info: "\x1b[34m",
     warn: "\x1b[33m",
     error: "\x1b[31m",
+    debug: "\x1b[32m",
 };
 
 class Logger {
@@ -16,6 +17,10 @@ class Logger {
 
     static error(...args: unknown[]): void {
         console.error(`${COLORS.error}[ERROR]${RESET}`, ...args);
+    }
+
+    static debug(...args: unknown[]): void {
+        console.debug(`${COLORS.debug}[DEBUG]${RESET}`, ...args);
     }
 }
 
