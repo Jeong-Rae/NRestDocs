@@ -335,7 +335,7 @@ export class DocumentBuilder {
         const renderer = await createAsciiDocRenderer();
 
         const document = await renderer.render(this.snapshot());
-        Logger.info(document);
+        Logger.info("[document]", document);
 
         return response;
     }

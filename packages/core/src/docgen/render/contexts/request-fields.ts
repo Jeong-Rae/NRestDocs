@@ -2,10 +2,11 @@ import { DescriptorKinds, type FieldDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { keyedArrayToRecord } from "@/types/collection";
 import { inferFieldType } from "@/utils/infer-field-type";
+import { renameKey } from "@/utils/rename";
 import { isEmpty, mapValues, merge, some, values } from "es-toolkit/compat";
 
 export type RequestFieldsSnippetContext = {
-    fields: FieldDescriptor[];
+    fields: (Omit<FieldDescriptor, "name"> & { path: string })[];
     hasFormat: boolean;
     hasOptional: boolean;
 };
@@ -32,7 +33,9 @@ export function buildRequestFieldsContext(snapshot: DocumentSnapshot): RequestFi
     const descriptorFieldRecords = keyedArrayToRecord("name", fieldDescriptors);
 
     const mergedFieldRecords = merge(rawFieldDescriptors, descriptorFieldRecords);
-    const fields = values(mergedFieldRecords);
+    const fields = renameKey(values(mergedFieldRecords), {
+        name: "path",
+    }) as (Omit<FieldDescriptor, "name"> & { path: string })[];
 
     const hasFormat = some(fields, (field) => Boolean(field.format));
     const hasOptional = some(fields, (field) => Boolean(field.optional));
