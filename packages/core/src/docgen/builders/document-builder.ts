@@ -34,7 +34,10 @@ import Logger from "@/utils/logger";
 import type { Response as SupertestResponse } from "supertest";
 import type { DocumentSnapshot } from "./model";
 
-export class DocumentBuilder {
+type PathSet = { __path: "set" };
+type PathUnset = { __path: "unset" };
+
+export class DocumentBuilder<PathState = PathUnset> {
     // HTTP 실행 및 기본 정보
     private readonly supertestPromise: Promise<SupertestResponse>;
     private httpMethod?: HttpMethod;
@@ -123,10 +126,10 @@ export class DocumentBuilder {
      * @param path {string} 등록 가능한 Path
      * @returns
      * @example
-     * / withRequestPath("/users/:userId/posts/:postId")
-     * / withRequestPath("/users/{userId}/posts/{postId}")
+     * / setRequestPath("/users/:userId/posts/:postId")
+     * / setRequestPath("/users/{userId}/posts/{postId}")
      */
-    withRequestPath(path: string): this {
+    setRequestPath(path: string): DocumentBuilder<PathSet> {
         this.httpRequestPath = path;
         return this;
     }
@@ -307,7 +310,13 @@ export class DocumentBuilder {
      * @param identifier document identifier
      * @returns supertest response
      */
-    async doc(identifier: string): Promise<SupertestResponse> {
+    async doc(this: DocumentBuilder<PathSet>, identifier: string): Promise<SupertestResponse> {
+        if (!this.httpRequestPath) {
+            throw new Error(
+                "Request Path is not set. Use `setRequestPath()` to set the request path"
+            );
+        }
+
         const response = await this.supertestPromise;
 
         const httpRequest = extractHttpRequest(response);
@@ -346,6 +355,8 @@ export class DocumentBuilder {
  * @param supertestPromise supertest Promise
  * @returns DocRequestBuilder
  */
-export function docRequest(supertestPromise: Promise<SupertestResponse>): DocumentBuilder {
+export function docRequest(
+    supertestPromise: Promise<SupertestResponse>
+): DocumentBuilder<PathUnset> {
     return new DocumentBuilder(supertestPromise);
 }

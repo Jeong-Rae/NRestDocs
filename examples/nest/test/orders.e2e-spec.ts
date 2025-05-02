@@ -33,6 +33,7 @@ describe("OrdersController (e2e)", () => {
                     expect(res.body.qty).toEqual(productData.qty);
                 })
         )
+            .setRequestPath("/orders")
             .withRequestFields([
                 defineField("productId").type("number").description("ID of the product"),
                 defineField("qty").type("number").description("Quantity ordered"),
@@ -59,7 +60,7 @@ describe("OrdersController (e2e)", () => {
                     expect(res.body.qty).toBeDefined();
                 })
         )
-            .withRequestPath("/orders/{id}")
+            .setRequestPath("/orders/:id")
             .withPathParameters([definePath("id").type("number").description("Order identifier")])
             .withResponseFields([
                 defineField("orderId").type("number"),
@@ -82,7 +83,7 @@ describe("OrdersController (e2e)", () => {
                     expect(res.body.message).toEqual("Order deleted successfully");
                 })
         )
-            .withRequestPath("/orders/{id}")
+            .setRequestPath("/orders/:id")
             .withPathParameters([definePath("id").type("number").description("Order identifier")])
             .withResponseFields([
                 defineField("orderId").type("number"),
