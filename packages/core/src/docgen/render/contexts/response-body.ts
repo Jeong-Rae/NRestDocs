@@ -2,18 +2,16 @@ import type { DocumentSnapshot } from "@/docgen/builders";
 import { formatJson } from "@/utils/format";
 import { isEmpty } from "es-toolkit/compat";
 import type { Context } from "./context.type";
-
-export type RequestBodySnippetContext = {
+export type ResponseBodySnippetContext = {
     language: string;
     body: string;
 };
 
-export function buildRequestBodyContext(
+export function buildResponseBodyContext(
     snapshot: DocumentSnapshot
-): Context<RequestBodySnippetContext> {
-    const { requestBody } = snapshot.http;
-
-    if (isEmpty(requestBody)) {
+): Context<ResponseBodySnippetContext> {
+    const { responseBody } = snapshot.http;
+    if (isEmpty(responseBody)) {
         return {
             context: {
                 language: "json",
@@ -25,7 +23,7 @@ export function buildRequestBodyContext(
     return {
         context: {
             language: "json",
-            body: `${formatJson(requestBody)}`,
+            body: `${formatJson(responseBody)}`,
         },
         isEmpty: false,
     };

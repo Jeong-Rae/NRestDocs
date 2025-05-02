@@ -4,18 +4,18 @@ import { renameKey } from "@/utils/rename";
 import { isEmpty, some, values } from "es-toolkit/compat";
 import type { Context } from "./context.type";
 
-export type RequestFieldsSnippetContext = {
+export type ResponseFieldsSnippetContext = {
     fields: (Omit<FieldDescriptor, "name"> & { path: string })[];
     hasFormat: boolean;
     hasOptional: boolean;
 };
 
-export function buildRequestFieldsContext(
+export function buildResponseFieldsContext(
     snapshot: DocumentSnapshot
-): Context<RequestFieldsSnippetContext> {
-    const { request: fieldDescriptors } = snapshot.fields;
+): Context<ResponseFieldsSnippetContext> {
+    const { response } = snapshot.fields;
 
-    if (isEmpty(fieldDescriptors)) {
+    if (isEmpty(response)) {
         return {
             context: {
                 fields: [],
@@ -26,7 +26,7 @@ export function buildRequestFieldsContext(
         };
     }
 
-    const fields = renameKey(values(fieldDescriptors), {
+    const fields = renameKey(values(response), {
         name: "path",
     }) as (Omit<FieldDescriptor, "name"> & { path: string })[];
 

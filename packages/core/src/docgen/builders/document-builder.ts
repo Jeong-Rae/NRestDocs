@@ -34,7 +34,10 @@ import Logger from "@/utils/logger";
 import type { Response as SupertestResponse } from "supertest";
 import type { DocumentSnapshot } from "./model";
 
-export class DocumentBuilder {
+type PathSet = { __path: "set" };
+type PathUnset = { __path: "unset" };
+
+export class DocumentBuilder<PathState = PathUnset> {
     // HTTP 실행 및 기본 정보
     private readonly supertestPromise: Promise<SupertestResponse>;
     private httpMethod?: HttpMethod;
@@ -47,7 +50,7 @@ export class DocumentBuilder {
     private httpRequestCookies?: string;
     private httpResponseCookies?: string;
     private httpRequestQuery?: HttpQuery;
-
+    private httpRequestPath?: string;
     // 요청 파라미터
     private pathParameters?: PathParamDescriptor[];
     private queryParameters?: QueryParamDescriptor[];
@@ -81,6 +84,7 @@ export class DocumentBuilder {
             http: {
                 method: this.httpMethod as HttpMethod,
                 url: this.httpUrl as URL,
+                path: this.httpRequestPath as string,
                 statusCode: this.httpStatusCode as HttpStatusCode,
                 requestHeaders: this.httpRequestHeaders as HttpHeaders,
                 responseHeaders: this.httpResponseHeaders as HttpHeaders,
@@ -115,6 +119,19 @@ export class DocumentBuilder {
         };
 
         return snapshot;
+    }
+
+    /**
+     * Request Path를 등록할 수 있다.
+     * @param path {string} 등록 가능한 Path
+     * @returns
+     * @example
+     * / setRequestPath("/users/:userId/posts/:postId")
+     * / setRequestPath("/users/{userId}/posts/{postId}")
+     */
+    setRequestPath(path: string): DocumentBuilder<PathSet> {
+        this.httpRequestPath = path;
+        return this;
     }
 
     /**
@@ -293,7 +310,13 @@ export class DocumentBuilder {
      * @param identifier document identifier
      * @returns supertest response
      */
-    async doc(identifier: string): Promise<SupertestResponse> {
+    async doc(this: DocumentBuilder<PathSet>, identifier: string): Promise<SupertestResponse> {
+        if (!this.httpRequestPath) {
+            throw new Error(
+                "Request Path is not set. Use `setRequestPath()` to set the request path"
+            );
+        }
+
         const response = await this.supertestPromise;
 
         const httpRequest = extractHttpRequest(response);
@@ -320,8 +343,8 @@ export class DocumentBuilder {
 
         const renderer = await createAsciiDocRenderer();
 
-        const document = renderer.render(this.snapshot());
-        Logger.info(document);
+        const document = await renderer.render(this.snapshot());
+        Logger.info("[document]", document);
 
         return response;
     }
@@ -332,6 +355,8 @@ export class DocumentBuilder {
  * @param supertestPromise supertest Promise
  * @returns DocRequestBuilder
  */
-export function docRequest(supertestPromise: Promise<SupertestResponse>): DocumentBuilder {
+export function docRequest(
+    supertestPromise: Promise<SupertestResponse>
+): DocumentBuilder<PathUnset> {
     return new DocumentBuilder(supertestPromise);
 }

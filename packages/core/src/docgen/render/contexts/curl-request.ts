@@ -1,7 +1,8 @@
+import type { HttpBody, HttpCookies, HttpHeaders, HttpMethod, HttpQuery } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { MissingFieldError } from "@/errors";
-import type { HttpBody, HttpCookies, HttpHeaders, HttpMethod, HttpQuery } from "@/types";
 import { compact, isEmpty, join, toPairs } from "es-toolkit/compat";
+import type { Context } from "./context.type";
 
 export type CurlSnippetContext = {
     method: string;
@@ -9,7 +10,7 @@ export type CurlSnippetContext = {
     options: string;
 };
 
-export function buildCurlContext(snapshot: DocumentSnapshot): CurlSnippetContext {
+export function buildCurlContext(snapshot: DocumentSnapshot): Context<CurlSnippetContext> {
     const { method, url, requestHeaders, requestCookies, requestQuery, requestBody } =
         snapshot.http;
 
@@ -30,9 +31,12 @@ export function buildCurlContext(snapshot: DocumentSnapshot): CurlSnippetContext
     ]);
 
     return {
-        method: method.toUpperCase(),
-        url: finalUrl.toString(),
-        options: join(options, " ") + "\n",
+        context: {
+            method: method.toUpperCase(),
+            url: finalUrl.toString(),
+            options: join(options, " ") + "\n",
+        },
+        isEmpty: false,
     };
 }
 

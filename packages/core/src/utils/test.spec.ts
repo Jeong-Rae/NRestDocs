@@ -1,90 +1,71 @@
 import { describe, expect, it } from "vitest";
 import { given } from "./test";
 
-describe("test", () => {
-    describe("given", () => {
-        it("should be able to perform a then assertion with a synchronous initial value", async () => {
-            // Given
-            const initialValue = 10;
+describe("given", () => {
+    it("should transform a synchronous value through when() and resolve in then()", async () => {
+        await given(1)
+            .when((x) => x + 1)
+            .then((v) => expect(v).toBe(2));
+    });
 
-            // When & Then
-            await given(initialValue).then((value) => {
-                expect(value).toBe(initialValue);
+    it("should accept an asynchronous initial value and resolve correctly", async () => {
+        await given(Promise.resolve("lyght"))
+            .when((x) => x.toUpperCase())
+            .then((v) => expect(v).toBe("LYGHT"));
+    });
+
+    it("should propagate through multiple when() calls in sequence", async () => {
+        await given(1)
+            .when((x) => x + 2) // 3
+            .when((x) => x * 4) // 12
+            .then((v) => expect(v).toBe(12));
+    });
+
+    it("should await asynchronous transformation inside when()", async () => {
+        await given("nrest")
+            .when(async (x) => x + "docs")
+            .then((v) => expect(v).toBe("nrestdocs"));
+    });
+
+    it("should catch a synchronous error thrown inside when()", async () => {
+        await given(1)
+            .when(() => {
+                throw new Error("fail-sync");
+            })
+            .catch((e) => {
+                expect(e).toBeInstanceOf(Error);
+                expect((e as Error).message).toBe("fail-sync");
             });
-        });
+    });
 
-        it("should be able to perform a then assertion with an asynchronous initial value", async () => {
-            // Given
-            const initialValue = Promise.resolve(20);
-
-            // When & Then
-            await given(initialValue).then((value) => {
-                expect(value).toBe(20);
+    it("should catch an asynchronous error thrown inside when()", async () => {
+        await given(1)
+            .when(async () => {
+                throw new Error("fail-async");
+            })
+            .catch((e) => {
+                expect((e as Error).message).toBe("fail-async");
             });
+    });
+
+    it("should throw the default error if catch() is called but no error occurred", async () => {
+        await given("ok").catch((e) => {
+            expect((e as Error).message).toBe("Expected error, but none was thrown.");
         });
+    });
 
-        it("should be able to transform the value synchronously using when", async () => {
-            // Given
-            const initialValue = 5;
-            const transformFn = (v: number) => v * 2;
+    it("should transform complex types and preserve result across async chain", async () => {
+        await given({ name: "foo" })
+            .when((x) => x.name.toUpperCase())
+            .then((s) => expect(s).toBe("FOO"));
+    });
 
-            // When & Then
-            await given(initialValue)
-                .when(transformFn)
-                .then((value) => {
-                    expect(value).toBe(10);
-                });
-        });
-
-        it("should be able to transform the value asynchronously using when", async () => {
-            // Given
-            const initialValue = 5;
-            const asyncTransformFn = async (v: number) => {
-                await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate async work
-                return v * 3;
-            };
-
-            // When & Then
-            await given(initialValue)
-                .when(asyncTransformFn)
-                .then((value) => {
-                    expect(value).toBe(15);
-                });
-        });
-
-        it("should be able to chain multiple when calls to transform the value sequentially", async () => {
-            // Given
-            const initialValue = 2;
-            const addOne = (v: number) => v + 1;
-            const multiplyByTwo = async (v: number) => {
-                await new Promise((resolve) => setTimeout(resolve, 5));
-                return v * 2;
-            };
-            const numberToString = (v: number) => `Result: ${v}`;
-
-            // When & Then
-            await given(initialValue)
-                .when(addOne)
-                .when(multiplyByTwo)
-                .when(numberToString)
-                .then((value) => {
-                    expect(value).toBe("Result: 6");
-                });
-        });
-
-        it("should be able to perform asynchronous assertions within then", async () => {
-            // Given
-            const initialValue = true;
-            let asyncCheckDone = false;
-
-            // When & Then
-            await given(initialValue).then(async (value) => {
-                expect(value).toBe(true);
-                await new Promise((resolve) => setTimeout(resolve, 10)); // Simulate async assertion part
-                asyncCheckDone = true;
+    it("should allow asynchronous assertions inside catch()", async () => {
+        await given(0)
+            .when(() => Promise.reject(new Error("deep")))
+            .catch(async (err) => {
+                await Promise.resolve();
+                expect((err as Error).message).toBe("deep");
             });
-
-            expect(asyncCheckDone).toBe(true);
-        });
     });
 });

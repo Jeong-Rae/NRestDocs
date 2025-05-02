@@ -8,11 +8,20 @@ export class EtaTemplateRenderer implements TemplateRenderer {
     constructor() {
         this.eta = new Eta({
             autoEscape: false,
+            autoTrim: false,
         });
     }
 
     async render(template: string, data: unknown): Promise<string> {
-        Logger.info(template, data);
-        return this.eta.renderStringAsync(template, data as object);
+        try {
+            const output = await this.eta.renderStringAsync(template, data as object);
+            return output;
+        } catch (err) {
+            Logger.error("[ETA] Template rendering failed.");
+            Logger.error("[ETA] Error message:", (err as Error).message);
+            Logger.error("[ETA] Stack trace:", (err as Error).stack);
+            Logger.error("[ETA] Render data at failure:", JSON.stringify(data, null, 2));
+            throw err;
+        }
     }
 }

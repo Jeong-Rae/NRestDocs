@@ -5,5 +5,5 @@ HTTP/1.1 <%= it.statusCode %> <%= it.statusReason %>
 <%= header.name %>: <%= header.value %>
 <% } %>
 
-<%= it.responseBody %>
+<%= it.body %>
 ----

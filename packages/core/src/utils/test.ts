@@ -17,17 +17,35 @@ export type Stream<T> = {
      * Supports asynchronous assertions as well.
      */
     then: (assertFn: (value: T) => Awaitable<void>) => Promise<void>;
+
+    /**
+     * Performs assertion on the error.
+     * Supports asynchronous assertions as well.
+     */
+    catch: (assertErr: (error: unknown) => Awaitable<void>) => Promise<void>;
 };
 
 export function given<const T>(initial: Awaitable<T>): Stream<Awaited<T>> {
     const current = Promise.resolve(initial);
 
     const stream: Stream<unknown> = {
-        when<U>(fn: (value: unknown) => Awaitable<U>) {
-            return given(current.then(fn)) as Stream<Awaited<U>>;
+        when(fn) {
+            const next = current.then(fn);
+            return given(next) as Stream<Awaited<ReturnType<typeof fn>>>;
         },
+
         async then(assertFn) {
-            await assertFn(await current);
+            const value = await current;
+            await assertFn(value);
+        },
+
+        async catch(assertErr) {
+            try {
+                await current;
+                throw new Error("Expected error, but none was thrown.");
+            } catch (e) {
+                await assertErr(e);
+            }
         },
     };
 

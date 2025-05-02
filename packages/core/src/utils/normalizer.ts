@@ -4,7 +4,6 @@ import type { TypeSet } from "@/descriptors/state";
 import type { DescriptorInput, PartialDescriptor } from "@/inputs";
 import { isKeyedRecord, keyedRecordToArray } from "@/types/collection";
 import { isBuilder } from "./is-builder";
-import Logger from "./logger";
 
 function withDefaults<K extends DescriptorKind>(
     kind: K,
@@ -43,7 +42,6 @@ export function applyNormalize<
     K extends DescriptorKind,
     D extends BaseDescriptor<K, AllowedType<K>>,
 >(kind: K, input: DescriptorInput<K, D>): D[] {
-    Logger.info(isKeyedRecord("name", { q: {}, page: { type: "number" } }));
     const arrayInput = normalizeToArray(input);
     return arrayInput.map((item) => toDescriptor(kind, item));
 }

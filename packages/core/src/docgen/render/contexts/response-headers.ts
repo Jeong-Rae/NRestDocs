@@ -3,18 +3,18 @@ import type { DocumentSnapshot } from "@/docgen/builders";
 import { isEmpty, some } from "es-toolkit/compat";
 import type { Context } from "./context.type";
 
-export type RequestHeadersSnippetContext = {
+export type ResponseHeadersSnippetContext = {
     headers: HeaderDescriptor[];
     hasFormat: boolean;
     hasOptional: boolean;
 };
 
-export function buildRequestHeadersContext(
+export function buildResponseHeadersContext(
     snapshot: DocumentSnapshot
-): Context<RequestHeadersSnippetContext> {
-    const { request } = snapshot.headers;
+): Context<ResponseHeadersSnippetContext> {
+    const { response } = snapshot.headers;
 
-    if (isEmpty(request)) {
+    if (isEmpty(response)) {
         return {
             context: {
                 headers: [],
@@ -25,12 +25,12 @@ export function buildRequestHeadersContext(
         };
     }
 
-    const hasFormat = some(request, (field) => Boolean(field.format));
-    const hasOptional = some(request, (field) => Boolean(field.optional));
+    const hasFormat = some(response, (field) => Boolean(field.format));
+    const hasOptional = some(response, (field) => Boolean(field.optional));
 
     return {
         context: {
-            headers: request,
+            headers: response,
             hasFormat,
             hasOptional,
         },

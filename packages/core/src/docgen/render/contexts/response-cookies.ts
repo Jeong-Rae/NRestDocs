@@ -3,17 +3,17 @@ import type { DocumentSnapshot } from "@/docgen/builders";
 import { isEmpty, some } from "es-toolkit/compat";
 import type { Context } from "./context.type";
 
-export type RequestCookiesSnippetContext = {
+export type ResponseCookiesSnippetContext = {
     cookies: CookieDescriptor[];
     hasOptional: boolean;
 };
 
-export function buildRequestCookiesContext(
+export function buildResponseCookiesContext(
     snapshot: DocumentSnapshot
-): Context<RequestCookiesSnippetContext> {
-    const { request } = snapshot.cookies;
+): Context<ResponseCookiesSnippetContext> {
+    const { response } = snapshot.cookies;
 
-    if (isEmpty(request)) {
+    if (isEmpty(response)) {
         return {
             context: {
                 cookies: [],
@@ -23,11 +23,11 @@ export function buildRequestCookiesContext(
         };
     }
 
-    const hasOptional = some(request, (field) => Boolean(field.optional));
+    const hasOptional = some(response, (field) => Boolean(field.optional));
 
     return {
         context: {
-            cookies: request,
+            cookies: response,
             hasOptional,
         },
         isEmpty: false,

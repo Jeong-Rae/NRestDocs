@@ -4,8 +4,6 @@ import request from "supertest";
 import type { App } from "supertest/types";
 import { AppModule } from "../src/app.module";
 
-import { definePathParam, docRequest } from "@nrestdocs/core";
-
 describe("Users API (e2e)", () => {
     let app: INestApplication<App>;
 
@@ -20,13 +18,44 @@ describe("Users API (e2e)", () => {
     afterAll(async () => await app.close());
 
     it("POST /users", async () => {
-        const dto = { name: "Alice" };
-        await docRequest(request(app.getHttpServer()).post("/users").send(dto).expect(201))
-            .withDescription("Create user")
-            .withPathParameters([
-                definePathParam("userId").type("string").description("User ID"),
-                { name: "postId", type: "string", description: "Post ID" },
-            ])
-            .doc("users-create");
+        const userName = "Test User";
+        return request(app.getHttpServer())
+            .post("/users")
+            .send({ name: userName })
+            .expect(201)
+            .expect((res) => {
+                expect(res.body).toHaveProperty("id");
+                expect(res.body.name).toEqual(userName);
+            });
+    });
+
+    it("GET /users/:id", async () => {
+        const userId = 1;
+        return request(app.getHttpServer())
+            .get(`/users/${userId}`)
+            .expect(200)
+            .expect({ id: userId, name: "홍길동" });
+    });
+
+    it("GET /users/:id/settings", async () => {
+        const userId = 1;
+        return request(app.getHttpServer())
+            .get(`/users/${userId}/settings`)
+            .expect(200)
+            .expect({ userId: userId, theme: "dark", notifications: true });
+    });
+
+    it("PUT /users/:id/profile", async () => {
+        const userId = 1;
+        const profileData = { email: "test@example.com" };
+        return request(app.getHttpServer())
+            .put(`/users/${userId}/profile`)
+            .send(profileData)
+            .expect(200)
+            .expect({
+                userId: userId,
+                message: "Profile updated successfully",
+                profile: profileData,
+            });
     });
 });

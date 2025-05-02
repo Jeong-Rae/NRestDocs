@@ -3,7 +3,13 @@ import { toPairs } from "es-toolkit/compat";
 
 export const DEFAULT_REQUEST_HEADER_BLACKLIST: string[] = ["cookie", "host", "content-length"];
 
-export const DEFAULT_RESPONSE_HEADER_BLACKLIST: string[] = ["etag", "date", "connection"];
+export const DEFAULT_RESPONSE_HEADER_BLACKLIST: string[] = [
+    "x-powered-by",
+    "etag",
+    "date",
+    "connection",
+    "content-length",
+];
 
 /**
  * 주어진 헤더에서 블랙리스트 항목을 제거
