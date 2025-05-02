@@ -8,6 +8,7 @@ export class EtaTemplateRenderer implements TemplateRenderer {
     constructor() {
         this.eta = new Eta({
             autoEscape: false,
+            autoTrim: false,
         });
     }
 

@@ -1,5 +1,6 @@
 export * from "./curl-request";
 export * from "./http-request";
+export * from "./http-response";
 export * from "./path-parameters";
 export * from "./query-parameters";
 export * from "./request-headers";

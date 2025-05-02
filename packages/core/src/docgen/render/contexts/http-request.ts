@@ -1,21 +1,27 @@
-import type { HeaderDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { formatJson } from "@/utils/format";
+import { filterRequestHeaders } from "@/utils/header-filter";
+import { isEmpty, toPairs } from "es-toolkit/compat";
 
 export type HttpRequestSnippetContext = {
     method: string;
     path: string;
-    headers: HeaderDescriptor[];
+    headers: { name: string; value: string }[];
     body: string;
 };
 
 export function buildHttpRequestContext(snapshot: DocumentSnapshot): HttpRequestSnippetContext {
-    const { method, path, requestBody } = snapshot.http;
+    const { method, url, requestBody, requestHeaders } = snapshot.http;
+
+    const headers = toPairs(filterRequestHeaders(requestHeaders)).map(([name, value]) => ({
+        name,
+        value,
+    }));
 
     return {
         method,
-        path,
-        headers: [],
-        body: `${formatJson(requestBody)}\n`,
+        path: url.pathname,
+        headers,
+        body: isEmpty(requestBody) ? "" : `${formatJson(requestBody)}\n`,
     };
 }
