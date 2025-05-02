@@ -20,7 +20,7 @@ describe("buildPathParametersContext", () => {
             .when(({ snapshot }) =>
                 buildPathParametersContext(snapshot as unknown as DocumentSnapshot)
             )
-            .then((context) => expect(context).toEqual(expectedContext));
+            .then(({ context }) => expect(context).toEqual(expectedContext));
     });
 
     it("should return context with parameters but false flags when parameters lack format and optional.", async () => {
@@ -38,7 +38,7 @@ describe("buildPathParametersContext", () => {
 
         await given({ snapshot })
             .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
-            .then((context) => expect(context).toEqual(expectedContext));
+            .then(({ context }) => expect(context).toEqual(expectedContext));
     });
 
     it("should set hasFormat to true if any parameter has a format.", async () => {
@@ -53,7 +53,7 @@ describe("buildPathParametersContext", () => {
 
         await given({ snapshot })
             .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
-            .then((context) => {
+            .then(({ context }) => {
                 expect(context.path).toBe("/users/:userId/posts/:postId");
                 expect(context.parameters).toEqual(parameters);
                 expect(context.hasFormat).toBe(true);
@@ -73,7 +73,7 @@ describe("buildPathParametersContext", () => {
 
         await given({ snapshot })
             .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
-            .then((context) => {
+            .then(({ context }) => {
                 expect(context.path).toBe("/users/:userId");
                 expect(context.parameters).toEqual(parameters);
                 expect(context.hasFormat).toBe(false);
@@ -93,7 +93,7 @@ describe("buildPathParametersContext", () => {
 
         await given({ snapshot })
             .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
-            .then((context) => {
+            .then(({ context }) => {
                 expect(context.path).toBe("/api/:version/users/:userId");
                 expect(context.parameters).toEqual(parameters);
                 expect(context.hasFormat).toBe(true);
@@ -111,7 +111,7 @@ describe("buildPathParametersContext", () => {
 
         await given({ snapshot })
             .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
-            .then((context) => {
+            .then(({ context }) => {
                 expect(context.path).toBe(specificPath);
                 expect(context.parameters).toEqual(parameters);
                 expect(context.hasFormat).toBe(false);

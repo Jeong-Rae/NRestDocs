@@ -1,21 +1,10 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { compact, join } from "es-toolkit/compat";
 import {
-    CurlSnippetRenderer,
-    HttpRequestSnippetRenderer,
-    HttpResponseSnippetRenderer,
-    RequestBodySnippetRenderer,
-    RequestCookiesSnippetRenderer,
-    RequestFieldsSnippetRenderer,
-    RequestHeadersSnippetRenderer,
-    ResponseBodySnippetRenderer,
-    ResponseCookiesSnippetRenderer,
-    ResponseFieldsSnippetRenderer,
-    ResponseHeadersSnippetRenderer,
+    // PathParametersSnippetRenderer,
+    QueryParametersSnippetRenderer,
+    type SnippetRenderer,
 } from "../snippet";
-import { PathParametersSnippetRenderer } from "../snippet/path-parameters";
-import { QueryParametersSnippetRenderer } from "../snippet/query-parameters";
-import type { SnippetRenderer } from "../snippet/snippet-renderer.type";
 import { TemplateStore } from "../template";
 
 export class AsciiDocRenderer {
@@ -36,19 +25,19 @@ export async function createAsciiDocRenderer(): Promise<AsciiDocRenderer> {
     await store.load();
 
     const snippets = [
-        new CurlSnippetRenderer(store),
-        new HttpRequestSnippetRenderer(store),
-        new HttpResponseSnippetRenderer(store),
-        new PathParametersSnippetRenderer(store),
+        // new CurlSnippetRenderer(store),
+        // new HttpRequestSnippetRenderer(store),
+        // new HttpResponseSnippetRenderer(store),
+        // new PathParametersSnippetRenderer(store),
         new QueryParametersSnippetRenderer(store),
-        new RequestHeadersSnippetRenderer(store),
-        new RequestCookiesSnippetRenderer(store),
-        new RequestBodySnippetRenderer(store),
-        new RequestFieldsSnippetRenderer(store),
-        new ResponseHeadersSnippetRenderer(store),
-        new ResponseCookiesSnippetRenderer(store),
-        new ResponseBodySnippetRenderer(store),
-        new ResponseFieldsSnippetRenderer(store),
+        // new RequestHeadersSnippetRenderer(store),
+        // new ResponseHeadersSnippetRenderer(store),
+        // new RequestCookiesSnippetRenderer(store),
+        // new ResponseCookiesSnippetRenderer(store),
+        // new RequestBodySnippetRenderer(store),
+        // new ResponseBodySnippetRenderer(store),
+        // new RequestFieldsSnippetRenderer(store),
+        // new ResponseFieldsSnippetRenderer(store),
     ];
     return new AsciiDocRenderer(snippets);
 }

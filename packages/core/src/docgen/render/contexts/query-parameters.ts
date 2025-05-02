@@ -1,6 +1,7 @@
 import type { QueryParamDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { isEmpty, some } from "es-toolkit/compat";
+import type { Context } from "./context.type.";
 
 export type QueryParametersSnippetContext = {
     parameters: QueryParamDescriptor[];
@@ -11,15 +12,18 @@ export type QueryParametersSnippetContext = {
 
 export function buildQueryParametersContext(
     snapshot: DocumentSnapshot
-): QueryParametersSnippetContext {
+): Context<QueryParametersSnippetContext> {
     const { query: queryParameters } = snapshot.parameters;
 
     if (isEmpty(queryParameters)) {
         return {
-            parameters: [],
-            hasType: false,
-            hasFormat: false,
-            hasOptional: false,
+            context: {
+                parameters: [],
+                hasType: false,
+                hasFormat: false,
+                hasOptional: false,
+            },
+            isEmpty: true,
         };
     }
 
@@ -28,9 +32,12 @@ export function buildQueryParametersContext(
     const hasOptional = some(queryParameters, (field) => Boolean(field.optional));
 
     return {
-        parameters: queryParameters,
-        hasType,
-        hasFormat,
-        hasOptional,
+        context: {
+            parameters: queryParameters,
+            hasType,
+            hasFormat,
+            hasOptional,
+        },
+        isEmpty: false,
     };
 }

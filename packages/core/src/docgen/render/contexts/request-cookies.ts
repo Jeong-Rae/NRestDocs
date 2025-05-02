@@ -1,6 +1,6 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { fromPairs, isEmpty, merge, some, split, toPairs, trim, values } from "es-toolkit/compat";
-
+import type { Context } from "./context.type.";
 type Cookie = {
     name: string;
     type: string;
@@ -15,9 +15,19 @@ export type RequestCookiesSnippetContext = {
 
 export function buildRequestCookiesContext(
     snapshot: DocumentSnapshot
-): RequestCookiesSnippetContext {
+): Context<RequestCookiesSnippetContext> {
     const { requestCookies } = snapshot.http;
     const { request } = snapshot.cookies;
+
+    if (isEmpty(request)) {
+        return {
+            context: {
+                cookies: [],
+                hasOptional: false,
+            },
+            isEmpty: true,
+        };
+    }
 
     const cookiePairs = split(requestCookies, ";")
         .map((pair) => {
@@ -60,7 +70,10 @@ export function buildRequestCookiesContext(
     const hasOptional = some(cookies, (field) => Boolean(field.optional));
 
     return {
-        cookies,
-        hasOptional,
+        context: {
+            cookies,
+            hasOptional,
+        },
+        isEmpty: false,
     };
 }

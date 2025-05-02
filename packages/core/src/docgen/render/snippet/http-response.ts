@@ -12,7 +12,11 @@ export class HttpResponseSnippetRenderer implements SnippetRenderer {
     async render(snapshot: DocumentSnapshot): Promise<string> {
         const { extension, content } = this.store.get(this.templateName);
         const renderer = createTemplateRenderer(extension);
-        const context = buildHttpResponseContext(snapshot);
+        const { context, isEmpty } = buildHttpResponseContext(snapshot);
+
+        if (isEmpty) {
+            return "";
+        }
 
         const result = await renderer.render(content, context);
         return result;

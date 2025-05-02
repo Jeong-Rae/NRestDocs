@@ -2,7 +2,7 @@ import { DescriptorKinds, type HeaderDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { keyedArrayToRecord } from "@/types/collection";
 import { isEmpty, mapValues, merge, some, values } from "es-toolkit/compat";
-
+import type { Context } from "./context.type.";
 export type ResponseHeadersSnippetContext = {
     headers: HeaderDescriptor[];
     hasFormat: boolean;
@@ -11,15 +11,18 @@ export type ResponseHeadersSnippetContext = {
 
 export function buildResponseHeadersContext(
     snapshot: DocumentSnapshot
-): ResponseHeadersSnippetContext {
+): Context<ResponseHeadersSnippetContext> {
     const { responseHeaders } = snapshot.http;
     const { response: headerDescriptors } = snapshot.headers;
 
     if (isEmpty(responseHeaders) && isEmpty(headerDescriptors)) {
         return {
-            headers: [],
-            hasFormat: false,
-            hasOptional: false,
+            context: {
+                headers: [],
+                hasFormat: false,
+                hasOptional: false,
+            },
+            isEmpty: true,
         };
     }
 
@@ -39,8 +42,11 @@ export function buildResponseHeadersContext(
     const hasOptional = some(headers, (field) => Boolean(field.optional));
 
     return {
-        headers,
-        hasFormat,
-        hasOptional,
+        context: {
+            headers,
+            hasFormat,
+            hasOptional,
+        },
+        isEmpty: false,
     };
 }

@@ -1,21 +1,24 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { MissingFieldError } from "@/errors";
+import { given } from "@/utils/test";
 import { describe, expect, it } from "vitest";
 import { buildCurlContext } from "./curl-request";
 
 describe("buildCurlContext", () => {
-    it("should throw MissingFieldError when method is missing", () => {
+    it("should throw MissingFieldError when method is missing", async () => {
         const snapshot = {
             http: {
                 method: undefined,
                 url: new URL("https://api.example.com/users"),
             },
-        } as unknown as DocumentSnapshot;
+        };
 
-        expect(() => buildCurlContext(snapshot)).toThrow(MissingFieldError);
+        await given({ snapshot })
+            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .then(({ context }) => expect(context).toThrow(MissingFieldError));
     });
 
-    it("should throw MissingFieldError when url is missing", () => {
+    it("should throw MissingFieldError when url is missing", async () => {
         const snapshot = {
             http: {
                 method: "GET",
@@ -23,10 +26,12 @@ describe("buildCurlContext", () => {
             },
         } as unknown as DocumentSnapshot;
 
-        expect(() => buildCurlContext(snapshot)).toThrow(MissingFieldError);
+        await given({ snapshot })
+            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .then(({ context }) => expect(context).toThrow(MissingFieldError));
     });
 
-    it("should build context with only method and url", () => {
+    it("should build context with only method and url", async () => {
         const snapshot = {
             http: {
                 method: "GET",
@@ -34,13 +39,16 @@ describe("buildCurlContext", () => {
             },
         } as unknown as DocumentSnapshot;
 
-        const ctx = buildCurlContext(snapshot);
-        expect(ctx.method).toBe("GET");
-        expect(ctx.url).toBe("https://api.example.com/products");
-        expect(ctx.options.trim()).toBe("-X GET");
+        await given({ snapshot })
+            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .then(({ context }) => {
+                expect(context.method).toBe("GET");
+                expect(context.url).toBe("https://api.example.com/products");
+                expect(context.options.trim()).toBe("-X GET");
+            });
     });
 
-    it("should build context with only headers", () => {
+    it("should build context with only headers", async () => {
         const snapshot = {
             http: {
                 method: "GET",
@@ -50,29 +58,33 @@ describe("buildCurlContext", () => {
                     Authorization: "Bearer token-519",
                 },
             },
-        } as unknown as DocumentSnapshot;
+        };
 
-        const ctx = buildCurlContext(snapshot);
-
-        expect(ctx.options).toContain('-H "Accept: application/json"');
-        expect(ctx.options).toContain('-H "Authorization: Bearer token-519"');
+        await given({ snapshot })
+            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .then(({ context }) => {
+                expect(context.options).toContain('-H "Accept: application/json"');
+                expect(context.options).toContain('-H "Authorization: Bearer token-519"');
+            });
     });
 
-    it("should build context with only cookies", () => {
+    it("should build context with only cookies", async () => {
         const snapshot = {
             http: {
                 method: "GET",
                 url: new URL("https://api.example.com/cart"),
                 requestCookies: "SESSIONID=abc519; secure=true",
             },
-        } as unknown as DocumentSnapshot;
+        };
 
-        const ctx = buildCurlContext(snapshot);
-
-        expect(ctx.options).toContain('--cookie "SESSIONID=abc519; secure=true"');
+        await given({ snapshot })
+            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .then(({ context }) => {
+                expect(context.options).toContain('--cookie "SESSIONID=abc519; secure=true"');
+            });
     });
 
-    it("should build context with only body", () => {
+    it("should build context with only body", async () => {
         const snapshot = {
             http: {
                 method: "POST",
@@ -82,15 +94,17 @@ describe("buildCurlContext", () => {
                     quantity: 3,
                 },
             },
-        } as unknown as DocumentSnapshot;
+        };
 
-        const ctx = buildCurlContext(snapshot);
-
-        expect(ctx.options).toContain("-X POST");
-        expect(ctx.options).toContain('-d "{\\"productId\\":519,\\"quantity\\":3}"');
+        await given({ snapshot })
+            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .then(({ context }) => {
+                expect(context.options).toContain("-X POST");
+                expect(context.options).toContain('-d "{\\"productId\\":519,\\"quantity\\":3}"');
+            });
     });
 
-    it("should build context with method, url, headers, cookies, query, and body", () => {
+    it("should build context with method, url, headers, cookies, query, and body", async () => {
         const snapshot = {
             http: {
                 method: "PATCH",
@@ -106,15 +120,17 @@ describe("buildCurlContext", () => {
                     status: "shipped",
                 },
             },
-        } as unknown as DocumentSnapshot;
+        };
 
-        const ctx = buildCurlContext(snapshot);
-
-        expect(ctx.method).toBe("PATCH");
-        expect(ctx.url).toBe("https://api.example.com/orders/519?update=true");
-        expect(ctx.options).toContain("-X PATCH");
-        expect(ctx.options).toContain('-H "Content-Type: application/json"');
-        expect(ctx.options).toContain('--cookie "auth_token=secure519"');
-        expect(ctx.options).toContain('-d "{\\"status\\":\\"shipped\\"}"');
+        await given({ snapshot })
+            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .then(({ context }) => {
+                expect(context.method).toBe("PATCH");
+                expect(context.url).toBe("https://api.example.com/orders/519?update=true");
+                expect(context.options).toContain("-X PATCH");
+                expect(context.options).toContain('-H "Content-Type: application/json"');
+                expect(context.options).toContain('--cookie "auth_token=secure519"');
+                expect(context.options).toContain('-d "{\\"status\\":\\"shipped\\"}"');
+            });
     });
 });

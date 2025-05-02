@@ -1,6 +1,7 @@
 import type { PathParamDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { isEmpty, some } from "es-toolkit/compat";
+import type { Context } from "./context.type.";
 
 export type PathParametersSnippetContext = {
     path: string;
@@ -11,16 +12,19 @@ export type PathParametersSnippetContext = {
 
 export function buildPathParametersContext(
     snapshot: DocumentSnapshot
-): PathParametersSnippetContext {
+): Context<PathParametersSnippetContext> {
     const { path } = snapshot.http;
     const { path: pathParameters } = snapshot.parameters;
 
     if (isEmpty(pathParameters)) {
         return {
-            path,
-            parameters: [],
-            hasFormat: false,
-            hasOptional: false,
+            context: {
+                path,
+                parameters: [],
+                hasFormat: false,
+                hasOptional: false,
+            },
+            isEmpty: true,
         };
     }
 
@@ -28,9 +32,12 @@ export function buildPathParametersContext(
     const hasOptional = some(pathParameters, (field) => Boolean(field.optional));
 
     return {
-        path,
-        parameters: pathParameters,
-        hasFormat,
-        hasOptional,
+        context: {
+            path,
+            parameters: pathParameters,
+            hasFormat,
+            hasOptional,
+        },
+        isEmpty: false,
     };
 }

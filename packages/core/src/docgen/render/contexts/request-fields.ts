@@ -4,6 +4,7 @@ import { keyedArrayToRecord } from "@/types/collection";
 import { inferFieldType } from "@/utils/infer-field-type";
 import { renameKey } from "@/utils/rename";
 import { isEmpty, mapValues, merge, some, values } from "es-toolkit/compat";
+import type { Context } from "./context.type.";
 
 export type RequestFieldsSnippetContext = {
     fields: (Omit<FieldDescriptor, "name"> & { path: string })[];
@@ -11,15 +12,20 @@ export type RequestFieldsSnippetContext = {
     hasOptional: boolean;
 };
 
-export function buildRequestFieldsContext(snapshot: DocumentSnapshot): RequestFieldsSnippetContext {
+export function buildRequestFieldsContext(
+    snapshot: DocumentSnapshot
+): Context<RequestFieldsSnippetContext> {
     const { requestBody } = snapshot.http;
     const { request: fieldDescriptors } = snapshot.fields;
 
     if (isEmpty(requestBody) && isEmpty(fieldDescriptors)) {
         return {
-            fields: [],
-            hasFormat: false,
-            hasOptional: false,
+            context: {
+                fields: [],
+                hasFormat: false,
+                hasOptional: false,
+            },
+            isEmpty: true,
         };
     }
 
@@ -41,8 +47,11 @@ export function buildRequestFieldsContext(snapshot: DocumentSnapshot): RequestFi
     const hasOptional = some(fields, (field) => Boolean(field.optional));
 
     return {
-        fields,
-        hasFormat,
-        hasOptional,
+        context: {
+            fields,
+            hasFormat,
+            hasOptional,
+        },
+        isEmpty: false,
     };
 }

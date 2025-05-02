@@ -12,7 +12,11 @@ export class ResponseCookiesSnippetRenderer implements SnippetRenderer {
     async render(snapshot: DocumentSnapshot): Promise<string> {
         const { extension, content } = this.store.get(this.templateName);
         const renderer = createTemplateRenderer(extension);
-        const context = buildResponseCookiesContext(snapshot);
+        const { context, isEmpty } = buildResponseCookiesContext(snapshot);
+
+        if (isEmpty) {
+            return "";
+        }
 
         const result = await renderer.render(content, context);
         return result;

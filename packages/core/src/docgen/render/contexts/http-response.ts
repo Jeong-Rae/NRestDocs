@@ -3,7 +3,7 @@ import type { DocumentSnapshot } from "@/docgen/builders";
 import { formatJson } from "@/utils/format";
 import { filterResponseHeaders } from "@/utils/header-filter";
 import { isEmpty, toPairs } from "es-toolkit/compat";
-
+import type { Context } from "./context.type.";
 export type HttpResponseSnippetContext = {
     statusCode: number;
     statusReason: string;
@@ -11,7 +11,9 @@ export type HttpResponseSnippetContext = {
     body: string;
 };
 
-export function buildHttpResponseContext(snapshot: DocumentSnapshot): HttpResponseSnippetContext {
+export function buildHttpResponseContext(
+    snapshot: DocumentSnapshot
+): Context<HttpResponseSnippetContext> {
     const { statusCode, responseBody, responseHeaders } = snapshot.http;
 
     const headers = toPairs(filterResponseHeaders(responseHeaders)).map(([name, value]) => ({
@@ -20,9 +22,12 @@ export function buildHttpResponseContext(snapshot: DocumentSnapshot): HttpRespon
     }));
 
     return {
-        statusCode,
-        statusReason: STATUS_CODES[statusCode] ?? "",
-        headers,
-        body: isEmpty(responseBody) ? "" : `${formatJson(responseBody)}\n`,
+        context: {
+            statusCode,
+            statusReason: STATUS_CODES[statusCode] ?? "",
+            headers,
+            body: isEmpty(responseBody) ? "" : `${formatJson(responseBody)}\n`,
+        },
+        isEmpty: false,
     };
 }

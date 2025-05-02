@@ -12,7 +12,11 @@ export class ResponseFieldsSnippetRenderer implements SnippetRenderer {
     async render(snapshot: DocumentSnapshot): Promise<string> {
         const { extension, content } = this.store.get(this.templateName);
         const renderer = createTemplateRenderer(extension);
-        const context = buildResponseFieldsContext(snapshot);
+        const { context, isEmpty } = buildResponseFieldsContext(snapshot);
+
+        if (isEmpty) {
+            return "";
+        }
 
         const result = await renderer.render(content, context);
         return result;

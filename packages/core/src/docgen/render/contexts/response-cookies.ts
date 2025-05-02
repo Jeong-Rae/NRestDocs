@@ -1,6 +1,6 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { fromPairs, isEmpty, merge, some, split, toPairs, trim, values } from "es-toolkit/compat";
-
+import type { Context } from "./context.type.";
 type Cookie = {
     name: string;
     type: string;
@@ -15,9 +15,19 @@ export type ResponseCookiesSnippetContext = {
 
 export function buildResponseCookiesContext(
     snapshot: DocumentSnapshot
-): ResponseCookiesSnippetContext {
+): Context<ResponseCookiesSnippetContext> {
     const { responseCookies } = snapshot.http;
-    const { request } = snapshot.cookies;
+    const { response } = snapshot.cookies;
+
+    if (isEmpty(response)) {
+        return {
+            context: {
+                cookies: [],
+                hasOptional: false,
+            },
+            isEmpty: true,
+        };
+    }
 
     const cookiePairs = split(responseCookies, ";")
         .map((pair) => {
@@ -46,7 +56,7 @@ export function buildResponseCookiesContext(
         return acc;
     }, {});
 
-    const requestFields = request.reduce<Record<string, Cookie>>((acc, cookie) => {
+    const responseFields = response.reduce<Record<string, Cookie>>((acc, cookie) => {
         acc[cookie.name] = {
             ...cookie,
             description: cookie.description ?? "",
@@ -54,13 +64,16 @@ export function buildResponseCookiesContext(
         return acc;
     }, {});
 
-    const mergedFields = merge(cookieValueFields, requestFields);
+    const mergedFields = merge(cookieValueFields, responseFields);
     const cookies = values(mergedFields);
 
     const hasOptional = some(cookies, (field) => Boolean(field.optional));
 
     return {
-        cookies,
-        hasOptional,
+        context: {
+            cookies,
+            hasOptional,
+        },
+        isEmpty: false,
     };
 }
