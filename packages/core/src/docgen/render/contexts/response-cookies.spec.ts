@@ -1,18 +1,18 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { given } from "@/utils/test";
 import { describe, expect, it } from "vitest";
-import { buildRequestCookiesContext } from "./request-cookies";
+import { buildResponseCookiesContext } from "./response-cookies";
 
-describe("buildRequestCookiesContext", () => {
-    it("returns empty context when no request cookies", async () => {
+describe("buildResponseCookiesContext", () => {
+    it("returns empty context when no response cookies", async () => {
         const snapshot = {
             cookies: {
-                request: [],
+                response: [],
             },
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildRequestCookiesContext(snapshot))
+            .when(({ snapshot }) => buildResponseCookiesContext(snapshot))
             .then(({ context, isEmpty }) => {
                 expect(isEmpty).toBe(true);
                 expect(context.cookies).toEqual([]);
@@ -28,12 +28,12 @@ describe("buildRequestCookiesContext", () => {
 
         const snapshot = {
             cookies: {
-                request: cookies,
+                response: cookies,
             },
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildRequestCookiesContext(snapshot))
+            .when(({ snapshot }) => buildResponseCookiesContext(snapshot))
             .then(({ context, isEmpty }) => {
                 expect(isEmpty).toBe(false);
                 expect(context.cookies).toEqual(cookies);
@@ -49,12 +49,12 @@ describe("buildRequestCookiesContext", () => {
 
         const snapshot = {
             cookies: {
-                request: cookies,
+                response: cookies,
             },
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildRequestCookiesContext(snapshot))
+            .when(({ snapshot }) => buildResponseCookiesContext(snapshot))
             .then(({ context, isEmpty }) => {
                 expect(isEmpty).toBe(false);
                 expect(context.cookies).toEqual(cookies);

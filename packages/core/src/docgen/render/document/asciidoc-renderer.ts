@@ -1,21 +1,6 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { compact, join } from "es-toolkit/compat";
-import {
-    CurlSnippetRenderer,
-    HttpRequestSnippetRenderer,
-    HttpResponseSnippetRenderer,
-    PathParametersSnippetRenderer,
-    QueryParametersSnippetRenderer,
-    RequestBodySnippetRenderer,
-    RequestCookiesSnippetRenderer,
-    RequestFieldsSnippetRenderer,
-    RequestHeadersSnippetRenderer,
-    ResponseBodySnippetRenderer,
-    ResponseCookiesSnippetRenderer,
-    ResponseFieldsSnippetRenderer,
-    ResponseHeadersSnippetRenderer,
-    type SnippetRenderer,
-} from "../snippet";
+import { type SnippetRenderer, snippetRegistry } from "../snippet";
 import { TemplateStore } from "../template";
 
 export class AsciiDocRenderer {
@@ -32,20 +17,22 @@ export async function createAsciiDocRenderer(): Promise<AsciiDocRenderer> {
     const store = new TemplateStore();
     await store.load();
 
+    const registry = snippetRegistry(store);
+
     const snippets = [
-        CurlSnippetRenderer.of(store),
-        HttpRequestSnippetRenderer.of(store),
-        HttpResponseSnippetRenderer.of(store),
-        PathParametersSnippetRenderer.of(store),
-        QueryParametersSnippetRenderer.of(store),
-        RequestHeadersSnippetRenderer.of(store),
-        ResponseHeadersSnippetRenderer.of(store),
-        RequestCookiesSnippetRenderer.of(store),
-        ResponseCookiesSnippetRenderer.of(store),
-        RequestBodySnippetRenderer.of(store),
-        ResponseBodySnippetRenderer.of(store),
-        RequestFieldsSnippetRenderer.of(store),
-        ResponseFieldsSnippetRenderer.of(store),
+        registry.curlRequest,
+        registry.httpRequest,
+        registry.httpResponse,
+        registry.pathParameters,
+        registry.queryParameters,
+        registry.requestHeaders,
+        registry.responseHeaders,
+        registry.requestCookies,
+        registry.responseCookies,
+        registry.requestBody,
+        registry.responseBody,
+        registry.requestFields,
+        registry.responseFields,
     ];
     return new AsciiDocRenderer(snippets);
 }
