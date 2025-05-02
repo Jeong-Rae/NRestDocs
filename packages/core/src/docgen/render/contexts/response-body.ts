@@ -1,4 +1,5 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
+import { formatJson } from "@/utils/format";
 import { isEmpty } from "es-toolkit/compat";
 
 export type ResponseBodySnippetContext = {
@@ -16,6 +17,6 @@ export function buildResponseBodyContext(snapshot: DocumentSnapshot): ResponseBo
     }
     return {
         language: "json",
-        body: JSON.stringify(responseBody, null, 2) + "\n",
+        body: `${formatJson(responseBody)}\n`,
     };
 }

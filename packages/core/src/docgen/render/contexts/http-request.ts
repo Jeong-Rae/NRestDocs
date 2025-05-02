@@ -1,20 +1,21 @@
-import type { HeaderDescriptor, HttpBody } from "@/core";
+import type { HeaderDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
+import { formatJson } from "@/utils/format";
 
 export type HttpRequestSnippetContext = {
     method: string;
     path: string;
     headers: HeaderDescriptor[];
-    body: HttpBody;
+    body: string;
 };
 
 export function buildHttpRequestContext(snapshot: DocumentSnapshot): HttpRequestSnippetContext {
-    const { method, url, requestBody } = snapshot.http;
+    const { method, path, requestBody } = snapshot.http;
 
     return {
         method,
-        path: url.pathname,
+        path,
         headers: [],
-        body: requestBody,
+        body: `${formatJson(requestBody)}\n`,
     };
 }

@@ -1,10 +1,11 @@
-import type { HeaderDescriptor, HttpBody } from "@/core";
+import type { HeaderDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
+import { formatJson } from "@/utils/format";
 
 export type HttpResponseSnippetContext = {
     statusCode: number;
     headers: HeaderDescriptor[];
-    body: HttpBody;
+    body: string;
 };
 
 export function buildHttpResponseContext(snapshot: DocumentSnapshot): HttpResponseSnippetContext {
@@ -13,6 +14,6 @@ export function buildHttpResponseContext(snapshot: DocumentSnapshot): HttpRespon
     return {
         statusCode,
         headers: [],
-        body: responseBody,
+        body: `${formatJson(responseBody)}\n`,
     };
 }
