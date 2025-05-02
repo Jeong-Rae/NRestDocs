@@ -1,7 +1,7 @@
 import type { HeaderDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { isEmpty, some } from "es-toolkit/compat";
-import type { Context } from "./context.type.";
+import type { Context } from "./context.type";
 
 export type RequestHeadersSnippetContext = {
     headers: HeaderDescriptor[];

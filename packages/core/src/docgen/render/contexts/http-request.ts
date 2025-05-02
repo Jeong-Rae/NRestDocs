@@ -2,7 +2,7 @@ import type { DocumentSnapshot } from "@/docgen/builders";
 import { formatJson } from "@/utils/format";
 import { filterRequestHeaders } from "@/utils/header-filter";
 import { isEmpty, toPairs } from "es-toolkit/compat";
-import type { Context } from "./context.type.";
+import type { Context } from "./context.type";
 
 export type HttpRequestSnippetContext = {
     method: string;

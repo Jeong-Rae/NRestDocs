@@ -1,6 +1,6 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { fromPairs, isEmpty, merge, some, split, toPairs, trim, values } from "es-toolkit/compat";
-import type { Context } from "./context.type.";
+import type { Context } from "./context.type";
 type Cookie = {
     name: string;
     type: string;

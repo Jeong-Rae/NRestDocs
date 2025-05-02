@@ -11,3 +11,5 @@ export * from "./response-headers";
 export * from "./response-cookies";
 export * from "./response-body";
 export * from "./response-fields";
+
+export * from "./context.type";

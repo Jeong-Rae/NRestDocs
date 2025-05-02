@@ -2,7 +2,7 @@ import type { FieldDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { renameKey } from "@/utils/rename";
 import { isEmpty, some, values } from "es-toolkit/compat";
-import type { Context } from "./context.type.";
+import type { Context } from "./context.type";
 
 export type ResponseFieldsSnippetContext = {
     fields: (Omit<FieldDescriptor, "name"> & { path: string })[];
