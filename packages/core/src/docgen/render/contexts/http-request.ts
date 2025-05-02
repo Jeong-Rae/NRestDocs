@@ -26,7 +26,7 @@ export function buildHttpRequestContext(
             method,
             path: url.pathname,
             headers,
-            body: isEmpty(requestBody) ? "" : `${formatJson(requestBody)}\n`,
+            body: isEmpty(requestBody) ? "" : `${formatJson(requestBody)}`,
         },
         isEmpty: false,
     };

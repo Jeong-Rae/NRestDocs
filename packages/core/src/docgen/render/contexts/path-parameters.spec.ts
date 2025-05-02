@@ -8,7 +8,7 @@ describe("buildPathParametersContext", () => {
         const snapshot = {
             http: { path: "/users/:userId" },
             parameters: { path: [] },
-        };
+        } as unknown as DocumentSnapshot;
         const expectedContext = {
             path: "/users/:userId",
             parameters: [],
@@ -17,9 +17,7 @@ describe("buildPathParametersContext", () => {
         };
 
         await given({ snapshot })
-            .when(({ snapshot }) =>
-                buildPathParametersContext(snapshot as unknown as DocumentSnapshot)
-            )
+            .when(({ snapshot }) => buildPathParametersContext(snapshot))
             .then(({ context }) => expect(context).toEqual(expectedContext));
     });
 
@@ -28,7 +26,7 @@ describe("buildPathParametersContext", () => {
         const snapshot = {
             http: { path: "/users/:userId" },
             parameters: { path: parameters },
-        };
+        } as unknown as DocumentSnapshot;
         const expectedContext = {
             path: "/users/:userId",
             parameters,
@@ -37,7 +35,7 @@ describe("buildPathParametersContext", () => {
         };
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
+            .when(({ snapshot }) => buildPathParametersContext(snapshot))
             .then(({ context }) => expect(context).toEqual(expectedContext));
     });
 
@@ -49,10 +47,10 @@ describe("buildPathParametersContext", () => {
         const snapshot = {
             http: { path: "/users/:userId/posts/:postId" },
             parameters: { path: parameters },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
+            .when(({ snapshot }) => buildPathParametersContext(snapshot))
             .then(({ context }) => {
                 expect(context.path).toBe("/users/:userId/posts/:postId");
                 expect(context.parameters).toEqual(parameters);
@@ -69,10 +67,10 @@ describe("buildPathParametersContext", () => {
         const snapshot = {
             http: { path: "/users/:userId" },
             parameters: { path: parameters },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
+            .when(({ snapshot }) => buildPathParametersContext(snapshot))
             .then(({ context }) => {
                 expect(context.path).toBe("/users/:userId");
                 expect(context.parameters).toEqual(parameters);
@@ -89,10 +87,10 @@ describe("buildPathParametersContext", () => {
         const snapshot = {
             http: { path: "/api/:version/users/:userId" },
             parameters: { path: parameters },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
+            .when(({ snapshot }) => buildPathParametersContext(snapshot))
             .then(({ context }) => {
                 expect(context.path).toBe("/api/:version/users/:userId");
                 expect(context.parameters).toEqual(parameters);
@@ -107,10 +105,10 @@ describe("buildPathParametersContext", () => {
         const snapshot = {
             http: { path: specificPath },
             parameters: { path: parameters },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildPathParametersContext(snapshot as DocumentSnapshot))
+            .when(({ snapshot }) => buildPathParametersContext(snapshot))
             .then(({ context }) => {
                 expect(context.path).toBe(specificPath);
                 expect(context.parameters).toEqual(parameters);

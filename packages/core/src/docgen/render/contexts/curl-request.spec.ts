@@ -11,11 +11,11 @@ describe("buildCurlContext", () => {
                 method: undefined,
                 url: new URL("https://api.example.com/users"),
             },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
-            .then(({ context }) => expect(context).toThrow(MissingFieldError));
+            .when(({ snapshot }) => buildCurlContext(snapshot))
+            .catch((err) => expect(err).toBeInstanceOf(MissingFieldError));
     });
 
     it("should throw MissingFieldError when url is missing", async () => {
@@ -27,8 +27,8 @@ describe("buildCurlContext", () => {
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
-            .then(({ context }) => expect(context).toThrow(MissingFieldError));
+            .when(({ snapshot }) => buildCurlContext(snapshot))
+            .catch((err) => expect(err).toBeInstanceOf(MissingFieldError));
     });
 
     it("should build context with only method and url", async () => {
@@ -40,7 +40,7 @@ describe("buildCurlContext", () => {
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .when(({ snapshot }) => buildCurlContext(snapshot))
             .then(({ context }) => {
                 expect(context.method).toBe("GET");
                 expect(context.url).toBe("https://api.example.com/products");
@@ -58,10 +58,10 @@ describe("buildCurlContext", () => {
                     Authorization: "Bearer token-519",
                 },
             },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .when(({ snapshot }) => buildCurlContext(snapshot))
             .then(({ context }) => {
                 expect(context.options).toContain('-H "Accept: application/json"');
                 expect(context.options).toContain('-H "Authorization: Bearer token-519"');
@@ -75,10 +75,10 @@ describe("buildCurlContext", () => {
                 url: new URL("https://api.example.com/cart"),
                 requestCookies: "SESSIONID=abc519; secure=true",
             },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .when(({ snapshot }) => buildCurlContext(snapshot))
             .then(({ context }) => {
                 expect(context.options).toContain('--cookie "SESSIONID=abc519; secure=true"');
             });
@@ -94,10 +94,10 @@ describe("buildCurlContext", () => {
                     quantity: 3,
                 },
             },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .when(({ snapshot }) => buildCurlContext(snapshot))
             .then(({ context }) => {
                 expect(context.options).toContain("-X POST");
                 expect(context.options).toContain('-d "{\\"productId\\":519,\\"quantity\\":3}"');
@@ -120,10 +120,10 @@ describe("buildCurlContext", () => {
                     status: "shipped",
                 },
             },
-        };
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildCurlContext(snapshot as unknown as DocumentSnapshot))
+            .when(({ snapshot }) => buildCurlContext(snapshot))
             .then(({ context }) => {
                 expect(context.method).toBe("PATCH");
                 expect(context.url).toBe("https://api.example.com/orders/519?update=true");

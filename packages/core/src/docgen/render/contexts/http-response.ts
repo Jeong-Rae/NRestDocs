@@ -26,7 +26,7 @@ export function buildHttpResponseContext(
             statusCode,
             statusReason: STATUS_CODES[statusCode] ?? "",
             headers,
-            body: isEmpty(responseBody) ? "" : `${formatJson(responseBody)}\n`,
+            body: isEmpty(responseBody) ? "" : `${formatJson(responseBody)}`,
         },
         isEmpty: false,
     };
