@@ -1,9 +1,7 @@
-import { DescriptorKinds, type FieldDescriptor } from "@/core";
+import type { FieldDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
-import { keyedArrayToRecord } from "@/types/collection";
-import { inferFieldType } from "@/utils/infer-field-type";
 import { renameKey } from "@/utils/rename";
-import { isEmpty, mapValues, merge, some, values } from "es-toolkit/compat";
+import { isEmpty, some, values } from "es-toolkit/compat";
 import type { Context } from "./context.type.";
 
 export type RequestFieldsSnippetContext = {
@@ -15,10 +13,9 @@ export type RequestFieldsSnippetContext = {
 export function buildRequestFieldsContext(
     snapshot: DocumentSnapshot
 ): Context<RequestFieldsSnippetContext> {
-    const { requestBody } = snapshot.http;
     const { request: fieldDescriptors } = snapshot.fields;
 
-    if (isEmpty(requestBody) && isEmpty(fieldDescriptors)) {
+    if (isEmpty(fieldDescriptors)) {
         return {
             context: {
                 fields: [],
@@ -29,17 +26,7 @@ export function buildRequestFieldsContext(
         };
     }
 
-    const rawFieldDescriptors = mapValues(requestBody, (value, key) => ({
-        kind: DescriptorKinds.Field,
-        name: key,
-        type: inferFieldType(value),
-        description: "",
-    }));
-
-    const descriptorFieldRecords = keyedArrayToRecord("name", fieldDescriptors);
-
-    const mergedFieldRecords = merge(rawFieldDescriptors, descriptorFieldRecords);
-    const fields = renameKey(values(mergedFieldRecords), {
+    const fields = renameKey(values(fieldDescriptors), {
         name: "path",
     }) as (Omit<FieldDescriptor, "name"> & { path: string })[];
 

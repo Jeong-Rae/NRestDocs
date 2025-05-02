@@ -1,18 +1,16 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { given } from "@/utils/test";
 import { describe, expect, it } from "vitest";
-import { buildRequestFieldsContext } from "./request-fields";
+import { buildResponseFieldsContext } from "./response-fields";
 
-describe("buildRequestFieldsContext", () => {
-    it("should return empty lists when no descriptors", async () => {
+describe("buildResponseFieldsContext", () => {
+    it("should return empty fields when no descriptors", async () => {
         const snapshot = {
-            fields: { request: [] },
-        };
+            fields: { response: [] },
+        } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) =>
-                buildRequestFieldsContext(snapshot as unknown as DocumentSnapshot)
-            )
+            .when(({ snapshot }) => buildResponseFieldsContext(snapshot))
             .then(({ context, isEmpty }) => {
                 expect(isEmpty).toBe(true);
                 expect(context.fields).toEqual([]);
@@ -21,36 +19,36 @@ describe("buildRequestFieldsContext", () => {
             });
     });
 
-    it("should correctly process field descriptors from snapshot.fields.request", async () => {
+    it("should correctly process field descriptors including optional and format", async () => {
         const snapshot = {
             fields: {
-                request: [
+                response: [
                     {
                         name: "x",
                         type: "string",
                         optional: true,
                         format: "uuid",
-                        description: "Test UUID",
+                        description: "Identifier",
                     },
                 ],
             },
-        };
+        } as unknown as DocumentSnapshot;
+
+        const expectedFields = [
+            {
+                path: "x",
+                type: "string",
+                optional: true,
+                format: "uuid",
+                description: "Identifier",
+            },
+        ];
 
         await given({ snapshot })
-            .when(({ snapshot }) =>
-                buildRequestFieldsContext(snapshot as unknown as DocumentSnapshot)
-            )
+            .when(({ snapshot }) => buildResponseFieldsContext(snapshot))
             .then(({ context, isEmpty }) => {
                 expect(isEmpty).toBe(false);
-                expect(context.fields).toEqual([
-                    {
-                        path: "x",
-                        type: "string",
-                        optional: true,
-                        format: "uuid",
-                        description: "Test UUID",
-                    },
-                ]);
+                expect(context.fields).toEqual(expectedFields);
                 expect(context.hasOptional).toBe(true);
                 expect(context.hasFormat).toBe(true);
             });
