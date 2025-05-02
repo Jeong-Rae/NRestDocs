@@ -1,10 +1,6 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { compact, join } from "es-toolkit/compat";
-import {
-    // PathParametersSnippetRenderer,
-    QueryParametersSnippetRenderer,
-    type SnippetRenderer,
-} from "../snippet";
+import { ResponseHeadersSnippetRenderer, type SnippetRenderer } from "../snippet";
 import { TemplateStore } from "../template";
 
 export class AsciiDocRenderer {
@@ -29,9 +25,9 @@ export async function createAsciiDocRenderer(): Promise<AsciiDocRenderer> {
         // new HttpRequestSnippetRenderer(store),
         // new HttpResponseSnippetRenderer(store),
         // new PathParametersSnippetRenderer(store),
-        new QueryParametersSnippetRenderer(store),
+        // new QueryParametersSnippetRenderer(store),
         // new RequestHeadersSnippetRenderer(store),
-        // new ResponseHeadersSnippetRenderer(store),
+        new ResponseHeadersSnippetRenderer(store),
         // new RequestCookiesSnippetRenderer(store),
         // new ResponseCookiesSnippetRenderer(store),
         // new RequestBodySnippetRenderer(store),

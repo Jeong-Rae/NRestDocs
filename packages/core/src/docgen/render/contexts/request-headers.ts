@@ -1,7 +1,6 @@
-import { DescriptorKinds, type HeaderDescriptor } from "@/core";
+import type { HeaderDescriptor } from "@/core";
 import type { DocumentSnapshot } from "@/docgen/builders";
-import { keyedArrayToRecord } from "@/types/collection";
-import { isEmpty, mapValues, merge, some, values } from "es-toolkit/compat";
+import { isEmpty, some } from "es-toolkit/compat";
 import type { Context } from "./context.type.";
 
 export type RequestHeadersSnippetContext = {
@@ -13,10 +12,9 @@ export type RequestHeadersSnippetContext = {
 export function buildRequestHeadersContext(
     snapshot: DocumentSnapshot
 ): Context<RequestHeadersSnippetContext> {
-    const { requestHeaders } = snapshot.http;
-    const { request: headerDescriptors } = snapshot.headers;
+    const { request } = snapshot.headers;
 
-    if (isEmpty(headerDescriptors)) {
+    if (isEmpty(request)) {
         return {
             context: {
                 headers: [],
@@ -27,24 +25,12 @@ export function buildRequestHeadersContext(
         };
     }
 
-    const rawHeaderFields = mapValues(requestHeaders, (_value, key) => ({
-        kind: DescriptorKinds.Header,
-        name: key,
-        type: "string",
-        description: "",
-    }));
-
-    const descriptorHeaderFields = keyedArrayToRecord("name", headerDescriptors);
-
-    const mergedHeaderFields = merge(rawHeaderFields, descriptorHeaderFields);
-    const headers = values(mergedHeaderFields);
-
-    const hasFormat = some(headers, (field) => Boolean(field.format));
-    const hasOptional = some(headers, (field) => Boolean(field.optional));
+    const hasFormat = some(request, (field) => Boolean(field.format));
+    const hasOptional = some(request, (field) => Boolean(field.optional));
 
     return {
         context: {
-            headers,
+            headers: request,
             hasFormat,
             hasOptional,
         },
