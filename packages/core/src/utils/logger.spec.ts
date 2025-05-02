@@ -9,6 +9,8 @@ describe("Logger", () => {
         vi.spyOn(console, "warn").mockImplementation(() => {});
         // biome-ignore lint/suspicious/noEmptyBlockStatements: Mock implementation does not require a body
         vi.spyOn(console, "error").mockImplementation(() => {});
+        // biome-ignore lint/suspicious/noEmptyBlockStatements: Mock implementation does not require a body
+        vi.spyOn(console, "debug").mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -31,5 +33,11 @@ describe("Logger", () => {
         const args = [new Error("Something went wrong"), "details"];
         Logger.error(...args);
         expect(console.error).toHaveBeenCalledWith("\x1b[31m[ERROR]\x1b[0m", ...args);
+    });
+
+    it("debug method should call console.debug", () => {
+        const args = ["Debug message", { key: "value" }];
+        Logger.debug(...args);
+        expect(console.debug).toHaveBeenCalledWith("\x1b[32m[DEBUG]\x1b[0m", ...args);
     });
 });
