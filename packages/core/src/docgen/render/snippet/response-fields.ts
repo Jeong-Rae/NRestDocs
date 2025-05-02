@@ -9,6 +9,10 @@ export class ResponseFieldsSnippetRenderer implements SnippetRenderer {
 
     constructor(private readonly store: TemplateStore) {}
 
+    static of(store: TemplateStore): SnippetRenderer {
+        return new ResponseFieldsSnippetRenderer(store);
+    }
+
     async render(snapshot: DocumentSnapshot): Promise<string> {
         const { extension, content } = this.store.get(this.templateName);
         const renderer = createTemplateRenderer(extension);

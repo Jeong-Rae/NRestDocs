@@ -9,6 +9,10 @@ export class PathParametersSnippetRenderer implements SnippetRenderer {
 
     constructor(private readonly store: TemplateStore) {}
 
+    static of(store: TemplateStore): SnippetRenderer {
+        return new PathParametersSnippetRenderer(store);
+    }
+
     async render(snapshot: DocumentSnapshot): Promise<string> {
         const { extension, content } = this.store.get(this.templateName);
         const renderer = createTemplateRenderer(extension);
