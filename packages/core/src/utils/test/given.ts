@@ -13,6 +13,12 @@ export type Stream<T> = {
     when: <U>(fn: (value: T) => Awaitable<U>) => Stream<Awaited<U>>;
 
     /**
+     * Inspects the value.
+     * Can be called multiple times, and the result of each call is passed to the next when.
+     */
+    inspect: (fn: (value: T) => void) => Stream<T>;
+
+    /**
      * Performs assertion on the final result.
      * Supports asynchronous assertions as well.
      */
@@ -32,6 +38,15 @@ export function given<const T>(initial: Awaitable<T>): Stream<Awaited<T>> {
         when(fn) {
             const next = current.then(fn);
             return given(next) as Stream<Awaited<ReturnType<typeof fn>>>;
+        },
+
+        inspect(fn: (value: T) => void): Stream<T> {
+            return given(
+                current.then((v) => {
+                    fn(v);
+                    return v;
+                })
+            );
         },
 
         async then(assertFn) {

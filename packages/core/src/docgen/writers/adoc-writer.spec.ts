@@ -1,5 +1,5 @@
 import type { NRestDocsConfig } from "@/config";
-import { given } from "@/utils/test";
+import { given } from "@/utils/test/given";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AsciiDocWriter } from "./adoc-writer";
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { given } from "./test";
+import { given } from "./given";
 
 describe("given", () => {
     it("should transform a synchronous value through when() and resolve in then()", async () => {

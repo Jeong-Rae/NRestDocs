@@ -1,5 +1,5 @@
 import type { NRestDocsConfig } from "@/config";
-import { given } from "@/utils/test";
+import { given } from "@/utils/test/given";
 import { describe, expect, it } from "vitest";
 import { getOutputFileName } from "./naming";
 

@@ -4,7 +4,7 @@ import { isString } from "es-toolkit/compat";
 export type Filename = string;
 
 // biome-ignore lint/suspicious/noControlCharactersInRegex: ignore
-const invalidChars = /[<>:"/\\|?*\u0000-\u001F]/g;
+const invalidChars = /[<>:"/\\?*\u0000-\u001F|]/;
 
 export function isValidFilename(name: string): name is Filename {
     return (
