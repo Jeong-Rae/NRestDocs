@@ -16,6 +16,7 @@ import type {
 } from "@/core";
 import { createAsciiDocRenderer } from "@/docgen/render";
 import { createWriter } from "@/docgen/writers";
+import { InvalidTypeError, MissingFieldError } from "@/errors";
 import {
     type CookieInput,
     type FieldInput,
@@ -32,6 +33,7 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
+import { type Filename, isValidFilename } from "@/utils/fs/filename";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import type { Response as SupertestResponse } from "supertest";
 import type { DocumentSnapshot } from "./model";
@@ -341,13 +343,24 @@ export class DocumentBuilder<PathState = PathUnset> {
      * @param identifier document identifier
      * @returns supertest response
      */
-    async doc(this: DocumentBuilder<PathSet>, identifier: string): Promise<SupertestResponse> {
+    async doc(this: DocumentBuilder<PathSet>, identifier: Filename): Promise<SupertestResponse> {
         await ConfigService.init();
 
+        if (!isValidFilename(identifier)) {
+            throw new InvalidTypeError({
+                context: "DocumentBuilder.doc",
+                fieldName: "identifier",
+                expected: "valid filename string (no control/special characters)",
+                actual: identifier,
+            });
+        }
+
         if (!this.httpRequestPath) {
-            throw new Error(
-                "Request Path is not set. Use `setRequestPath()` to set the request path"
-            );
+            throw new MissingFieldError({
+                context: "DocumentBuilder.doc",
+                fieldName: "httpRequestPath",
+                suggestion: "Call `setRequestPath()` before invoking `doc()`.",
+            });
         }
 
         const response = await this.supertestPromise;

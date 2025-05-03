@@ -1,39 +1,47 @@
+import { CoreError } from "./core-error";
+
 /**
- * 타입 검증 실패 시 발생하는 오류
+ * InvalidTypeError constructor parameters.
  */
-export interface InvalidTypeErrorOptions {
+interface InvalidTypeErrorParams {
     context: string;
-    message: string;
-    expected: string;
-    actual: string;
+    /** field name (optional, for the whole value) */
     fieldName?: string;
+    /** expected type description */
+    expected: string;
+    /** actual value passed */
+    actual: unknown;
 }
 
-export class InvalidTypeError extends Error {
-    public readonly context: string;
-    public readonly expected: string;
-    public readonly actual: string;
-    public readonly fieldName?: string;
+/**
+ * error code for invalid type error
+ */
+export const E_INVALID_TYPE = "E_INVALID_TYPE";
 
-    constructor(options: InvalidTypeErrorOptions | string) {
-        if (typeof options === "string") {
-            super(options);
-            this.context = "";
-            this.expected = "";
-            this.actual = "";
-        } else {
-            const { context, message, expected, actual, fieldName } = options;
-            const detailedMessage = fieldName
-                ? `${message}: field '${fieldName}' expected type '${expected}', but got '${actual}'`
-                : `${message}: expected '${expected}', but got '${actual}'`;
+/**
+ * error thrown when a value does not match the expected type
+ * (e.g. unsafe filename, wrong descriptor type, etc.).
+ */
+export class InvalidTypeError extends CoreError {
+    constructor(p: InvalidTypeErrorParams) {
+        const reason = p.fieldName
+            ? `Invalid type for field '${p.fieldName}': expected '${p.expected}', got '${String(p.actual)}'`
+            : `Invalid type: expected '${p.expected}', got '${String(p.actual)}'`;
 
-            super(detailedMessage);
-            this.context = context;
-            this.expected = expected;
-            this.actual = actual;
-            this.fieldName = fieldName;
-        }
+        const suggestion = p.fieldName
+            ? `Ensure '${p.fieldName}' is of type '${p.expected}' before calling this method.`
+            : `Pass a value compatible with '${p.expected}'.`;
 
-        this.name = "InvalidTypeError";
+        super({
+            context: p.context,
+            code: E_INVALID_TYPE,
+            reason,
+            suggestion,
+            data: {
+                expected: p.expected,
+                actual: p.actual,
+                fieldName: p.fieldName,
+            },
+        });
     }
 }

@@ -1,30 +1,41 @@
+import { CoreError } from "./core-error";
+
 /**
- * 필수 필드가 누락되었을 때 발생하는 오류
+ * error code for missing field
+ */
+export const E_MISSING_FIELD = "E_MISSING_FIELD";
+
+/**
+ * Throw when a required field (configuration, state, dto property …) is missing.
+ *
+ * @example
+ * ```ts
+ * if (!this.httpRequestPath) {
+ *   throw new MissingFieldError({
+ *     context: "DocumentBuilder.doc",
+ *     fieldName: "httpRequestPath",
+ *     suggestion: "Call `setRequestPath()` before invoking `doc()`.",
+ *   });
+ * }
+ * ```
  */
 export interface MissingFieldErrorOptions {
+    /** location, method, file, etc. where the error occurred */
     context: string;
-    message: string;
+    /** name of the missing field */
     fieldName: string;
+    /** guide for the user to fix the problem */
+    suggestion: string;
 }
 
-export class MissingFieldError extends Error {
-    public readonly context: string;
-    public readonly fieldName: string;
-
-    constructor(options: MissingFieldErrorOptions | string) {
-        if (typeof options === "string") {
-            super(options);
-            this.context = "";
-            this.fieldName = "";
-        } else {
-            const { context, message, fieldName } = options;
-            const detailedMessage = `${message}: '${fieldName}'`;
-
-            super(detailedMessage);
-            this.context = context;
-            this.fieldName = fieldName;
-        }
-
-        this.name = "MissingFieldError";
+export class MissingFieldError extends CoreError {
+    constructor(opts: MissingFieldErrorOptions) {
+        super({
+            context: opts.context,
+            code: E_MISSING_FIELD,
+            reason: `Missing required field: '${opts.fieldName}'`,
+            suggestion: opts.suggestion,
+            data: { fieldName: opts.fieldName },
+        });
     }
 }
