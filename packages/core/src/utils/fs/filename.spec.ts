@@ -11,31 +11,10 @@ describe("isValidFilename", () => {
     });
 
     it("should return false for a filename with invalid characters", async () => {
-        await given("inva<lid>.txt")
+        await given
+            .each(["inva<lid>.txt", "bad|name.txt", "bad\u0000name.txt", "", ".", ".."])
             .when((name) => isValidFilename(name))
-            .then((result) => expect(result).toEqual(false));
-        await given("bad|name.txt")
-            .when((name) => isValidFilename(name))
-            .inspect((result) => console.log(result))
-            .then((result) => expect(result).toEqual(false));
-    });
-
-    it("should return false for a filename with control characters", async () => {
-        await given("bad\u0000name.txt")
-            .when((name) => isValidFilename(name))
-            .then((result) => expect(result).toEqual(false));
-    });
-
-    it("should return false for empty string, '.' and '..'", async () => {
-        await given("")
-            .when((name) => isValidFilename(name))
-            .then((result) => expect(result).toEqual(false));
-        await given(".")
-            .when((name) => isValidFilename(name))
-            .then((result) => expect(result).toEqual(false));
-        await given("..")
-            .when((name) => isValidFilename(name))
-            .then((result) => expect(result).toEqual(false));
+            .then((result) => expect(result).toEqual([false, false, false, false, false, false]));
     });
 });
 
@@ -47,22 +26,13 @@ describe("safeFilename", () => {
     });
 
     it("should throw InvalidTypeError for invalid characters", async () => {
-        await given("bad:name.txt")
+        await given
+            .each(["bad:name.txt", "bad\u0001name.txt", "", ".", ".."])
             .when((name) => safeFilename(name))
-            .catch((err) => expect(err).toBeInstanceOf(InvalidTypeError));
-    });
-
-    it("should throw InvalidTypeError for control characters", async () => {
-        await given("bad\u0001name.txt")
-            .when((name) => safeFilename(name))
-            .catch((err) => expect(err).toBeInstanceOf(InvalidTypeError));
-    });
-
-    it("should throw InvalidTypeError for empty string, '.' and '..'", async () => {
-        for (const name of ["", ".", ".."] as const) {
-            await given(name)
-                .when((n) => safeFilename(n))
-                .catch((err) => expect(err).toBeInstanceOf(InvalidTypeError));
-        }
+            .catch((errors) =>
+                errors.forEach((e) => {
+                    expect(e).toBeInstanceOf(InvalidTypeError);
+                })
+            );
     });
 });
