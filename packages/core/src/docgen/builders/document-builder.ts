@@ -15,6 +15,7 @@ import type {
     SupertestRequest,
 } from "@/core";
 import { createAsciiDocRenderer } from "@/docgen/render";
+import { createWriter } from "@/docgen/writers";
 import {
     type CookieInput,
     type FieldInput,
@@ -33,7 +34,6 @@ import {
 } from "@/inputs";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import type { Response as SupertestResponse } from "supertest";
-import { createWriter } from "../writers/writer-factory";
 import type { DocumentSnapshot } from "./model";
 
 type PathSet = { __path: "set" };
