@@ -20,6 +20,7 @@ export type SupertestRequest = {
     header?: Record<string, string>;
     method?: HttpMethod;
     url?: string;
+    qs?: HttpQuery;
 };
 
 export type HttpRequest = {
