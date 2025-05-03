@@ -1,4 +1,4 @@
-import type { ArrayItem } from "./keyed-collection.type";
+import type { ArrayItem } from "@/types/keyed-collection.type";
 
 /**
  * Convert given record to an array of key-value pairs

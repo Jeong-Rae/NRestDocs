@@ -1,4 +1,4 @@
-import type { ArrayItem } from "./keyed-collection.type";
+import type { ArrayItem } from "@/types/keyed-collection.type";
 
 /**
  * Check if the given value is in Array format of KeyedCollection.
