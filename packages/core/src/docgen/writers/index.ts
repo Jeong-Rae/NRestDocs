@@ -1,2 +1,2 @@
-export * from "./doc-writer.interface";
-export * from "./local-doc-writer";
+export * from "./adoc-writer";
+export * from "./writer.type";

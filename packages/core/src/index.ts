@@ -1,5 +1,5 @@
 export { docRequest } from "./docgen/builders/document-builder";
-export { setNRestDocsConfig, getNRestDocsConfig } from "./config/config";
+export { setNRestDocsConfig, getNRestDocsConfig } from "./config/docs-config";
 
 export * from "./errors";
 export * from "./docgen/builders";
