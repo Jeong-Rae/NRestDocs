@@ -1,3 +1,4 @@
+import { ConfigService } from "@/config/provider";
 import type {
     CookieDescriptor,
     FieldDescriptor,
@@ -11,6 +12,7 @@ import type {
     PartDescriptor,
     PathParamDescriptor,
     QueryParamDescriptor,
+    SupertestRequest,
 } from "@/core";
 import { createAsciiDocRenderer } from "@/docgen/render";
 import {
@@ -30,8 +32,8 @@ import {
     applyRequestPart,
 } from "@/inputs";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
-import Logger from "@/utils/logger";
 import type { Response as SupertestResponse } from "supertest";
+import { createWriter } from "../writers/writer-factory";
 import type { DocumentSnapshot } from "./model";
 
 type PathSet = { __path: "set" };
@@ -305,8 +307,37 @@ export class DocumentBuilder<PathState = PathUnset> {
         return this;
     }
 
+    private extractHttpTrace(
+        supertestRequest: SupertestRequest,
+        supertestResponse: SupertestResponse
+    ) {
+        const {
+            body: requestBody,
+            headers: requestHeaders,
+            method,
+            url,
+            cookies,
+            query,
+        } = extractHttpRequest(supertestRequest);
+        this.httpMethod = method;
+        this.httpUrl = url;
+        this.httpRequestCookies = cookies;
+        this.httpRequestHeaders = requestHeaders;
+        this.httpRequestBody = requestBody as HttpBody;
+        this.httpRequestQuery = query;
+
+        const {
+            body: responseBody,
+            headers: responseHeaders,
+            statusCode,
+        } = extractHttpResponse(supertestResponse);
+        this.httpStatusCode = statusCode;
+        this.httpResponseHeaders = responseHeaders;
+        this.httpResponseBody = responseBody as HttpBody;
+    }
+
     /**
-     * 문서 생성
+     * trigger supertest request and generate document
      * @param identifier document identifier
      * @returns supertest response
      */
@@ -318,33 +349,13 @@ export class DocumentBuilder<PathState = PathUnset> {
         }
 
         const response = await this.supertestPromise;
-
-        const httpRequest = extractHttpRequest(response);
-        const {
-            body: requestBody,
-            headers: requestHeaders,
-            method,
-            url,
-            cookies,
-            query,
-        } = httpRequest;
-        this.httpMethod = method;
-        this.httpUrl = url;
-        this.httpRequestCookies = cookies;
-        this.httpRequestHeaders = requestHeaders;
-        this.httpRequestBody = requestBody as HttpBody;
-        this.httpRequestQuery = query;
-
-        const httpResponse = extractHttpResponse(response);
-        const { body: responseBody, headers: responseHeaders, statusCode } = httpResponse;
-        this.httpStatusCode = statusCode;
-        this.httpResponseHeaders = responseHeaders;
-        this.httpResponseBody = responseBody as HttpBody;
+        this.extractHttpTrace(response.request as SupertestRequest, response);
 
         const renderer = await createAsciiDocRenderer();
+        const documents = await renderer.render(this.snapshot());
 
-        const document = await renderer.render(this.snapshot());
-        Logger.info("[document]", document);
+        const writer = createWriter(ConfigService.get());
+        await writer.write(identifier, documents);
 
         return response;
     }
