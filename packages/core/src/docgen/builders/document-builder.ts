@@ -36,7 +36,7 @@ import {
 import { type Filename, isValidFilename } from "@/utils/fs/filename";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
 import type { Response as SupertestResponse } from "supertest";
-import type { DocumentSnapshot } from "./model";
+import type { DocumentSnapshot } from "./document.type";
 
 type PathSet = { __path: "set" };
 type PathUnset = { __path: "unset" };

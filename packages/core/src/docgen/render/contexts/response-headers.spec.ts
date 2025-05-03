@@ -1,16 +1,16 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { given } from "@/utils/test/given";
 import { describe, expect, it } from "vitest";
-import { buildRequestHeadersContext } from "./request-headers";
+import { buildResponseHeadersContext } from "./response-headers";
 
-describe("buildRequestHeadersContext", () => {
+describe("buildResponseHeaderContext", () => {
     it("should return empty headers when descriptors are empty", async () => {
         const snapshot = {
-            headers: { request: [] },
+            headers: { response: [] },
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildRequestHeadersContext(snapshot))
+            .when(({ snapshot }) => buildResponseHeadersContext(snapshot))
             .then(({ context }) => {
                 expect(context.headers).toEqual([]);
                 expect(context.hasFormat).toBe(false);
@@ -21,7 +21,7 @@ describe("buildRequestHeadersContext", () => {
     it("should return headers as is from descriptors", async () => {
         const snapshot = {
             headers: {
-                request: [
+                response: [
                     {
                         name: "Authorization",
                         type: "string",
@@ -33,7 +33,7 @@ describe("buildRequestHeadersContext", () => {
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildRequestHeadersContext(snapshot))
+            .when(({ snapshot }) => buildResponseHeadersContext(snapshot))
             .then(({ context }) => {
                 expect(context.headers).toEqual([
                     {
@@ -49,7 +49,7 @@ describe("buildRequestHeadersContext", () => {
     it("should set hasFormat true when any header has format", async () => {
         const snapshot = {
             headers: {
-                request: [
+                response: [
                     {
                         name: "X-Custom",
                         type: "string",
@@ -60,7 +60,7 @@ describe("buildRequestHeadersContext", () => {
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildRequestHeadersContext(snapshot))
+            .when(({ snapshot }) => buildResponseHeadersContext(snapshot))
             .then(({ context }) => {
                 expect(context.hasFormat).toBe(true);
             });
@@ -69,7 +69,7 @@ describe("buildRequestHeadersContext", () => {
     it("should set hasOptional true when any header is optional", async () => {
         const snapshot = {
             headers: {
-                request: [
+                response: [
                     {
                         name: "X-Optional",
                         type: "string",
@@ -80,7 +80,7 @@ describe("buildRequestHeadersContext", () => {
         } as unknown as DocumentSnapshot;
 
         await given({ snapshot })
-            .when(({ snapshot }) => buildRequestHeadersContext(snapshot))
+            .when(({ snapshot }) => buildResponseHeadersContext(snapshot))
             .then(({ context }) => {
                 expect(context.hasOptional).toBe(true);
             });
