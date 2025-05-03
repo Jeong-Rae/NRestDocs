@@ -13,7 +13,7 @@ import type {
 } from "@/core";
 import type { DescriptorBuilder } from "@/descriptors";
 import type { TypeSet } from "@/descriptors/state";
-import type { KeyedCollection } from "@/types/collection";
+import type { KeyedCollection } from "@/utils/collection/keyed-collection.type";
 
 /**
  * Partial Descriptor

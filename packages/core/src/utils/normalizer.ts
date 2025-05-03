@@ -2,7 +2,8 @@ import type { AllowedType, BaseDescriptor, DescriptorKind } from "@/core";
 import type { DescriptorBuilder } from "@/descriptors";
 import type { TypeSet } from "@/descriptors/state";
 import type { DescriptorInput, PartialDescriptor } from "@/inputs";
-import { isKeyedRecord, keyedRecordToArray } from "@/types/collection";
+import { keyedRecordToArray } from "./collection/convert";
+import { isKeyedRecord } from "./collection/predicate";
 import { isBuilder } from "./is-builder";
 
 function withDefaults<K extends DescriptorKind>(
