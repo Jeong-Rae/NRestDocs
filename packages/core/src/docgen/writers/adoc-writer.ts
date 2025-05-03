@@ -14,7 +14,7 @@ export class AsciiDocWriter implements DocumentWriter {
     async write(identifier: string, snippets: Record<string, string>): Promise<void> {
         const base =
             this.config.directoryStructure === "flat"
-                ? this.config.output
+                ? path.join(this.config.output)
                 : path.join(this.config.output, identifier);
 
         await mkdir(base, { recursive: true });
