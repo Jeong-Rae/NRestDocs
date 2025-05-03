@@ -2,8 +2,6 @@
 |Name<% if (it.hasOptional) { %>|Optional<% } %>|Description
 
 <% for (let cookie of it.cookies) { %>
-|`+<%= cookie.name %>+`
-<% if (it.hasOptional) { %>|<%= cookie.optional ? "true" : "false" %><% } %>
-|<%= cookie.description %>
+|`+<%= cookie.name %>+`<% if (it.hasOptional) { %>|<%= cookie.optional ? "true" : "false" %><% } %>|<%= cookie.description %>
 <% } %>
 |===
