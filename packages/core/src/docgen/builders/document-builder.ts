@@ -342,6 +342,8 @@ export class DocumentBuilder<PathState = PathUnset> {
      * @returns supertest response
      */
     async doc(this: DocumentBuilder<PathSet>, identifier: string): Promise<SupertestResponse> {
+        await ConfigService.init();
+
         if (!this.httpRequestPath) {
             throw new Error(
                 "Request Path is not set. Use `setRequestPath()` to set the request path"
@@ -362,9 +364,33 @@ export class DocumentBuilder<PathState = PathUnset> {
 }
 
 /**
- * supertest Promise를 받아 DocumentBuilder 감싸기
- * @param supertestPromise supertest Promise
- * @returns DocRequestBuilder
+ * Proxy function that receives a supertest Promise and returns a DocumentBuilder for API documentation generation.
+ *
+ * This function takes a Promise from a supertest HTTP request and wraps it with a DocumentBuilder instance.
+ * The returned DocumentBuilder allows you to chain methods to set request/response parameters, headers, cookies, body, and more for documentation purposes.
+ *
+ * @template PathUnset Initial state type for DocumentBuilder (path not set)
+ * @param {Promise<SupertestResponse>} supertestPromise The Promise object from a supertest HTTP request
+ * @returns {DocumentBuilder<PathUnset>} A DocumentBuilder instance (with path unset)
+ *
+ * @example
+ * import { defineField, docRequest } from "@nrestdocs/core";
+ * import request from "supertest";
+ *
+ * await docRequest(
+ *   request(app.getHttpServer())
+ *     .post("/orders")
+ *     .send({ productId: 1, qty: 1 })
+ *     .expect(201)
+ * )
+ *   .setRequestPath("/orders")
+ *   .withRequestFields([
+ *     defineField("productId").type("number"),
+ *     defineField("qty").type("number"),
+ *   ])
+ *   .doc("orders-create");
+ *
+ * @see DocumentBuilder
  */
 export function docRequest(
     supertestPromise: Promise<SupertestResponse>
