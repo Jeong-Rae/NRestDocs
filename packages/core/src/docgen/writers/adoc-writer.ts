@@ -1,7 +1,9 @@
 import path from "path";
 import type { NRestDocsConfig } from "@/config/docs-config";
 import { ConfigService } from "@/config/provider";
+import { toPairs } from "es-toolkit/compat";
 import { mkdir, writeFile } from "fs/promises";
+import { getOutputFileName } from "./naming";
 import type { DocumentWriter } from "./writer.type";
 
 export class AsciiDocWriter implements DocumentWriter {
@@ -18,11 +20,12 @@ export class AsciiDocWriter implements DocumentWriter {
         await mkdir(base, { recursive: true });
 
         await Promise.all(
-            Object.entries(snippets).map(async ([name, content]) => {
-                const fileName =
-                    this.config.directoryStructure === "flat"
-                        ? `${identifier}-${name}.adoc`
-                        : `${name}.adoc`;
+            toPairs(snippets).map(async ([name, content]) => {
+                const fileName = getOutputFileName(this.config, {
+                    name,
+                    identifier,
+                    extension: this.config.format,
+                });
                 const filePath = path.join(base, fileName);
                 await writeFile(filePath, content, "utf-8");
             })
