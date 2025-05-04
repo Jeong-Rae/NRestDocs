@@ -5,7 +5,7 @@ import type { DescriptorKind, FormatFor } from "@/core";
 import type { DescriptorBuilder } from "@/descriptors";
 import type { TypeSet, TypeUnset } from "@/descriptors/state";
 import { applyNormalize } from "@/utils/normalizer";
-import { given } from "@/utils/test";
+import { given } from "@/utils/test/given";
 
 function mockBuilder<
     K extends DescriptorKind,

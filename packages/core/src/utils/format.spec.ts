@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { formatJson } from "./format";
-import { given } from "./test";
+import { given } from "./test/given";
 
 describe("formatJson", () => {
     it("should format JSON with default spacing when only value is provided.", async () => {

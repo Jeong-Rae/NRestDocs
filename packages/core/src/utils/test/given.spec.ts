@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { given } from "./test";
+import { given, givenEach } from "./given";
 
 describe("given", () => {
     it("should transform a synchronous value through when() and resolve in then()", async () => {
@@ -67,5 +67,65 @@ describe("given", () => {
                 await Promise.resolve();
                 expect((err as Error).message).toBe("deep");
             });
+    });
+
+    // --- 추가: inspect 기능 테스트 ---
+    it("should allow inspecting the value in the chain using inspect()", async () => {
+        let inspected: unknown = undefined;
+        await given(10)
+            .when((x) => x + 5)
+            .inspect((v) => {
+                inspected = v;
+            })
+            .when((x) => x * 2)
+            .then((result) => {
+                expect(inspected).toBe(15);
+                expect(result).toBe(30);
+            });
+    });
+
+    // --- 추가: given.each 기능 테스트 ---
+    it("should transform multiple values using given.each and aggregate results", async () => {
+        await given
+            .each([1, 2, 3])
+            .when((x) => x * 2)
+            .then((results) => {
+                expect(results).toEqual([2, 4, 6]);
+            });
+    });
+
+    it("should allow inspecting each value in given.each using inspect()", async () => {
+        const inspected: number[] = [];
+        await given
+            .each([1, 2, 3])
+            .when((x) => x + 1)
+            .inspect((v, i) => {
+                inspected[i] = v;
+            })
+            .when((x) => x * 10)
+            .then((results) => {
+                expect(inspected).toEqual([2, 3, 4]);
+                expect(results).toEqual([20, 30, 40]);
+            });
+    });
+
+    it("should catch errors for all values in given.each and aggregate errors", async () => {
+        await given
+            .each([1, 2, 3])
+            .when((x) => {
+                if (x === 2) throw new Error("fail");
+                return x;
+            })
+            .catch((errors) => {
+                expect(errors.length).toBe(3);
+                expect(errors[1]).toBeInstanceOf(Error);
+                expect((errors[1] as Error).message).toBe("fail");
+            });
+    });
+});
+
+describe("given namespace", () => {
+    it("should call given.each via namespace", () => {
+        expect(given.each).toBe(givenEach);
     });
 });

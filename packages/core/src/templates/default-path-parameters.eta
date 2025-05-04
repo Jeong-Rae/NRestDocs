@@ -1,9 +1,8 @@
-.+<%= it.path %>+
++<%= it.path %>+
 |===
 |Parameter|Description
 
 <% for (let param of it.parameters) { %>
-|`+<%= param.name %>+`
-|<%= param.description %>
+|`+<%= param.name %>+`|<%= param.description %>
 <% } %>
 |===

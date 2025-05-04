@@ -1,5 +1,5 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
-import { given } from "@/utils/test";
+import { given } from "@/utils/test/given";
 import { describe, expect, it } from "vitest";
 import { buildResponseFieldsContext } from "./response-fields";
 

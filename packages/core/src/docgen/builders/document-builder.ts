@@ -1,3 +1,4 @@
+import { ConfigService } from "@/config/config.service";
 import type {
     CookieDescriptor,
     FieldDescriptor,
@@ -11,8 +12,11 @@ import type {
     PartDescriptor,
     PathParamDescriptor,
     QueryParamDescriptor,
+    SupertestRequest,
 } from "@/core";
 import { createAsciiDocRenderer } from "@/docgen/render";
+import { createWriter } from "@/docgen/writers";
+import { InvalidTypeError, MissingFieldError } from "@/errors";
 import {
     type CookieInput,
     type FieldInput,
@@ -29,10 +33,10 @@ import {
     applyQueryParameters,
     applyRequestPart,
 } from "@/inputs";
+import { type Filename, isValidFilename } from "@/utils/fs/filename";
 import { extractHttpRequest, extractHttpResponse } from "@/utils/http-trace-extractor";
-import Logger from "@/utils/logger";
 import type { Response as SupertestResponse } from "supertest";
-import type { DocumentSnapshot } from "./model";
+import type { DocumentSnapshot } from "./document.type";
 
 type PathSet = { __path: "set" };
 type PathUnset = { __path: "unset" };
@@ -305,21 +309,10 @@ export class DocumentBuilder<PathState = PathUnset> {
         return this;
     }
 
-    /**
-     * 문서 생성
-     * @param identifier document identifier
-     * @returns supertest response
-     */
-    async doc(this: DocumentBuilder<PathSet>, identifier: string): Promise<SupertestResponse> {
-        if (!this.httpRequestPath) {
-            throw new Error(
-                "Request Path is not set. Use `setRequestPath()` to set the request path"
-            );
-        }
-
-        const response = await this.supertestPromise;
-
-        const httpRequest = extractHttpRequest(response);
+    private extractHttpTrace(
+        supertestRequest: SupertestRequest,
+        supertestResponse: SupertestResponse
+    ) {
         const {
             body: requestBody,
             headers: requestHeaders,
@@ -327,7 +320,7 @@ export class DocumentBuilder<PathState = PathUnset> {
             url,
             cookies,
             query,
-        } = httpRequest;
+        } = extractHttpRequest(supertestRequest);
         this.httpMethod = method;
         this.httpUrl = url;
         this.httpRequestCookies = cookies;
@@ -335,25 +328,82 @@ export class DocumentBuilder<PathState = PathUnset> {
         this.httpRequestBody = requestBody as HttpBody;
         this.httpRequestQuery = query;
 
-        const httpResponse = extractHttpResponse(response);
-        const { body: responseBody, headers: responseHeaders, statusCode } = httpResponse;
+        const {
+            body: responseBody,
+            headers: responseHeaders,
+            statusCode,
+        } = extractHttpResponse(supertestResponse);
         this.httpStatusCode = statusCode;
         this.httpResponseHeaders = responseHeaders;
         this.httpResponseBody = responseBody as HttpBody;
+    }
+
+    /**
+     * trigger supertest request and generate document
+     * @param identifier document identifier
+     * @returns supertest response
+     */
+    async doc(this: DocumentBuilder<PathSet>, identifier: Filename): Promise<SupertestResponse> {
+        await ConfigService.init();
+
+        if (!isValidFilename(identifier)) {
+            throw new InvalidTypeError({
+                context: "DocumentBuilder.doc",
+                fieldName: "identifier",
+                expected: "valid filename string (no control/special characters)",
+                actual: identifier,
+            });
+        }
+
+        if (!this.httpRequestPath) {
+            throw new MissingFieldError({
+                context: "DocumentBuilder.doc",
+                fieldName: "httpRequestPath",
+                suggestion: "Call `setRequestPath()` before invoking `doc()`.",
+            });
+        }
+
+        const response = await this.supertestPromise;
+        this.extractHttpTrace(response.request as SupertestRequest, response);
 
         const renderer = await createAsciiDocRenderer();
+        const documents = await renderer.render(this.snapshot());
 
-        const document = await renderer.render(this.snapshot());
-        Logger.info("[document]", document);
+        const writer = createWriter(ConfigService.get());
+        await writer.write(identifier, documents);
 
         return response;
     }
 }
 
 /**
- * supertest Promise를 받아 DocumentBuilder 감싸기
- * @param supertestPromise supertest Promise
- * @returns DocRequestBuilder
+ * Proxy function that receives a supertest Promise and returns a DocumentBuilder for API documentation generation.
+ *
+ * This function takes a Promise from a supertest HTTP request and wraps it with a DocumentBuilder instance.
+ * The returned DocumentBuilder allows you to chain methods to set request/response parameters, headers, cookies, body, and more for documentation purposes.
+ *
+ * @template PathUnset Initial state type for DocumentBuilder (path not set)
+ * @param {Promise<SupertestResponse>} supertestPromise The Promise object from a supertest HTTP request
+ * @returns {DocumentBuilder<PathUnset>} A DocumentBuilder instance (with path unset)
+ *
+ * @example
+ * import { defineField, docRequest } from "@nrestdocs/core";
+ * import request from "supertest";
+ *
+ * await docRequest(
+ *   request(app.getHttpServer())
+ *     .post("/orders")
+ *     .send({ productId: 1, qty: 1 })
+ *     .expect(201)
+ * )
+ *   .setRequestPath("/orders")
+ *   .withRequestFields([
+ *     defineField("productId").type("number"),
+ *     defineField("qty").type("number"),
+ *   ])
+ *   .doc("orders-create");
+ *
+ * @see DocumentBuilder
  */
 export function docRequest(
     supertestPromise: Promise<SupertestResponse>

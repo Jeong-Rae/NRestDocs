@@ -1,6 +1,6 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
 import { formatJson } from "@/utils/format";
-import { given } from "@/utils/test";
+import { given } from "@/utils/test/given";
 import { describe, expect, it } from "vitest";
 import { buildRequestBodyContext } from "./request-body";
 

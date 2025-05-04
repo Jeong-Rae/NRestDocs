@@ -1,15 +1,23 @@
 import type { DocumentSnapshot } from "@/docgen/builders";
-import { compact, join } from "es-toolkit/compat";
+import { isEmpty } from "es-toolkit/compat";
 import { type SnippetRenderer, snippetRegistry } from "../snippet";
 import { TemplateStore } from "../template";
 
 export class AsciiDocRenderer {
     constructor(private snippets: SnippetRenderer[] = []) {}
 
-    async render(snapshot: DocumentSnapshot): Promise<string> {
-        const rendered = await Promise.all(this.snippets.map((s) => s.render(snapshot)));
-        const parts = compact(rendered);
-        return join(parts, "\n\n");
+    async render(snapshot: DocumentSnapshot): Promise<Record<string, string>> {
+        const documents: Record<string, string> = {};
+        await Promise.all(
+            this.snippets.map(async (snippet) => {
+                const rendered = await snippet.render(snapshot);
+                if (isEmpty(rendered)) {
+                    return;
+                }
+                documents[snippet.templateName] = rendered;
+            })
+        );
+        return documents;
     }
 }
 

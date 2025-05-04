@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { deepRenameKey, renameKey } from "./rename";
-import { given } from "./test";
+import { given } from "./test/given";
 
 describe("renameKey", () => {
     it("should rename keys of a single object.", async () => {

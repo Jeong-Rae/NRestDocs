@@ -1,6 +1,5 @@
 import type {
     HttpMethod,
-    HttpQuery,
     HttpRequest,
     HttpResponse,
     HttpStatusCode,
@@ -13,8 +12,7 @@ import type {
  * @param response Supertest 응답 객체
  * @returns 추출된 요청 정보
  */
-export function extractHttpRequest(response: SupertestResponse): HttpRequest {
-    const request = response.request as SupertestRequest & { qs?: HttpQuery };
+export function extractHttpRequest(request: SupertestRequest): HttpRequest {
     return {
         method: request.method as HttpMethod,
         url: new URL(request?.url || "", "http://localhost"),

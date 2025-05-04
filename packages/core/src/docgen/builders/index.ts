@@ -1,2 +1,2 @@
 export * from "./document-builder";
-export * from "./model";
+export * from "./document.type";
