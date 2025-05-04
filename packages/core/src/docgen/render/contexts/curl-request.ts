@@ -15,10 +15,18 @@ export function buildCurlContext(snapshot: DocumentSnapshot): Context<CurlSnippe
         snapshot.http;
 
     if (!method) {
-        throw new MissingFieldError("method is undefined");
+        throw new MissingFieldError({
+            context: "build curl request context",
+            fieldName: "http method",
+            suggestion: "Please check the request method",
+        });
     }
     if (!url) {
-        throw new MissingFieldError("url is undefined");
+        throw new MissingFieldError({
+            context: "build curl request context",
+            fieldName: "http url",
+            suggestion: "Please check the request url",
+        });
     }
 
     const finalUrl = buildUrl(url, requestQuery);

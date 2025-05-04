@@ -4,9 +4,20 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "typecheck": "tsc --noEmit",
+        "build": "pnpm lint:fix && pnpm typecheck && tsup",
+        "test": "vitest run --coverage",
+        "test:watch": "vitest watch",
+        "test:cov": "vitest run --coverage",
+        "test:ui": "vitest ui",
+        "lint": "pnpm exec biome check",
+        "lint:fix": "pnpm exec biome check --write",
+        "format": "pnpm exec biome format --write"
     },
     "keywords": [],
     "author": "",
-    "license": "ISC"
+    "license": "ISC",
+    "dependencies": {
+        "@nrestdocs/core": "workspace:*"
+    }
 }
