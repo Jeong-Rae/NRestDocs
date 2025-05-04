@@ -1,4 +1,4 @@
-import { ConfigService } from "@/config/provider";
+import { ConfigService } from "@/config/config.service";
 import type {
     CookieDescriptor,
     FieldDescriptor,

@@ -13,7 +13,7 @@ vi.mock("@/config/provider", () => ({
 }));
 
 import path from "path";
-import { ConfigService } from "@/config/provider";
+import { ConfigService } from "@/config/config.service";
 import { given } from "@/utils/test/given";
 import { mkdir, writeFile } from "fs/promises";
 import * as naming from "./naming";
