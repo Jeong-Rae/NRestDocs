@@ -1,5 +1,5 @@
 import { deepFreeze } from "@/utils/freeze";
-import type { NRestDocsConfig } from "./docs-config";
+import type { NRestDocsConfig } from "./docs-config.type";
 
 async function loadConfig(): Promise<NRestDocsConfig> {
     return {
@@ -16,11 +16,12 @@ export class ConfigService {
     /**
      * initialize config (once only)
      */
-    static async init(): Promise<void> {
+    static async init(): Promise<Readonly<NRestDocsConfig>> {
         if (!this.instance) {
             const config = await loadConfig();
             this.instance = deepFreeze(config);
         }
+        return this.instance;
     }
 
     /**

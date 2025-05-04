@@ -1,5 +1,5 @@
 import { ConfigService } from "@/config";
-import type { NRestDocsConfig } from "@/config/docs-config";
+import type { NRestDocsConfig } from "@/config/docs-config.type";
 import { beforeEach, describe, expect, it } from "vitest";
 import { AsciiDocWriter } from "./adoc-writer";
 import { createWriter } from "./writer-factory";

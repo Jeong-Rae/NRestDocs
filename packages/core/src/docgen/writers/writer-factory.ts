@@ -1,4 +1,4 @@
-import type { NRestDocsConfig } from "@/config/docs-config";
+import type { NRestDocsConfig } from "@/config/docs-config.type";
 import { AsciiDocWriter } from "./adoc-writer";
 import type { DocumentWriter } from "./writer.type";
 

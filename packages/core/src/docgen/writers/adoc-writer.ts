@@ -1,6 +1,6 @@
 import path from "path";
 import { ConfigService } from "@/config/config.service";
-import type { NRestDocsConfig } from "@/config/docs-config";
+import type { NRestDocsConfig } from "@/config/docs-config.type";
 import { toPairs } from "es-toolkit/compat";
 import { mkdir, writeFile } from "fs/promises";
 import { getOutputFileName } from "./naming";
