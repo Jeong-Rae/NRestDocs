@@ -1,0 +1,12 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+
+content-type: application/json; charset=utf-8
+
+
+{
+  "id": 1746353215256,
+  "name": "Test User"
+}
+----

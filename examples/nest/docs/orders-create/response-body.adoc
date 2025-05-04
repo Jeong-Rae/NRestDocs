@@ -1,0 +1,8 @@
+[source,json,options="nowrap"]
+----
+{
+  "orderId": 1746353114134,
+  "productId": 1,
+  "qty": 1
+}
+----

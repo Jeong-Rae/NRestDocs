@@ -1,0 +1,13 @@
+|===
+|Path|Type|Description
+
+
+|`+orderId+`|`+number+`|ID of the order
+
+|`+productId+`|`+number+`|ID of the product
+
+|`+qty+`|`+number+`|Quantity ordered
+
+|`+status+`|`+string+`|Order status
+
+|===

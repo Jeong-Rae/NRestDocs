@@ -1,0 +1,14 @@
+[source,http,options="nowrap"]
+----
+POST /orders HTTP/1.1
+
+Content-Type: application/json
+
+Authorization: Bearer test-token
+
+
+{
+  "productId": 1,
+  "qty": 1
+}
+----

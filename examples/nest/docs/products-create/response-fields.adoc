@@ -1,0 +1,11 @@
+|===
+|Path|Type|Description
+
+
+|`+id+`|`+number+`|ID of the product
+
+|`+name+`|`+string+`|Name of the product
+
+|`+price+`|`+number+`|Price of the product
+
+|===

@@ -1,0 +1,13 @@
+|===
+|Path|Type|Description
+
+
+|`+orderId+`|`+number+`|
+
+|`+productId+`|`+number+`|
+
+|`+qty+`|`+number+`|
+
+|`+status+`|`+string+`|
+
+|===

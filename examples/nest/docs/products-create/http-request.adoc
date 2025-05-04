@@ -1,0 +1,12 @@
+[source,http,options="nowrap"]
+----
+POST /products HTTP/1.1
+
+Content-Type: application/json
+
+
+{
+  "name": "Test Product",
+  "price": 50
+}
+----

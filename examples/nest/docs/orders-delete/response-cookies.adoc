@@ -1,0 +1,7 @@
+|===
+|Name|Optional|Description
+
+
+|`+order_session+`|true|Order session cleared
+
+|===

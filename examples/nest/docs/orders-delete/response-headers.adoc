@@ -1,0 +1,7 @@
+|===
+|Name|Optional|Description
+
+
+|`+Set-Cookie+`|true|Clear session cookie
+
+|===

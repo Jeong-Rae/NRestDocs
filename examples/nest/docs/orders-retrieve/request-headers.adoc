@@ -1,0 +1,7 @@
+|===
+|Name|Description
+
+
+|`+Accept+`   |Expected media type (application/json)
+
+|===

@@ -1,0 +1,7 @@
+|===
+|Name|Description
+
+
+|`+Authorization+`   |Bearer authentication token
+
+|===

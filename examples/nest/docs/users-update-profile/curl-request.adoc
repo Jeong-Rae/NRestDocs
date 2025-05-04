@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl http://127.0.0.1:59266/users/1/profile -X PUT -H "Content-Type: application/json" -d "{\"email\":\"test@example.com\"}"
+
+----

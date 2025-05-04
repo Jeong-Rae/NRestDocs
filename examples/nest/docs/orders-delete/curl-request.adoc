@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl http://127.0.0.1:59182/orders/456 -X DELETE -H "Authorization: Bearer test-token"
+
+----

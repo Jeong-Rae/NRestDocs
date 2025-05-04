@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl http://127.0.0.1:59175/products -X GET
+
+----

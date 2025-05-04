@@ -1,0 +1,7 @@
+[source,json,options="nowrap"]
+----
+{
+  "orderId": 456,
+  "message": "Order deleted successfully"
+}
+----

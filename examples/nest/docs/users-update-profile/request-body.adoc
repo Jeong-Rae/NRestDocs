@@ -1,0 +1,6 @@
+[source,json,options="nowrap"]
+----
+{
+  "email": "test@example.com"
+}
+----

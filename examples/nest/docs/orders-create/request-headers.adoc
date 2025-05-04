@@ -1,0 +1,9 @@
+|===
+|Name|Description
+
+
+|`+Content-Type+`   |Request body media type
+
+|`+Authorization+`   |Bearer authentication token
+
+|===

@@ -1,0 +1,11 @@
+|===
+|Path|Type|Description
+
+
+|`+userId+`|`+number+`|User ID
+
+|`+theme+`|`+string+`|Theme preference
+
+|`+notifications+`|`+boolean+`|Notification setting
+
+|===

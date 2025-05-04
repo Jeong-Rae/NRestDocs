@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl http://127.0.0.1:59260/users -X POST -H "Content-Type: application/json" -d "{\"name\":\"Test User\"}"
+
+----

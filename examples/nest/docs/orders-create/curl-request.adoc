@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl http://127.0.0.1:59177/orders -X POST -H "Content-Type: application/json" -H "Authorization: Bearer test-token" -H "Cookie: sessionId=abc123" --cookie "sessionId=abc123" -d "{\"productId\":1,\"qty\":1}"
+
+----

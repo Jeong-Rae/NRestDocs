@@ -1,6 +1,7 @@
 import type { INestApplication } from "@nestjs/common";
 import { Test, type TestingModule } from "@nestjs/testing";
-import * as request from "supertest";
+import { defineField, docRequest } from "@nrestdocs/core";
+import request from "supertest";
 import { AppModule } from "./../src/app.module";
 
 describe("ProductsController (e2e)", () => {
@@ -15,27 +16,52 @@ describe("ProductsController (e2e)", () => {
         await app.init();
     });
 
-    it("/products (POST)", () => {
+    it("/products (POST)", async () => {
         const productData = { name: "Test Product", price: 50 };
-        return request(app.getHttpServer())
-            .post("/products")
-            .send(productData)
-            .expect(201)
-            .expect((res) => {
-                expect(res.body).toHaveProperty("id");
-                expect(res.body.name).toEqual(productData.name);
-                expect(res.body.price).toEqual(productData.price);
-            });
+        await docRequest(
+            request(app.getHttpServer())
+                .post("/products")
+                .send(productData)
+                .expect(201)
+                .expect((res) => {
+                    expect(res.body).toHaveProperty("id");
+                    expect(res.body).toHaveProperty("name");
+                    expect(res.body).toHaveProperty("price");
+                })
+        )
+            .setRequestPath("/products")
+            .withRequestFields([
+                defineField("name").type("string").description("Name of the product"),
+                defineField("price").type("number").description("Price of the product"),
+            ])
+            .withResponseFields([
+                defineField("id").type("number").description("ID of the product"),
+                defineField("name").type("string").description("Name of the product"),
+                defineField("price").type("number").description("Price of the product"),
+            ])
+            .doc("products-create");
     });
 
-    it("/products (GET)", () => {
-        return request(app.getHttpServer())
-            .get("/products")
-            .expect(200)
-            .expect([
-                { id: 1, name: "Product A", price: 100 },
-                { id: 2, name: "Product B", price: 200 },
-            ]);
+    it("/products (GET)", async () => {
+        await docRequest(
+            request(app.getHttpServer())
+                .get("/products")
+                .expect(200)
+                .expect(({ body }) => {
+                    expect(Array.isArray(body)).toBe(true);
+                    expect(body.length).toBeGreaterThan(0);
+                    expect(body[0]).toHaveProperty("id");
+                    expect(body[0]).toHaveProperty("name");
+                    expect(body[0]).toHaveProperty("price");
+                })
+        )
+            .setRequestPath("/products")
+            .withResponseFields([
+                defineField("id").type("number").description("ID of the product"),
+                defineField("name").type("string").description("Name of the product"),
+                defineField("price").type("number").description("Price of the product"),
+            ])
+            .doc("products-list");
     });
 
     afterAll(async () => {

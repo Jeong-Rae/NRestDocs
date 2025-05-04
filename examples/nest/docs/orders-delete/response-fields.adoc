@@ -1,0 +1,9 @@
+|===
+|Path|Type|Description
+
+
+|`+orderId+`|`+number+`|
+
+|`+message+`|`+string+`|Deletion result message
+
+|===

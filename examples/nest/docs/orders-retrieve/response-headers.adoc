@@ -1,0 +1,7 @@
+|===
+|Name|Optional|Description
+
+
+|`+Cache-Control+`|true|Caching policy
+
+|===

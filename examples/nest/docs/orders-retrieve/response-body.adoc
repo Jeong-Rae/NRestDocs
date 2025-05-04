@@ -1,0 +1,9 @@
+[source,json,options="nowrap"]
+----
+{
+  "orderId": 123,
+  "productId": 1,
+  "qty": 2,
+  "status": "pending"
+}
+----

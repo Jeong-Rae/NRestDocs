@@ -1,4 +1,3 @@
-// test/orders.e2e-spec.ts
 import type { INestApplication } from "@nestjs/common";
 import { Test, type TestingModule } from "@nestjs/testing";
 import { defineCookie, defineField, defineHeader, definePath, docRequest } from "@nrestdocs/core";

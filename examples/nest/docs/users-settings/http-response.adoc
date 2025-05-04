@@ -1,0 +1,13 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 200 OK
+
+content-type: application/json; charset=utf-8
+
+
+{
+  "userId": 1,
+  "theme": "dark",
+  "notifications": true
+}
+----

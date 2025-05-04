@@ -1,0 +1,10 @@
+[source,json,options="nowrap"]
+----
+{
+  "userId": 1,
+  "message": "Profile updated successfully",
+  "profile": {
+    "email": "test@example.com"
+  }
+}
+----

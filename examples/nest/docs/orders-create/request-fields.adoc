@@ -1,0 +1,9 @@
+|===
+|Path|Type|Description
+
+
+|`+productId+`|`+number+`|ID of the product
+
+|`+qty+`|`+number+`|Quantity ordered
+
+|===

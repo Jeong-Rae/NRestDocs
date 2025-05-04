@@ -1,0 +1,8 @@
+[source,json,options="nowrap"]
+----
+{
+  "id": 1746353106978,
+  "name": "Test Product",
+  "price": 50
+}
+----

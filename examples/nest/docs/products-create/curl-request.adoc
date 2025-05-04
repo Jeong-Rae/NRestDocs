@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl http://127.0.0.1:59173/products -X POST -H "Content-Type: application/json" -d "{\"name\":\"Test Product\",\"price\":50}"
+
+----

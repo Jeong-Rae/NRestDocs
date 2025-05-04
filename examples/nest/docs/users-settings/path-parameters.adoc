@@ -1,0 +1,8 @@
++/users/:id/settings+
+|===
+|Parameter|Description
+
+
+|`+id+`|User ID
+
+|===

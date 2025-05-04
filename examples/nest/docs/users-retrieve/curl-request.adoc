@@ -1,0 +1,5 @@
+[source,bash]
+----
+$ curl http://127.0.0.1:59262/users/1 -X GET
+
+----

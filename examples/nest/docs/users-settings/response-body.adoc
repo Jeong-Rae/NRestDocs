@@ -1,0 +1,8 @@
+[source,json,options="nowrap"]
+----
+{
+  "userId": 1,
+  "theme": "dark",
+  "notifications": true
+}
+----

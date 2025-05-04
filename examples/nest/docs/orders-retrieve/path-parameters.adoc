@@ -1,0 +1,8 @@
++/orders/:id+
+|===
+|Parameter|Description
+
+
+|`+id+`|Order identifier
+
+|===

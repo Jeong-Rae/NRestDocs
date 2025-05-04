@@ -1,0 +1,9 @@
+|===
+|Name|Optional|Description
+
+
+|`+Set-Cookie+`|false|Session cookie
+
+|`+Location+`|true|Created resource URI
+
+|===

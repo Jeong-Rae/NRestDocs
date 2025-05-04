@@ -1,0 +1,9 @@
+|===
+|Path|Type|Description
+
+
+|`+id+`|`+number+`|ID of the user
+
+|`+name+`|`+string+`|Name of the user
+
+|===

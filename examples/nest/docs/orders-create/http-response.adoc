@@ -1,0 +1,13 @@
+[source,http,options="nowrap"]
+----
+HTTP/1.1 201 Created
+
+content-type: application/json; charset=utf-8
+
+
+{
+  "orderId": 1746353114134,
+  "productId": 1,
+  "qty": 1
+}
+----
