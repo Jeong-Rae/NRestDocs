@@ -1,0 +1,247 @@
+= NRestDocs API Book
+:doctype: book
+:toc: left
+:icons: font
+:sectnums:
+:snippets: {docdir}
+
+************************************
+= User APIs
+************************************
+
+[[users-create]]
+== users-create
+
+=== Request
+include::{snippets}/users-create/curl-request.adoc[opts=optional]
+include::{snippets}/users-create/http-request.adoc[opts=optional]
+
+==== Body
+include::{snippets}/users-create/request-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/users-create/request-fields.adoc[opts=optional]
+
+=== Response
+include::{snippets}/users-create/http-response.adoc[opts=optional]
+
+==== Body
+include::{snippets}/users-create/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/users-create/response-fields.adoc[opts=optional]
+
+<<<
+
+[[users-retrieve]]
+== users-retrieve
+
+=== Request
+include::{snippets}/users-retrieve/curl-request.adoc[opts=optional]
+include::{snippets}/users-retrieve/http-request.adoc[opts=optional]
+
+==== Path Parameters
+include::{snippets}/users-retrieve/path-parameters.adoc[opts=optional]
+
+=== Response
+include::{snippets}/users-retrieve/http-response.adoc[opts=optional]
+
+==== Body
+include::{snippets}/users-retrieve/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/users-retrieve/response-fields.adoc[opts=optional]
+
+<<<
+
+[[users-settings]]
+== users-settings
+
+=== Request
+include::{snippets}/users-settings/curl-request.adoc[opts=optional]
+include::{snippets}/users-settings/http-request.adoc[opts=optional]
+
+==== Path Parameters
+include::{snippets}/users-settings/path-parameters.adoc[opts=optional]
+
+=== Response
+include::{snippets}/users-settings/http-response.adoc[opts=optional]
+
+==== Body
+include::{snippets}/users-settings/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/users-settings/response-fields.adoc[opts=optional]
+
+<<<
+
+[[users-update-profile]]
+== users-update-profile
+
+=== Request
+include::{snippets}/users-update-profile/curl-request.adoc[opts=optional]
+include::{snippets}/users-update-profile/http-request.adoc[opts=optional]
+
+==== Path Parameters
+include::{snippets}/users-update-profile/path-parameters.adoc[opts=optional]
+
+==== Body
+include::{snippets}/users-update-profile/request-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/users-update-profile/request-fields.adoc[opts=optional]
+
+=== Response
+include::{snippets}/users-update-profile/http-response.adoc[opts=optional]
+
+==== Body
+include::{snippets}/users-update-profile/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/users-update-profile/response-fields.adoc[opts=optional]
+
+<<<
+
+************************************
+= Order APIs
+************************************
+
+[[orders-create]]
+== orders-create
+
+=== Request
+include::{snippets}/orders-create/curl-request.adoc[opts=optional]
+include::{snippets}/orders-create/http-request.adoc[opts=optional]
+
+==== Headers
+include::{snippets}/orders-create/request-headers.adoc[opts=optional]
+
+==== Cookies
+include::{snippets}/orders-create/request-cookies.adoc[opts=optional]
+
+==== Body
+include::{snippets}/orders-create/request-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/orders-create/request-fields.adoc[opts=optional]
+
+=== Response
+include::{snippets}/orders-create/http-response.adoc[opts=optional]
+
+==== Headers
+include::{snippets}/orders-create/response-headers.adoc[opts=optional]
+
+==== Cookies
+include::{snippets}/orders-create/response-cookies.adoc[opts=optional]
+
+==== Body
+include::{snippets}/orders-create/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/orders-create/response-fields.adoc[opts=optional]
+
+<<<
+
+[[orders-retrieve]]
+== orders-retrieve
+
+=== Request
+include::{snippets}/orders-retrieve/curl-request.adoc[opts=optional]
+include::{snippets}/orders-retrieve/http-request.adoc[opts=optional]
+
+==== Path Parameters
+include::{snippets}/orders-retrieve/path-parameters.adoc[opts=optional]
+
+==== Headers
+include::{snippets}/orders-retrieve/request-headers.adoc[opts=optional]
+
+=== Response
+include::{snippets}/orders-retrieve/http-response.adoc[opts=optional]
+
+==== Headers
+include::{snippets}/orders-retrieve/response-headers.adoc[opts=optional]
+
+==== Cookies
+include::{snippets}/orders-retrieve/response-cookies.adoc[opts=optional]
+
+==== Body
+include::{snippets}/orders-retrieve/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/orders-retrieve/response-fields.adoc[opts=optional]
+
+<<<
+
+[[orders-delete]]
+== orders-delete
+
+=== Request
+include::{snippets}/orders-delete/curl-request.adoc[opts=optional]
+include::{snippets}/orders-delete/http-request.adoc[opts=optional]
+
+==== Path Parameters
+include::{snippets}/orders-delete/path-parameters.adoc[opts=optional]
+
+==== Headers
+include::{snippets}/orders-delete/request-headers.adoc[opts=optional]
+
+=== Response
+include::{snippets}/orders-delete/http-response.adoc[opts=optional]
+
+==== Headers
+include::{snippets}/orders-delete/response-headers.adoc[opts=optional]
+
+==== Cookies
+include::{snippets}/orders-delete/response-cookies.adoc[opts=optional]
+
+==== Body
+include::{snippets}/orders-delete/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/orders-delete/response-fields.adoc[opts=optional]
+
+<<<
+
+************************************
+= Product APIs
+************************************
+
+[[products-create]]
+== products-create
+
+=== Request
+include::{snippets}/products-create/curl-request.adoc[opts=optional]
+include::{snippets}/products-create/http-request.adoc[opts=optional]
+
+==== Body
+include::{snippets}/products-create/request-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/products-create/request-fields.adoc[opts=optional]
+
+=== Response
+include::{snippets}/products-create/http-response.adoc[opts=optional]
+
+==== Body
+include::{snippets}/products-create/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/products-create/response-fields.adoc[opts=optional]
+
+<<<
+
+[[products-list]]
+== products-list
+
+=== Request
+include::{snippets}/products-list/curl-request.adoc[opts=optional]
+include::{snippets}/products-list/http-request.adoc[opts=optional]
+
+=== Response
+include::{snippets}/products-list/http-response.adoc[opts=optional]
+
+==== Body
+include::{snippets}/products-list/response-body.adoc[opts=optional]
+
+==== Fields
+include::{snippets}/products-list/response-fields.adoc[opts=optional]
